@@ -1,5 +1,8 @@
 ## Ohtun miniprojekti, syksy 2025 (team Neliapila)
 
+### Linkit backlogeihin
+Backlogit: https://docs.google.com/spreadsheets/d/1YLn6Z2UjyHvtpES_IHdXTMnKivLhKFq_CAAXcKCP_Vc/edit?usp=sharing
+
 ### Definition of done
 - Toteutetun koodin testikattavuus on kohtuullinen (~80 %).
 - Asiakas voi aina nähdä koodin ja testien tilanteen CI-palvelusta.
