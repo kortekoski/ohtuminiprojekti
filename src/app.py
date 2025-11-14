@@ -6,9 +6,8 @@ from util import validate_todo
 
 @app.route("/")
 def index():
-    todos = get_todos()
-    unfinished = len([todo for todo in todos if not todo.done])
-    return render_template("index.html", todos=todos, unfinished=unfinished) 
+    references = ['1', '2', '3']  # placeholder, koska repositoriota ei ole vielä tehty
+    return render_template("index.html", references=references) 
 
 @app.route("/new_todo")
 def new():

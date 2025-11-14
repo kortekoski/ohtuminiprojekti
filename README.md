@@ -29,15 +29,16 @@ Backlogit: https://docs.google.com/spreadsheets/d/1YLn6Z2UjyHvtpES_IHdXTMnKivLhK
 
 ### Definition of done
 - Toteutetun koodin testikattavuus on kohtuullinen (~80 %).
-- Asiakas voi aina nähdä koodin ja testien tilanteen CI-palvelusta.
-- Asiakas hyväksyy toteutetun koodin.
+- Asiakas voi aina nähdä koodin ja testien tilanteen CI-palvelusta. Testit menevät läpi CI:ssä.
+- Hyväksymiskriteerit täyttyvät. Asiakas hyväksyy toteutetun koodin.
 - Koodin tulee olla mahdollisimman ylläpidettävää, eli
   - nimeäminen on tehty järkevästi ja yhdenmukaisesti Pythonin tyylikäytänteiden mukaisesti
   - arkkitehtuuri on selkeää ja perusteltua
   - koodin tyyli on yhtenäistä, ja sitä valvotaan Pylintin avulla.
-
+- Dokumentaatiota on päivitetty tarpeen mukaan.
 
 ## Asennusohjeet
 
 ### Tietokanta 
 [README_db](documentation/README_db.md) 
+- Dokumentaatiota on päivitetty tarpeen mukaan.
