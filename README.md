@@ -1,5 +1,29 @@
 ## Ohtun miniprojekti, syksy 2025 (team Neliapila)
 
+### Ohjelman käynnistäminen
+
+Sovellus käynnistetään Poetry-virtuaaliympäristössä komennolla
+````
+python src/index.py
+````
+Tietokanta käynnistetään projektin juuressa (erillisessä terminaalissa) komennolla 
+````
+docker compose up
+````
+Huomaa että ennen kuin käynnistät sovelluksen ensimmäisen kerran, tulee suorittaa komento, joka luo sovelluksen käyttämän tietokantataulun:
+````
+python src/db_helper.py
+````
+Yksikkötestit suoritetaan komennolla:
+````
+pytest src/tests
+````
+Robot-testit suoritetaan komennolla:
+````
+robot src/story_tests
+````
+
+
 ### Linkit backlogeihin
 Backlogit: https://docs.google.com/spreadsheets/d/1YLn6Z2UjyHvtpES_IHdXTMnKivLhKFq_CAAXcKCP_Vc/edit?usp=sharing
 
@@ -11,3 +35,9 @@ Backlogit: https://docs.google.com/spreadsheets/d/1YLn6Z2UjyHvtpES_IHdXTMnKivLhK
   - nimeäminen on tehty järkevästi ja yhdenmukaisesti Pythonin tyylikäytänteiden mukaisesti
   - arkkitehtuuri on selkeää ja perusteltua
   - koodin tyyli on yhtenäistä, ja sitä valvotaan Pylintin avulla.
+
+
+## Asennusohjeet
+
+### Tietokanta 
+[README_db](documentation/README_db.md) 
