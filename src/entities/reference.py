@@ -1,4 +1,4 @@
-class Todo:
+class Reference:
     def __init__(self, id, year, author, title):
         self.id = id
         self.year = year
