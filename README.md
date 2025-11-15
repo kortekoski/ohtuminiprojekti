@@ -1,6 +1,6 @@
-## Ohtun miniprojekti, syksy 2025 (team Neliapila)
+# Ohtun miniprojekti, syksy 2025 (team Neliapila)
 
-### Ohjelman käynnistäminen
+## Ohjelman käynnistäminen
 
 Sovellus käynnistetään Poetry-virtuaaliympäristössä komennolla
 ````
@@ -28,10 +28,10 @@ coverage run --branch -m pytest; coverage html
 ```` 
 
 
-### Linkit backlogeihin
+## Linkit backlogeihin
 Backlogit: https://docs.google.com/spreadsheets/d/1YLn6Z2UjyHvtpES_IHdXTMnKivLhKFq_CAAXcKCP_Vc/edit?usp=sharing
 
-### Definition of done
+## Definition of done
 - Toteutetun koodin testikattavuus on kohtuullinen (~80 %).
 - Asiakas voi aina nähdä koodin ja testien tilanteen CI-palvelusta. Testit menevät läpi CI:ssä.
 - Hyväksymiskriteerit täyttyvät. Asiakas hyväksyy toteutetun koodin.
@@ -40,6 +40,16 @@ Backlogit: https://docs.google.com/spreadsheets/d/1YLn6Z2UjyHvtpES_IHdXTMnKivLhK
   - arkkitehtuuri on selkeää ja perusteltua
   - koodin tyyli on yhtenäistä, ja sitä valvotaan Pylintin avulla.
 - Dokumentaatiota on päivitetty tarpeen mukaan.
+
+
+## Versionhallintakäytännöt (ehdotus)
+- Hae uusin main 
+  - `git checkout main` 
+  - `git pull`
+- Luo taskista uusi branch 
+  - `git checkout -b omanimi\taskin-nimi`
+- 
+
 
 ## Asennusohjeet
 
