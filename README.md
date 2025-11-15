@@ -10,10 +10,16 @@ Tietokanta käynnistetään projektin juuressa (erillisessä terminaalissa) kome
 ````
 docker compose up
 ````
-Huomaa että ennen kuin käynnistät sovelluksen ensimmäisen kerran, tulee suorittaa komento, joka luo sovelluksen käyttämän tietokantataulun:
+Huomaa, että ennen kuin käynnistät sovelluksen ensimmäisen kerran, tulee suorittaa komento, joka luo sovelluksen käyttämän tietokantataulun:
 ````
 python src/db_helper.py
 ````
+Huomaa, että jos tietokantaskeeman entiteettien rakenne muuttuu, tietokanta kannattaa tuhota ja luoda se uudestaan:
+```` 
+docker compose down -v
+docker compose up
+```` 
+
 Yksikkötestit suoritetaan komennolla:
 ````
 pytest src/tests

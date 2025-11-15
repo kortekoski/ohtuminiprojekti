@@ -35,7 +35,7 @@ class TestReferenceRepository(unittest.TestCase):
         self.app_context.pop()
 
     def test_create_and_get_reference(self):
-        create_reference(2024, "Test Author", "Test Title")
+        create_reference(2024, "Test Author", "Test Title", "book")
 
         refs = get_references()
         self.assertEqual(len(refs), 1)
@@ -46,8 +46,8 @@ class TestReferenceRepository(unittest.TestCase):
         self.assertEqual(ref.title, "Test Title")
 
     def test_get_reference_by_id(self):
-        create_reference(2021, "Alice", "Book A")
-        create_reference(2022, "Bob", "Book B")
+        create_reference(2021, "Alice", "Book A", "book")
+        create_reference(2022, "Bob", "Book B", "book")
 
         ref = get_reference_by_id(2)
         self.assertIsNotNone(ref)
