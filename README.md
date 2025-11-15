@@ -22,6 +22,10 @@ Robot-testit suoritetaan komennolla:
 ````
 robot src/story_tests
 ````
+Coverage-kattavuus suoritetaan komennolla: 
+```` 
+coverage run --branch -m pytest; coverage html
+```` 
 
 
 ### Linkit backlogeihin
