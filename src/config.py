@@ -1,8 +1,8 @@
-
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 from os import getenv
+from json_provider import CustomJSONProvider
 
 load_dotenv()
 
@@ -12,4 +12,5 @@ print(f"Test environment: {test_env}")
 app = Flask(__name__)
 app.secret_key = getenv("SECRET_KEY")
 app.config["SQLALCHEMY_DATABASE_URI"] = getenv("DATABASE_URL")
+app.json = CustomJSONProvider(app)
 db = SQLAlchemy(app)
