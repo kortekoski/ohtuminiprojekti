@@ -14,7 +14,7 @@ Huomaa, että ennen kuin käynnistät sovelluksen ensimmäisen kerran, tulee suo
 ````
 python src/db_helper.py
 ````
-Huomaa, että jos tietokantaskeeman entiteettien rakenne muuttuu, tietokanta kannattaa tuhota ja luoda se uudestaan:
+Huomaa, että jos tietokantaskeeman taulujen ja entiteettien rakenne muuttuu, tietokanta kannattaa tuhota ja luoda se uudestaan:
 ```` 
 docker compose down -v
 docker compose up
@@ -54,7 +54,7 @@ Backlogit: https://docs.google.com/spreadsheets/d/1YLn6Z2UjyHvtpES_IHdXTMnKivLhK
   - `git pull`
 - Luo taskista uusi branch 
   - `git checkout -b omanimi\taskin-nimi`
-- 
+  
 
 
 ## Asennusohjeet
