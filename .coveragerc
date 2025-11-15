@@ -1,0 +1,27 @@
+[run]
+source = src
+branch = True
+
+omit =
+    # Exclude app startup
+    src/app.py
+    src/index.py
+
+    # Exclude configuration and setup
+    src/config.py
+    src/db_helper.py
+
+    # Exclude all tests
+    src/tests/*
+    */__init__.py
+
+[report]
+exclude_lines =
+    # Don't complain about missing debug-only code:
+    if __name__ == .__main__.:
+
+    # Ignore abstract methods or unimplemented stubs
+    raise NotImplementedError
+
+show_missing = True
+precision = 2
