@@ -41,4 +41,3 @@ Backlogit: https://docs.google.com/spreadsheets/d/1YLn6Z2UjyHvtpES_IHdXTMnKivLhK
 
 ### Tietokanta 
 [README_db](documentation/README_db.md) 
-- Dokumentaatiota on päivitetty tarpeen mukaan.
