@@ -1,6 +1,6 @@
-## Ohtun miniprojekti, syksy 2025 (team Neliapila)
+# Ohtun miniprojekti, syksy 2025 (team Neliapila)
 
-### Ohjelman käynnistäminen
+## Ohjelman käynnistäminen
 
 Sovellus käynnistetään Poetry-virtuaaliympäristössä komennolla
 ````
@@ -10,10 +10,16 @@ Tietokanta käynnistetään projektin juuressa (erillisessä terminaalissa) kome
 ````
 docker compose up
 ````
-Huomaa että ennen kuin käynnistät sovelluksen ensimmäisen kerran, tulee suorittaa komento, joka luo sovelluksen käyttämän tietokantataulun:
+Huomaa, että ennen kuin käynnistät sovelluksen ensimmäisen kerran, tulee suorittaa komento, joka luo sovelluksen käyttämän tietokantataulun:
 ````
 python src/db_helper.py
 ````
+Huomaa, että jos tietokantaskeeman entiteettien rakenne muuttuu, tietokanta kannattaa tuhota ja luoda se uudestaan:
+```` 
+docker compose down -v
+docker compose up
+```` 
+
 Yksikkötestit suoritetaan komennolla:
 ````
 pytest src/tests
@@ -22,12 +28,16 @@ Robot-testit suoritetaan komennolla:
 ````
 robot src/story_tests
 ````
+Coverage-kattavuus suoritetaan komennolla: 
+```` 
+coverage run --branch -m pytest; coverage html
+```` 
 
 
-### Linkit backlogeihin
+## Linkit backlogeihin
 Backlogit: https://docs.google.com/spreadsheets/d/1YLn6Z2UjyHvtpES_IHdXTMnKivLhKFq_CAAXcKCP_Vc/edit?usp=sharing
 
-### Definition of done
+## Definition of done
 - Toteutetun koodin testikattavuus on kohtuullinen (~80 %).
 - Asiakas voi aina nähdä koodin ja testien tilanteen CI-palvelusta. Testit menevät läpi CI:ssä.
 - Hyväksymiskriteerit täyttyvät. Asiakas hyväksyy toteutetun koodin.
@@ -36,6 +46,16 @@ Backlogit: https://docs.google.com/spreadsheets/d/1YLn6Z2UjyHvtpES_IHdXTMnKivLhK
   - arkkitehtuuri on selkeää ja perusteltua
   - koodin tyyli on yhtenäistä, ja sitä valvotaan Pylintin avulla.
 - Dokumentaatiota on päivitetty tarpeen mukaan.
+
+
+## Versionhallintakäytännöt (ehdotus)
+- Hae uusin main 
+  - `git checkout main` 
+  - `git pull`
+- Luo taskista uusi branch 
+  - `git checkout -b omanimi\taskin-nimi`
+- 
+
 
 ## Asennusohjeet
 
