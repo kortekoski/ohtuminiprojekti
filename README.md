@@ -54,6 +54,14 @@ Backlogit: https://docs.google.com/spreadsheets/d/1YLn6Z2UjyHvtpES_IHdXTMnKivLhK
   - `git pull`
 - Luo taskista uusi branch 
   - `git checkout -b omanimi\taskin-nimi`
+  - `git add oma_muutos.py`
+  - `git commit -m "oma commit"`
+  - git push --set-upstream origin omanimitaskin-nimi
+- Mahdollisimman usein kannattaa hakea uusin main
+   - `git fetch origin`
+   - `git merge origin/main`
+   - resolvaa mahdolliset konfliktit
+   - `git push`
   
 
 
