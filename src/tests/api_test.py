@@ -21,7 +21,9 @@ class TestAPI(unittest.TestCase):
         self.client = app.test_client()
 
         db.session.execute(text("DELETE FROM reference_values"))
-        db.session.execute(text("ALTER SEQUENCE reference_values_id_seq RESTART WITH 1"))
+        db.session.execute(
+            text("ALTER SEQUENCE reference_values_id_seq RESTART WITH 1")
+        )
         db.session.commit()
 
     def tearDown(self):
@@ -32,26 +34,23 @@ class TestAPI(unittest.TestCase):
             "author": "cool author",
             "year": 2025,
             "title": "title fit for a cool author",
-            "type": "book"
+            "type": "book",
         }
         response = self.client.get(
             NEW_REFERENCE_LOCATION,
             query_string=ref,
-            headers={"Content-Type": "application/json"}
+            headers={"Content-Type": "application/json"},
         )
         self.assertTrue(response.status_code == 200)
         self.assertTrue(response.get_data(as_text=True) != "")
 
         response = self.client.get(
-            REFERENCES_LOCATION + "/1",
-            headers={"Content-Type": "application/json"}
+            REFERENCES_LOCATION + "/1", headers={"Content-Type": "application/json"}
         )
         self.assertTrue(response.status_code == 200)
         response_ref = json.loads(response.get_data(as_text=True))
         response_ref.pop("id")
-        self.assertTrue(
-            response_ref == ref
-        )
+        self.assertTrue(response_ref == ref)
 
     def test_create_multiple_and_get_all(self):
         refs = [
@@ -59,27 +58,27 @@ class TestAPI(unittest.TestCase):
                 "author": "cool author 1",
                 "year": 2025,
                 "title": "title fit for a cool author 1",
-                "type": "book"
+                "type": "book",
             },
             {
                 "author": "cool author 2",
                 "year": 2024,
                 "title": "title fit for a cool author 2",
-                "type": "book"
+                "type": "book",
             },
             {
                 "author": "cool author 3",
                 "year": 2023,
                 "title": "title fit for a cool author 3",
-                "type": "book"
-            }
+                "type": "book",
+            },
         ]
 
         for ref in refs:
             res = self.client.get(
                 NEW_REFERENCE_LOCATION,
                 query_string=ref,
-                headers={"Content-Type": "application/json"}
+                headers={"Content-Type": "application/json"},
             )
             self.assertTrue(res.status_code == 200)
 
@@ -89,13 +88,9 @@ class TestAPI(unittest.TestCase):
         for item in res_loaded:
             item.pop("id")
 
-        self.assertTrue(
-            all([res_item in refs for res_item in res_loaded])
-        )
+        self.assertTrue(all([res_item in refs for res_item in res_loaded]))
 
     def test_get_nonexistent_reference(self):
-        res = self.client.get(
-            REFERENCES_LOCATION + "/255"
-        )
+        res = self.client.get(REFERENCES_LOCATION + "/255")
         self.assertTrue(res.status_code == 404)
         self.assertTrue(res.get_data(as_text=True) != "")
