@@ -15,6 +15,10 @@ omit =
     src/tests/*
     */__init__.py
 
+    # Exclude TODO app
+    src/repositories/todo_repository.py
+    src/entities/todo.py
+
 [report]
 exclude_lines =
     # Don't complain about missing debug-only code:

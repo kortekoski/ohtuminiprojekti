@@ -3,6 +3,7 @@ from db_helper import reset_db
 from repositories.todo_repository import get_todos, create_todo, set_done
 from config import app, test_env
 from util import validate_todo
+from api import api
 
 @app.route("/")
 def index():
