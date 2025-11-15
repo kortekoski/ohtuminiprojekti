@@ -36,4 +36,4 @@ SECRET_KEY=satunnainen_merkkijono
     -  POSTGRES_DB: neliapila
       port:5432
 
-      ![DBeaver](images/dbeaver.png)       
+      ![DBeaver](images/dbeaver.jpg)       
