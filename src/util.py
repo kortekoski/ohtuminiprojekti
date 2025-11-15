@@ -10,7 +10,7 @@ def validate_todo(content):
 
 
 def is_valid_reference(
-        maybe_reference: dict[str: list[str]]
+        maybe_reference: dict[str: list[str]|str|int]
 ) -> bool:
     required_keys = [
         "year",
@@ -25,7 +25,6 @@ def is_valid_reference(
         ),
         required_keys
     )
-
     return all(validator_iter)
 
 def _is_valid_reference_helper(
