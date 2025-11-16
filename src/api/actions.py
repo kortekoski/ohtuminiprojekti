@@ -1,6 +1,6 @@
 # from logging import debug, info, warn, error
-from config import db
 from flask import jsonify, request
+
 from entities.reference import Reference
 from repositories import reference_repository as repo
 from util import is_valid_reference
@@ -30,7 +30,7 @@ def create_new_reference():
         )
        return jsonify({"message": "reference created succesfully"})
     except Exception as err:
-        # error(f"Failed to add reference:\n{err}")
+       # error(f"Failed to add reference:\n{err}")
         return (
             jsonify({"error": "internal server error"}),
             HTTP_500_INTERNAL_SERVER_ERROR,
