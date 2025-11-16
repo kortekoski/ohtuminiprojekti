@@ -1,7 +1,6 @@
 import unittest
 import json
-from api import api
-from api.api import ALL_REFERENCES_LOCATION, NEW_REFERENCE_LOCATION, REFERENCES_LOCATION
+from api.routes import ALL_REFERENCES_LOCATION, NEW_REFERENCE_LOCATION, REFERENCES_LOCATION
 from config import app, db
 from db_helper import setup_db
 from sqlalchemy import text

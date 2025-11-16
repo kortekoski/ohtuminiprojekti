@@ -4,10 +4,15 @@ from dotenv import load_dotenv
 from os import getenv
 from json_provider import CustomJSONProvider
 
+API_ROOT = "/api"
+
 load_dotenv()
 
 test_env = getenv("TEST_ENV") == "true"
 print(f"Test environment: {test_env}")
+
+if location := getenv("API_ROOT"):
+    API_ROOT = location
 
 app = Flask(__name__)
 app.secret_key = getenv("SECRET_KEY")

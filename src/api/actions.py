@@ -1,6 +1,5 @@
 # from logging import debug, info, warn, error
-from config import app, db
-import json
+from config import db
 from flask import jsonify, request
 from entities.reference import Reference
 from repositories import reference_repository as repo
@@ -10,19 +9,13 @@ HTTP_200_SUCCESS = 200
 HTTP_400_BAD_REQUEST = 400
 HTTP_404_NOT_FOUND = 404
 HTTP_500_INTERNAL_SERVER_ERROR = 500
-API_ROOT = "/api"
-ALL_REFERENCES_LOCATION = API_ROOT + "/all_references"
-NEW_REFERENCE_LOCATION = API_ROOT + "/new_reference"
-REFERENCES_LOCATION = API_ROOT + "/references"
 
 
-@app.route(ALL_REFERENCES_LOCATION, methods=["GET"])
 def get_all_references():
     references: list[Reference] = repo.get_references()
     return jsonify(references)
 
 
-@app.route(NEW_REFERENCE_LOCATION, methods=["GET"])
 def create_new_reference():
     # We don't flatten the arguments since a reference
     # can have multiple authors.
@@ -44,7 +37,6 @@ def create_new_reference():
         )
 
 
-@app.route(REFERENCES_LOCATION + "/<int:reference_id>", methods=["GET"])
 def get_reference_by_id(reference_id: int):
     ref: Reference | None = repo.get_reference_by_id(reference_id)
 

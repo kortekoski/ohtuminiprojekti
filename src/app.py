@@ -4,7 +4,7 @@ from entities.reference import Reference
 from repositories.reference_repository import get_references, create_reference
 from config import app, test_env
 from util import validate_reference
-from api import api
+from api import routes
 
 
 @app.route("/")
