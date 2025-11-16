@@ -7,15 +7,22 @@ Reference app
 {% block body %}
 
 <h2>Reference app</h2>
-<ul>
-  {% for reference in references %}
-    <li style="display: flex">
-      <div>
-        {{ reference }} 
-      </div>
-    </li>
-  {% endfor %}
-</ul>
+<h3>Book references:</h3>
+{% if references|length == 0 %}
+  <p>No references found!</p>
+{% else %}
+  <ul>
+    {% for reference in references %}
+        {% if reference.type == 'book' %}
+          <li style="display: flex">
+            <div>
+              [{{ reference.id }}] {{ reference.author }}. <i>{{ reference.title }}</i>.{{ reference.year }}.
+            </div>
+          </li>
+        {% endif %}
+    {% endfor %}
+  </ul>
+{% endif %}
 
 <div>
   <a href="/new_todo">Create new reference</a>

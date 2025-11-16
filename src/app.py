@@ -1,12 +1,14 @@
 from flask import redirect, render_template, request, jsonify, flash
 from db_helper import reset_db
 from repositories.todo_repository import get_todos, create_todo, set_done
+from entities.reference import Reference
+from repositories.reference_repository import get_references
 from config import app, test_env
 from util import validate_todo
 
 @app.route("/")
 def index():
-    references = ['1', '2', '3']  # placeholder, koska repositoriota ei ole vielä tehty
+    references: list[Reference] = get_references()
     return render_template("index.html", references=references) 
 
 @app.route("/new_todo")
