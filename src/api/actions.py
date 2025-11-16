@@ -28,7 +28,7 @@ def create_new_reference():
         repo.create_reference(
             int(args["year"][0]), args["author"][0], args["title"][0], args["type"][0]
         )
-        return jsonify({"message": "reference created succesfully"})
+       return jsonify({"message": "reference created succesfully"})
     except Exception as err:
         # error(f"Failed to add reference:\n{err}")
         return (
