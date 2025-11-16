@@ -1,7 +1,20 @@
+from collections.abc import Iterator
+
 class UserInputError(Exception):
     pass
 
 def validate_todo(content):
+    """
+    TODO change the behaviour of this function to validate references. 
+    Also remember to change the import statements in app.py and tests.
+    
+    Validates the content of a todo item. 
+    Usage:
+        content = request.form.get("content")
+
+         try:
+             validate_todo(content)
+    """
     if len(content) < 5:
         raise UserInputError("Todo content length must be greater than 4")
 
