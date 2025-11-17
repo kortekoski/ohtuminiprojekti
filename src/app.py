@@ -1,15 +1,36 @@
 from flask import redirect, render_template, request, jsonify, flash
 from db_helper import reset_db
 from entities.reference import Reference
-from repositories.reference_repository import get_references
+from repositories.reference_repository import get_references, create_reference
 from config import app, test_env
-#from util import validate_todo
+from util import validate_reference
 from api import api
 
 @app.route("/")
 def index():
     references: list[Reference] = get_references()
-    return render_template("index.html", references=references) 
+    return render_template("index.html", references=references)
+
+@app.route("/new_reference")
+def new():
+    return render_template("new_reference.html")
+
+@app.route("/create_reference", methods=["POST"])
+def reference_creation():
+    year = int(request.form.get("year"))
+    author = request.form.get("author")
+    title = request.form.get("title")
+    reftype = request.form.get("reftype")
+
+    try:
+        new_reference = Reference(None, year, author, title, reftype)
+        validate_reference(new_reference)
+        # Pitäisikö muuttaa käyttämään referenceä?
+        create_reference(year, author, title, reftype)
+        return redirect("/")
+    except Exception as error:
+        flash(str(error))
+        return  redirect("/new_reference")
 
 # Jätetään esimerkeiksi tulevaa käyttöä varten kommentoituina
 # @app.route("/new_todo")
