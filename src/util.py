@@ -1,32 +1,39 @@
+
 from datetime import datetime
 import re
+from collections.abc import Iterator
 
 class UserInputError(Exception):
     pass
 
-def validate_reference(year, author, title, reftype):
+class ValueError(Exception):
+    pass
+
+def validate_reference(ref):
+    """Validates the reference information provided by the user according to the specified rules."""
+
     # Check first that there are no empty entries
-    for entry in [year, author, title, reftype]:
+    for entry in [ref.year, ref.author, ref.title, ref.type]:
         if not entry:
-            raise UserInputError(f"All fields must be non-empty")
-        
+            raise UserInputError("All fields must be non-empty")
+
     # Check variable types
-    if type(year) != int:
+    if not isinstance(ref.year, int):
         raise ValueError("Incorrect value type")
-    if type(author) != str or type(title) != str or type(reftype) != str:
+    if not all(isinstance(x, str) for x in [ref.author, ref.title, ref.type]):
         raise ValueError("Incorrect value type")
-        
+
     # Year must be within a reasonable range
     current_year = datetime.now().year
-    if year < 1000 or year > current_year:
+    if ref.year < 1000 or ref.year > current_year:
         raise UserInputError(f"Year must be between 1000 and {current_year}")
 
     # Author must be in format First Last or Last, First
-    if not author_validator(author):
-        raise UserInputError(f"Author must be in format John Smith or Smith, John")
-    
+    if not author_validator(ref.author):
+        raise UserInputError("Author must be in format John Smith or Smith, John")
+
     # Title should be at least 10 characters long?
-    if len(title) < 10:
+    if len(ref.title) < 10:
         raise UserInputError("Title must be at least 10 characters long")
 
     # Type validation, must be one of the valid bibtex types
@@ -45,20 +52,15 @@ def validate_reference(year, author, title, reftype):
     "proceedings",
     "techreport",
     "unpublished"
-    ]   
+    ]
 
-    if reftype not in bibtex_types:
+    if ref.type not in bibtex_types:
         raise UserInputError("Incorrect bibtex reference type")
-    
+
     return True
 
 def author_validator(author):
-    # Should accept formats like:
-    # - John Smith (First Last)
-    # - Maria-Elena O'Brien (with hyphens and apostrophes)
-    # - John Middle Smith (with middle names/initials)
-    # - Smith, John (Last, First)
-    # - O'Brien, Maria-Elena (Last, First with special characters)
+    """Validates that the name is in an acceptable format (e.g. John O'Smith; Smith, John)."""
     pattern = r"([A-Z][a-zA-Z'-]*(\s+[A-Z][a-zA-Z'-]*)*)|([A-Z][a-zA-Z'-]*(\s+[A-Z][a-zA-Z'-]*)*,\s+[A-Z][a-zA-Z'-]*(\s+[A-Z][a-zA-Z'-]*)*)"
     return bool(re.fullmatch(pattern, author))
 

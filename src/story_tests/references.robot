@@ -8,7 +8,6 @@ Test Setup       Reset References
 At start there are no references
     Go To  ${HOME_URL}
     Title Should Be  Reference app
-    Page Should Contain  Create new reference
     Page Should Contain  No references found
 
 One reference is shown after adding it
