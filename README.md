@@ -48,12 +48,12 @@ Backlogit: https://docs.google.com/spreadsheets/d/1YLn6Z2UjyHvtpES_IHdXTMnKivLhK
 - Dokumentaatiota on päivitetty tarpeen mukaan.
 
 
-## Versionhallintakäytännöt (ehdotus)
+## Versionhallintakäytännöt
 - Hae uusin main 
   - `git checkout main` 
   - `git pull`
 - Luo taskista uusi branch 
-  - `git checkout -b omanimi\taskin-nimi`
+  - `git checkout -b omanimi/taskin-nimi`
   - `git add oma_muutos.py`
   - `git commit -m "oma commit"`
   - git push --set-upstream origin omanimitaskin-nimi
@@ -62,7 +62,12 @@ Backlogit: https://docs.google.com/spreadsheets/d/1YLn6Z2UjyHvtpES_IHdXTMnKivLhK
    - `git merge origin/main`
    - resolvaa mahdolliset konfliktit
    - `git push`
-  
+- Githubissa luo uusi Pull Request 
+   - lisää muut tiimiläiset katselmoijiksi 
+   - linkkaa PR Discordiin muille tiedoksi
+   - varmista, että CI-testit menevät läpi 
+   - Mergeä mainiin 
+   - tuhoa branch githubista 
 
 
 ## Asennusohjeet
