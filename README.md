@@ -10,11 +10,7 @@ Tietokanta käynnistetään projektin juuressa (erillisessä terminaalissa) kome
 ````
 docker compose up
 ````
-Huomaa, että ennen kuin käynnistät sovelluksen ensimmäisen kerran, tulee suorittaa komento, joka luo sovelluksen käyttämän tietokantataulun:
-````
-python src/db_helper.py
-````
-Huomaa, että jos tietokantaskeeman taulujen ja entiteettien rakenne muuttuu, tietokanta kannattaa tuhota ja luoda se uudestaan:
+Huomaa, että jos tietokantaskeeman taulujen ja entiteettien rakenne muuttuu, tietokanta kannattaa tuhota ja luoda se uudestaan. Tietokantaan ajetaan automaattisesti migraatiot kansiosta `migrations` aakkosjärjestyksessä, kun se ensimmäistä kertaa luodaan.
 ```` 
 docker compose down -v
 docker compose up
@@ -63,11 +59,11 @@ Backlogit: https://docs.google.com/spreadsheets/d/1YLn6Z2UjyHvtpES_IHdXTMnKivLhK
    - resolvaa mahdolliset konfliktit
    - `git push`
 - Githubissa luo uusi Pull Request 
-   - lisää muut tiimiläiset katselmoijiksi 
-   - linkkaa PR Discordiin muille tiedoksi
-   - varmista, että CI-testit menevät läpi 
+   - Lisää muut tiimiläiset katselmoijiksi 
+   - Linkkaa PR Discordiin muille tiedoksi
+   - Varmista, että CI-testit menevät läpi 
    - Mergeä mainiin 
-   - tuhoa branch githubista 
+   - Tuhoa branch githubista 
 
 
 ## Asennusohjeet
