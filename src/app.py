@@ -60,3 +60,15 @@ if test_env:
     def reset_database():
         reset_db()
         return jsonify({ 'message': "db reset" })
+    
+# testausta varten oleva reitti
+if test_env:
+    @app.route("/add_test_reference", methods=["POST"])
+    def add_test_reference():
+        year = int(request.form.get("year"))
+        author = request.form.get("author")
+        title = request.form.get("title")
+        reftype = request.form.get("reftype")
+
+        create_reference(year, author, title, reftype)
+        return jsonify({ 'message': "reference registered" })

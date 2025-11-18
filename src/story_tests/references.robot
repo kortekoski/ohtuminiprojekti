@@ -1,5 +1,5 @@
 *** Settings ***
-Resource  resource.robot
+Resource         resource.robot
 Suite Setup      Open And Configure Browser
 Suite Teardown   Close Browser
 Test Setup       Reset References
@@ -11,4 +11,7 @@ At start there are no references
     Page Should Contain  No references found
 
 One reference is shown after adding it
-    Skip  Adding functionality not implemented yet
+    Add Test Reference
+    Go To  ${HOME_URL}
+    Page Should Contain    Threepwood
+    Page Should Contain    clover
