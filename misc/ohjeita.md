@@ -5,7 +5,7 @@ Ihmisten välinen yhteistyö on suurin haaste ohjelmistojen kehittämiseen, ja e
 - [X] tehkää esittäytymiskierros
 - [X] luokaa jokin yhteinen kommunikaatiokanava, esim. Discordiin, Telegramiin, yms
 - [X] jokainen liittyy kanavalle
-- [ ] sopikaa yhteisistä työskentelyajoista
+- [X] sopikaa yhteisistä työskentelyajoista
   - mahdollisimman monta tuntia viikossa
   - mielellään kampuksella paikan päällä, mutta jos se ei onnistu niin esim Discordin äänikanavalla
 - [X] luokaa projektillenne GitHub-repositorio
@@ -14,10 +14,10 @@ Ihmisten välinen yhteistyö on suurin haaste ohjelmistojen kehittämiseen, ja e
 - [X] lisätkää repositorioon sovelluksen runko
   - runko voi olla esim Flask-sovellus jonka ainoa toiminnallisuus on etusivu, joka toteaa "Hello World"
   - mieluiten yhdessä, jos se ei onnistu niin sopikaa että esim. kaksi teistä yhdessä hoitaa asian
-- [ ] sopikaa yhteisistä koodaus- ja versionhallintakäytänteistä
+- [X] sopikaa yhteisistä koodaus- ja versionhallintakäytänteistä
   - määritelkää definition of done
   - miettikää miten käytätte brancheja
-- [ ] lisätkää Robot-testi, joka testaa että sovelluksen etusivu toimii, ja määritelkää GitHub Action, joka suorittaa testin
+- [X] lisätkää Robot-testi, joka testaa että sovelluksen etusivu toimii, ja määritelkää GitHub Action, joka suorittaa testin
   - tähänkin voi vastuulliseksi valita esim kaksi ryhmäläistä
-- [ ] Luokaa projektille tietokanta, ks ohje [täältä](https://ohjelmistotuotanto-hy.github.io/flask/#sovelluksen-k%C3%A4ynnist%C3%A4minen)
+- [X] Luokaa projektille tietokanta, ks ohje [täältä](https://ohjelmistotuotanto-hy.github.io/flask/#sovelluksen-k%C3%A4ynnist%C3%A4minen)
   - tähänkin voi vastuulliseksi valita esim kaksi ryhmäläistä
