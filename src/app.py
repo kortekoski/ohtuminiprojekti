@@ -27,6 +27,7 @@ def reference_creation():
         validate_reference(new_reference)
         # Pitäisikö muuttaa käyttämään referenceä?
         create_reference(year, author, title, reftype)
+        flash("Reference created successfully!")
         return redirect("/")
     except Exception as error:
         flash(str(error))
