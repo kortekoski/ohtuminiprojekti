@@ -38,7 +38,7 @@ class TestAddReference(unittest.TestCase):
         self.assertTrue(validate_reference(ref))
 
     def test_cannot_add_empty_reference(self):
-        ref = Reference ("", "", "", "")
+        ref = Reference("", "", "", "")
         with self.assertRaises(UserInputError):
             self.assertRaises(validate_reference(
                 ref
@@ -61,7 +61,7 @@ class TestAddReference(unittest.TestCase):
         for ref in [ref1, ref2, ref3, ref4]:
             with self.assertRaises(ValueError):
                 self.assertRaises(validate_reference(ref)
-        )
+                                  )
 
     def test_year_must_be_in_valid_range(self):
         ref1 = Reference(
@@ -82,7 +82,7 @@ class TestAddReference(unittest.TestCase):
         for ref in [ref1, ref2]:
             with self.assertRaises(UserInputError):
                 self.assertRaises(validate_reference(ref)
-        )
+                                  )
 
     def test_author_must_be_in_correct_format(self):
         ref1 = Reference(
@@ -117,7 +117,7 @@ class TestAddReference(unittest.TestCase):
         for ref in [ref1, ref2, ref3, ref4]:
             with self.assertRaises(UserInputError):
                 self.assertRaises(validate_reference(ref)
-        )
+                                  )
 
     def test_title_must_be_10_characters_long(self):
         ref = Reference(
@@ -142,7 +142,6 @@ class TestAddReference(unittest.TestCase):
 
         with self.assertRaises(UserInputError):
             self.assertRaises(validate_reference(ref))
-
 
     def test_create_valid_reference_redirects_to_home(self):
         """Test that creating a valid reference redirects to home"""

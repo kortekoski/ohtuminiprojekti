@@ -3,11 +3,14 @@ from datetime import datetime
 import re
 from collections.abc import Iterator
 
+
 class UserInputError(Exception):
     pass
 
+
 class ValueError(Exception):
     pass
+
 
 def validate_reference(ref):
     """Validates the reference information provided by the user according to the specified rules."""
@@ -30,7 +33,8 @@ def validate_reference(ref):
 
     # Author must be in format First Last or Last, First
     if not author_validator(ref.author):
-        raise UserInputError("Author must be in format John Smith or Smith, John")
+        raise UserInputError(
+            "Author must be in format John Smith or Smith, John")
 
     # Title should be at least 10 characters long?
     if len(ref.title) < 10:
@@ -38,20 +42,20 @@ def validate_reference(ref):
 
     # Type validation, must be one of the valid bibtex types
     bibtex_types = [
-    "article",
-    "book",
-    "booklet",
-    "conference",
-    "inbook",
-    "incollection",
-    "inproceedings",
-    "manual",
-    "mastersthesis",
-    "misc",
-    "phdthesis",
-    "proceedings",
-    "techreport",
-    "unpublished"
+        "article",
+        "book",
+        "booklet",
+        "conference",
+        "inbook",
+        "incollection",
+        "inproceedings",
+        "manual",
+        "mastersthesis",
+        "misc",
+        "phdthesis",
+        "proceedings",
+        "techreport",
+        "unpublished"
     ]
 
     if ref.type not in bibtex_types:
@@ -59,13 +63,15 @@ def validate_reference(ref):
 
     return True
 
+
 def author_validator(author):
     """Validates that the name is in an acceptable format (e.g. John O'Smith; Smith, John)."""
     pattern = r"([A-Z][a-zA-Z'-]*(\s+[A-Z][a-zA-Z'-]*)*)|([A-Z][a-zA-Z'-]*(\s+[A-Z][a-zA-Z'-]*)*,\s+[A-Z][a-zA-Z'-]*(\s+[A-Z][a-zA-Z'-]*)*)"
     return bool(re.fullmatch(pattern, author))
 
+
 def is_valid_reference(
-        maybe_reference: dict[str: list[str]|str|int]
+        maybe_reference: dict[str: list[str] | str | int]
 ) -> bool:
     required_keys = [
         "year",
@@ -81,6 +87,7 @@ def is_valid_reference(
         required_keys
     )
     return all(validator_iter)
+
 
 def _is_valid_reference_helper(
         maybe_reference: dict[str: list[str]],
