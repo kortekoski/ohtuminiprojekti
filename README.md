@@ -28,10 +28,6 @@ Coverage-kattavuus suoritetaan komennolla:
 ```` 
 coverage run --branch -m pytest; coverage html
 ```` 
-Koodin formatointi komennolla:
-```` 
-
-```` 
 Pylint komennolla:
 ```` 
 poetry run pylint .
