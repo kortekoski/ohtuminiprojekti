@@ -119,6 +119,17 @@ class TestAddReference(unittest.TestCase):
                 self.assertRaises(validate_reference(ref)
                                   )
 
+    def test_multiple_authors_accepted(self):
+        ref1 = Reference(
+            None,
+            2001,
+            "Bad Dude and Duke Nukem and Max, Pepsi",
+            "all out of gum",
+            "book"
+        )
+
+        self.assertTrue(validate_reference(ref1))
+
     def test_title_must_be_10_characters_long(self):
         ref = Reference(
             None,
