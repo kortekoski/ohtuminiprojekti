@@ -1,5 +1,5 @@
 # Ohtun miniprojekti, syksy 2025 (team Neliapila)
-[![GHA workflow_badge](https://github.com/kortekoski/ohtuminiprojekti/actions/workflows/ci.yml/badge.svg)](https://github.com/kortekoski/ohtuminiprojekti/actions)
+[![GHA workflow_badge](https://github.com/kortekoski/ohtuminiprojekti/actions/workflows/ci.yaml/badge.svg)](https://github.com/kortekoski/ohtuminiprojekti/actions)
 ## Ohjelman käynnistäminen
 
 Sovellus käynnistetään Poetry-virtuaaliympäristössä komennolla
