@@ -34,7 +34,7 @@ def validate_reference(ref):
     # Author must be in format First Last or Last, First
     if not author_validator(ref.author):
         raise UserInputError(
-            "Author must be in format John Smith or Smith, John")
+            "Author must be in format John Smith or Smith, John (or multiple authors separated by ' and ')")
 
     # Title should be at least 10 characters long?
     if len(ref.title) < 10:
@@ -67,7 +67,8 @@ def validate_reference(ref):
 def author_validator(author):
     """Validates that the name is in an acceptable format (e.g. John O'Smith; Smith, John)."""
     pattern = r"([A-Z][a-zA-Z'-]*(\s+[A-Z][a-zA-Z'-]*)*)|([A-Z][a-zA-Z'-]*(\s+[A-Z][a-zA-Z'-]*)*,\s+[A-Z][a-zA-Z'-]*(\s+[A-Z][a-zA-Z'-]*)*)"
-    return bool(re.fullmatch(pattern, author))
+    authors = [a.strip() for a in author.split(' and ')]
+    return all(bool(re.fullmatch(pattern, author)) for author in authors)
 
 
 def is_valid_reference(
