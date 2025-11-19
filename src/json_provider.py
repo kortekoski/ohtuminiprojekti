@@ -1,17 +1,19 @@
 from entities.reference import Reference
 from flask.json.provider import DefaultJSONProvider
 
+
 def _default(item):
-        if isinstance(item, Reference):
-            return {
-                "id": item.id,
-                "year": item.year,
-                "author": item.author,
-                "title": item.title,
-                "type": item.type,
-            }
-        else:
-            return DefaultJSONProvider.default(item)
+    if isinstance(item, Reference):
+        return {
+            "id": item.id,
+            "year": item.year,
+            "author": item.author,
+            "title": item.title,
+            "type": item.type,
+        }
+    else:
+        return DefaultJSONProvider.default(item)
+
 
 def _loads(item):
     if isinstance(item, dict):

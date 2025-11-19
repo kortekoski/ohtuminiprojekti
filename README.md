@@ -28,7 +28,10 @@ Coverage-kattavuus suoritetaan komennolla:
 ```` 
 coverage run --branch -m pytest; coverage html
 ```` 
-
+Pylint komennolla:
+```` 
+poetry run pylint .
+````
 
 ## Linkit backlogeihin
 Backlogit: https://docs.google.com/spreadsheets/d/1YLn6Z2UjyHvtpES_IHdXTMnKivLhKFq_CAAXcKCP_Vc/edit?usp=sharing

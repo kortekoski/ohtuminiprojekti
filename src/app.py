@@ -6,14 +6,17 @@ from config import app, test_env
 from util import validate_reference
 from api import api
 
+
 @app.route("/")
 def index():
     references: list[Reference] = get_references()
     return render_template("index.html", references=references)
 
+
 @app.route("/new_reference")
 def new():
     return render_template("new_reference.html")
+
 
 @app.route("/create_reference", methods=["POST"])
 def reference_creation():
@@ -31,7 +34,7 @@ def reference_creation():
         return redirect("/")
     except Exception as error:
         flash(str(error))
-        return  redirect("/new_reference")
+        return redirect("/new_reference")
 
 # Jätetään esimerkeiksi tulevaa käyttöä varten kommentoituina
 # @app.route("/new_todo")
@@ -55,13 +58,14 @@ def reference_creation():
 #     set_done(todo_id)
 #     return redirect("/")
 
+
 # testausta varten oleva reitti
 if test_env:
     @app.route("/reset_db")
     def reset_database():
         reset_db()
-        return jsonify({ 'message': "db reset" })
-    
+        return jsonify({'message': "db reset"})
+
 # testausta varten oleva reitti
 if test_env:
     @app.route("/add_test_reference", methods=["POST"])
@@ -72,4 +76,4 @@ if test_env:
         reftype = request.form.get("reftype")
 
         create_reference(year, author, title, reftype)
-        return jsonify({ 'message': "reference registered" })
+        return jsonify({'message': "reference registered"})
