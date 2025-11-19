@@ -15,3 +15,16 @@ One reference is shown after adding it
     Go To  ${HOME_URL}
     Page Should Contain    Threepwood
     Page Should Contain    clover
+
+One reference is shown after adding it via input
+    Go To  ${HOME_URL}/new_reference
+    Input Text  author  John Trimmer
+    Input Text  title  How to Avoid Huge Ships
+    Input Text  year  1982
+    Select From List By Value  reftype  book
+    Click Button  Create
+    Title Should Be  Reference app
+    Page Should Contain  Reference created successfully!
+    Page Should Contain  John Trimmer
+    Page Should Contain  How to Avoid Huge Ships
+    Page Should Contain  1982
