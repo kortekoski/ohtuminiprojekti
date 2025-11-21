@@ -38,6 +38,12 @@ jobs:
         run: pip install poetry
       - name: Install dependencies
         run: poetry install        
+      - name: Format
+        run: poetry run black .
+      - name: Lint
+      # We use '--errors-only' only at the start of adoption.
+      # When all current problems are fixed, the flag is removed.
+        run: poetry run pylint --errors-only src
       - name: Run unit tests
         run: poetry run pytest src/tests
       - name: Setup chromedriver
