@@ -36,15 +36,19 @@ def reference_creation():
         flash(str(error))
         return redirect("/new_reference")
 
-# testausta varten oleva reitti
-if test_env:
-    @app.route("/reset_db")
-    def reset_database():
-        reset_db()
-        return jsonify({'message': "db reset"})
 
 # testausta varten oleva reitti
 if test_env:
+
+    @app.route("/reset_db")
+    def reset_database():
+        reset_db()
+        return jsonify({"message": "db reset"})
+
+
+# testausta varten oleva reitti
+if test_env:
+
     @app.route("/add_test_reference", methods=["POST"])
     def add_test_reference():
         year = int(request.form.get("year"))
@@ -53,4 +57,4 @@ if test_env:
         reftype = request.form.get("reftype")
 
         create_reference(year, author, title, reftype)
-        return jsonify({'message': "reference registered"})
+        return jsonify({"message": "reference registered"})

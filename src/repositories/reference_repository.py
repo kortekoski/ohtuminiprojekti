@@ -12,25 +12,26 @@ def get_references():
 
 
 def create_reference(year, author, title, type):
-    sql = text("""
+    sql = text(
+        """
         INSERT INTO reference_values (year, author, title, type)
         VALUES (:year, :author, :title, :type)
-    """)
-    db.session.execute(sql, {
-        "year": year,
-        "author": author,
-        "title": title,
-        "type": type
-    })
+    """
+    )
+    db.session.execute(
+        sql, {"year": year, "author": author, "title": title, "type": type}
+    )
     db.session.commit()
 
 
 def get_reference_by_id(reference_id):
-    sql = text("""
+    sql = text(
+        """
         SELECT id, year, author, title, type
         FROM reference_values
         WHERE id = :id
-    """)
+    """
+    )
     row = db.session.execute(sql, {"id": reference_id}).fetchone()
 
     if row:

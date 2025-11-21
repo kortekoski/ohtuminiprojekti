@@ -19,18 +19,11 @@ def _loads(item):
     if isinstance(item, dict):
         try:
             ref = Reference(
-                item["id"],
-                item["year"],
-                item["author"],
-                item["title"],
-                item["type"]
+                item["id"], item["year"], item["author"], item["title"], item["type"]
             )
             return ref
         except:
-            return {
-                _loads(key): _loads(value)
-                for key, value in item.items()
-            }
+            return {_loads(key): _loads(value) for key, value in item.items()}
 
     if isinstance(item, list):
         return [_loads(value) for value in item]

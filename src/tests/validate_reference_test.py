@@ -11,7 +11,7 @@ class TestReferenceValidation(unittest.TestCase):
             "year": [2004],
             "title": ["really cool title"],
             "author": ["big name author"],
-            "type": ["book"]
+            "type": ["book"],
         }
         self.assertTrue(is_valid_reference(test_ref))
 
@@ -19,22 +19,14 @@ class TestReferenceValidation(unittest.TestCase):
         test_ref1 = {
             "title": "really cool title",
             "author": "big name author",
-            "type": "book"
+            "type": "book",
         }
-        test_ref2 = {
-            "year": 2004,
-            "author": "big name author",
-            "type": "book"
-        }
-        test_ref3 = {
-            "year": 2004,
-            "title": "really cool title",
-            "type": "book"
-        }
+        test_ref2 = {"year": 2004, "author": "big name author", "type": "book"}
+        test_ref3 = {"year": 2004, "title": "really cool title", "type": "book"}
         test_ref4 = {
             "year": 2004,
             "title": "really cool title",
-            "author": "big name author"
+            "author": "big name author",
         }
 
         for ref in [test_ref1, test_ref2, test_ref3, test_ref4]:
