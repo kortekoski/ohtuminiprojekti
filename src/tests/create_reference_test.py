@@ -27,16 +27,19 @@ class TestAddReference(unittest.TestCase):
             reset_db()
 
     def test_valid_reference_goes_through(self):
+        """Tests that a valid reference passes validation."""
         ref = Reference(None, 2001, "Bad Dude", "all out of gum", "book")
 
         self.assertTrue(validate_reference(ref))
 
     def test_cannot_add_empty_reference(self):
+        """Tests that reference fields are not empty."""
         ref = Reference("", "", "", "")
         with self.assertRaises(UserInputError):
             self.assertRaises(validate_reference(ref))
 
     def test_cannot_add_wrong_value_types(self):
+        """Tests that fields have correct types."""
         ref1 = Reference(None, "string", "Bad Dude", "all out of gum", "book")
         ref2 = Reference(None, 2001, 1, "all out of gum", "book")
         ref3 = Reference(None, 2001, "Bad Dude", 1, "book")
@@ -47,6 +50,7 @@ class TestAddReference(unittest.TestCase):
                 self.assertRaises(validate_reference(ref))
 
     def test_year_must_be_in_valid_range(self):
+        """Tests that year is within valid range."""
         ref1 = Reference(None, 1, "Bad Dude", "all out of gum", "book")
         ref2 = Reference(None, 2077, "Bad Dude", "all out of gum", "book")
 
@@ -55,6 +59,7 @@ class TestAddReference(unittest.TestCase):
                 self.assertRaises(validate_reference(ref))
 
     def test_author_must_be_in_correct_format(self):
+        """Tests that author name is in correct format."""
         ref1 = Reference(None, 2001, "bad dude", "all out of gum", "book")
         ref2 = Reference(None, 2001, "baddude", "all out of gum", "book")
         ref3 = Reference(None, 2001, "dude, bad", "all out of gum", "book")
@@ -65,6 +70,7 @@ class TestAddReference(unittest.TestCase):
                 self.assertRaises(validate_reference(ref))
 
     def test_multiple_authors_accepted(self):
+        """Tests that multiple authors are accepted."""
         ref1 = Reference(
             None,
             2001,
@@ -76,12 +82,14 @@ class TestAddReference(unittest.TestCase):
         self.assertTrue(validate_reference(ref1))
 
     def test_title_must_be_10_characters_long(self):
+        """Tests that title is at least 10 characters long."""
         ref = Reference(None, 2001, "Bad Dude", "gum", "book")
 
         with self.assertRaises(UserInputError):
             self.assertRaises(validate_reference(ref))
 
     def test_type_must_be_bibtex_type(self):
+        """Tests that reference type is a valid BibTeX type."""
         ref = Reference(None, 2001, "Bad Dude", "all out of gum", "value")
 
         with self.assertRaises(UserInputError):

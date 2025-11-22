@@ -3,16 +3,20 @@ from enum import Enum
 import re
 from collections.abc import Iterator
 
+
 class RefField(str, Enum):
     """Enumeration for reference fields."""
+
     CITATION_KEY = "citation_key"
     YEAR = "year"
     AUTHOR = "author"
     TITLE = "title"
     REFTYPE = "reftype"
 
+
 class RefType(str, Enum):
     """Enumeration for reference types."""
+
     ARTICLE = "article"
     BOOK = "book"
     BOOKLET = "booklet"
@@ -29,12 +33,15 @@ class RefType(str, Enum):
     UNPUBLISHED = "unpublished"
 
 
-
 class UserInputError(Exception):
+    """Exception raised for errors in the user input."""
+
     pass
 
 
 class ValueError(Exception):
+    """Exception raised for errors in the value types."""
+
     pass
 
 
@@ -98,8 +105,10 @@ def author_validator(author):
     return all(bool(re.fullmatch(pattern, author)) for author in authors)
 
 
-def is_valid_reference(maybe_reference: dict[str : list[str] | str | int]) -> bool:
-    required_keys = [RefField.YEAR, RefField.AUTHOR, RefField.TITLE, RefField.REFTYPE]
+def is_valid_reference(maybe_reference: dict[str: list[str] | str | int]) -> bool:
+    """Checks that the provided dictionary has all required keys for a reference."""
+    required_keys = [RefField.YEAR, RefField.AUTHOR,
+                     RefField.TITLE, RefField.REFTYPE]
 
     validator_iter: Iterator[bool] = map(
         lambda x: _is_valid_reference_helper(maybe_reference, x), required_keys
@@ -108,8 +117,9 @@ def is_valid_reference(maybe_reference: dict[str : list[str] | str | int]) -> bo
 
 
 def _is_valid_reference_helper(
-    maybe_reference: dict[str : list[str]], key: str
+    maybe_reference: dict[str: list[str]], key: str
 ) -> bool:
+    """Helper function for is_valid_reference to check for individual keys."""
     if key in maybe_reference.keys() and maybe_reference[key] is not []:
         return True
     else:

@@ -15,11 +15,13 @@ class TestAPI(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        """Runs once before all tests."""
         app.config["TESTING"] = True
         with app.app_context():
             setup_db()
 
     def setUp(self):
+        """Runs before each individual test."""
         self.app_context = app.app_context()
         self.app_context.push()
         self.client = app.test_client()
@@ -32,6 +34,7 @@ class TestAPI(unittest.TestCase):
         db.session.commit()
 
     def tearDown(self):
+        """Runs after each test."""
         self.app_context.pop()
 
     # ------------------------------------------------------------------
@@ -77,6 +80,7 @@ class TestAPI(unittest.TestCase):
     # ------------------------------------------------------------------
 
     def test_create_and_get_reference(self):
+        """Create a reference and fetch it back by ID."""
         ref = {
             RefField.AUTHOR.value: "cool author",
             RefField.YEAR.value: 2025,
@@ -100,6 +104,7 @@ class TestAPI(unittest.TestCase):
         )
 
     def test_create_multiple_and_get_all(self):
+        """Create multiple references and fetch them all."""
         refs = [
             {
                 RefField.AUTHOR.value: "cool author 1",
@@ -140,6 +145,7 @@ class TestAPI(unittest.TestCase):
         )
 
     def test_get_nonexistent_reference(self):
+        """Fetching a nonexistent reference should return 404."""
         url = f"{REFERENCES_LOCATION}/255"
         response = self.client.get(url)
 

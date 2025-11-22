@@ -1,3 +1,5 @@
+"""Unit tests for the Reference Repository."""
+
 import unittest
 from sqlalchemy import text
 from config import app, db
@@ -10,8 +12,9 @@ from repositories.reference_repository import (
 )
 
 
-class TestReferenceRepository(unittest.TestCase):
 
+class TestReferenceRepository(unittest.TestCase):
+    """Tests for the Reference Repository."""
     @classmethod
     def setUpClass(cls):
         """Runs once before all tests."""
@@ -38,6 +41,7 @@ class TestReferenceRepository(unittest.TestCase):
         self.app_context.pop()
 
     def test_create_and_get_reference(self):
+        """Tests creating and retrieving a reference."""
         create_reference(2024, "Test Author", "Test Title", "book")
 
         refs = get_references()
@@ -49,6 +53,7 @@ class TestReferenceRepository(unittest.TestCase):
         self.assertEqual(ref.title, "Test Title")
 
     def test_get_reference_by_id(self):
+        """Tests fetching a reference by its ID."""
         create_reference(2021, "Alice", "Book A", "book")
         create_reference(2022, "Bob", "Book B", "book")
 
@@ -58,6 +63,7 @@ class TestReferenceRepository(unittest.TestCase):
         self.assertEqual(ref.year, 2022)
 
     def test_get_reference_by_id_not_found(self):
+        """Tests fetching a non-existent reference by ID."""
         ref = get_reference_by_id(999)
         self.assertIsNone(ref)
 

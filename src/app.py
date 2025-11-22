@@ -9,17 +9,20 @@ from api import routes
 
 @app.route("/")
 def index():
+    """Renders the index page with all references."""
     references: list[Reference] = get_references()
     return render_template("index.html", references=references)
 
 
 @app.route("/new_reference")
 def new():
+    """Renders the new reference creation form."""
     return render_template("new_reference.html")
 
 
 @app.route("/create_reference", methods=["POST"])
 def reference_creation():
+    """Handles the creation of a new reference."""
     year = int(request.form.get(RefField.YEAR.value))
     author = request.form.get(RefField.AUTHOR.value)
     title = request.form.get(RefField.TITLE.value)
@@ -42,6 +45,7 @@ if test_env:
 
     @app.route("/reset_db")
     def reset_database():
+        """Resets the database to an empty state."""
         reset_db()
         return jsonify({"message": "db reset"})
 
@@ -51,6 +55,7 @@ if test_env:
 
     @app.route("/add_test_reference", methods=["POST"])
     def add_test_reference():
+        """Adds a reference for testing purposes."""
         year = int(request.form.get(RefField.YEAR.value))
         author = request.form.get(RefField.AUTHOR.value)
         title = request.form.get(RefField.TITLE.value)

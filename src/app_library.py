@@ -14,6 +14,11 @@ class app_library:
         title="Different types of clover in Melee island",
         reftype="book",
     ):
-        data = {RefField.YEAR.value: year, RefField.AUTHOR.value: author, RefField.TITLE.value: title, RefField.REFTYPE.value: reftype}
+        data = {
+            RefField.YEAR.value: year,
+            RefField.AUTHOR.value: author,
+            RefField.TITLE.value: title,
+            RefField.REFTYPE.value: reftype,
+        }
 
         requests.post(f"{self._base_url}/add_test_reference", data=data)
