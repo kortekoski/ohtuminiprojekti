@@ -36,7 +36,13 @@ start_tests() {
 
 teardown() {
     echo "tearing everything down..."
-    kill -9 $MAIN_PID
+    # Try sending SIGTERM first
+    kill -SIGTERM $MAIN_PID
+    # Kill the process unceremoniously if SIGTERM fails
+    # for whatever reason.
+    if [[ $? != 0 ]]; then
+       kill -9 $MAIN_PID
+    fi
     docker compose down
 }
 
