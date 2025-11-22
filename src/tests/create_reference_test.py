@@ -5,7 +5,7 @@ import os
 # Import app from app.py to ensure routes are registered
 from app import app
 from db_helper import setup_db, reset_db
-from util import validate_reference, UserInputError, ValueError
+from util import validate_reference, UserInputError, ValueError, RefField
 from entities.reference import Reference
 
 # Add src directory to path
@@ -92,10 +92,10 @@ class TestAddReference(unittest.TestCase):
         response = self.client.post(
             "/create_reference",
             data={
-                "year": "2001",
-                "author": "Bad Dude",
-                "title": "all out of gum",
-                "reftype": "book",
+                RefField.YEAR.value: "2001",
+                RefField.AUTHOR.value: "Bad Dude",
+                RefField.TITLE.value: "all out of gum",
+                RefField.REFTYPE.value: "book",
             },
         )
         # Should redirect to home on success (302 or 303)
@@ -107,10 +107,10 @@ class TestAddReference(unittest.TestCase):
         self.client.post(
             "/create_reference",
             data={
-                "year": "2001",
-                "author": "Bad Dude",
-                "title": "all out of gum",
-                "reftype": "book",
+                RefField.YEAR.value: "2001",
+                RefField.AUTHOR.value: "Bad Dude",
+                RefField.TITLE.value: "all out of gum",
+                RefField.REFTYPE.value: "book",
             },
         )
 
