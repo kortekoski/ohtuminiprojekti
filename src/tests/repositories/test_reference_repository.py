@@ -12,9 +12,9 @@ from repositories.reference_repository import (
 )
 
 
-
 class TestReferenceRepository(unittest.TestCase):
     """Tests for the Reference Repository."""
+
     @classmethod
     def setUpClass(cls):
         """Runs once before all tests."""

@@ -1,4 +1,5 @@
 """Database helper functions for setting up and managing the database."""
+
 import os
 from sqlalchemy import text
 from config import db, app

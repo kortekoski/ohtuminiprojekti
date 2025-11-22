@@ -1,4 +1,5 @@
 """Utility functions and classes for reference validation and management."""
+
 from datetime import datetime
 from enum import Enum
 import re
@@ -39,10 +40,12 @@ class UserInputError(Exception):
 
     pass
 
+
 class ValueError(Exception):
     """Exception raised for errors in the value type."""
 
     pass
+
 
 def validate_reference(ref):
     """Validates the reference information provided by the user according to the specified rules."""
@@ -99,17 +102,16 @@ def validate_reference(ref):
 
 
 def author_validator(author):
-    """Validates that the name is in an acceptable format 
+    """Validates that the name is in an acceptable format
     (e.g. John O'Smith; Smith, John)."""
     pattern = r"([A-Z][a-zA-Z'-]*(\s+[A-Z][a-zA-Z'-]*)*)|([A-Z][a-zA-Z'-]*(\s+[A-Z][a-zA-Z'-]*)*,\s+[A-Z][a-zA-Z'-]*(\s+[A-Z][a-zA-Z'-]*)*)"
     authors = [a.strip() for a in author.split(" and ")]
     return all(bool(re.fullmatch(pattern, author)) for author in authors)
 
 
-def is_valid_reference(maybe_reference: dict[str: list[str] | str | int]) -> bool:
+def is_valid_reference(maybe_reference: dict[str : list[str] | str | int]) -> bool:
     """Checks that the provided dictionary has all required keys for a reference."""
-    required_keys = [RefField.YEAR, RefField.AUTHOR,
-                     RefField.TITLE, RefField.REFTYPE]
+    required_keys = [RefField.YEAR, RefField.AUTHOR, RefField.TITLE, RefField.REFTYPE]
 
     validator_iter: Iterator[bool] = map(
         lambda x: _is_valid_reference_helper(maybe_reference, x), required_keys
@@ -119,4 +121,3 @@ def is_valid_reference(maybe_reference: dict[str: list[str] | str | int]) -> boo
 
 def _is_valid_reference_helper(maybe_reference: dict[str, list[str]], key: str) -> bool:
     return key in maybe_reference and maybe_reference[key] != []
-

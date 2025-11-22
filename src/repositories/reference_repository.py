@@ -1,4 +1,5 @@
 """Repository module for managing reference data in the database."""
+
 from config import db
 from sqlalchemy import text
 
