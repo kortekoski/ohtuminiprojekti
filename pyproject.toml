@@ -30,6 +30,10 @@ dev = [
 
 [tool.poetry]
 package-mode = false
+packages = [{include = "*", from = "src"}]
+
+[tool.poetry.scripts]
+run-all-tests = "src.scripts.poetry_runner:run_all_tests"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
