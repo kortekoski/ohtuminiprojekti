@@ -6,7 +6,7 @@ from db_helper import setup_db
 from repositories.reference_repository import (
     get_references,
     create_reference,
-    get_reference_by_id
+    get_reference_by_id,
 )
 
 
@@ -29,7 +29,8 @@ class TestReferenceRepository(unittest.TestCase):
         db.session.execute(text("DELETE FROM reference_values"))
         # reset the sequence counter to start from 1
         db.session.execute(
-            text("ALTER SEQUENCE reference_values_id_seq RESTART WITH 1"))
+            text("ALTER SEQUENCE reference_values_id_seq RESTART WITH 1")
+        )
         db.session.commit()
 
     def tearDown(self):

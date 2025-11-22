@@ -1,4 +1,3 @@
-
 from datetime import datetime
 import re
 from collections.abc import Iterator
@@ -34,7 +33,8 @@ def validate_reference(ref):
     # Author must be in format First Last or Last, First
     if not author_validator(ref.author):
         raise UserInputError(
-            "Author must be in format John Smith or Smith, John (or multiple authors separated by ' and ')")
+            "Author must be in format John Smith or Smith, John (or multiple authors separated by ' and ')"
+        )
 
     # Title should be at least 10 characters long?
     if len(ref.title) < 10:
@@ -55,7 +55,7 @@ def validate_reference(ref):
         "phdthesis",
         "proceedings",
         "techreport",
-        "unpublished"
+        "unpublished",
     ]
 
     if ref.type not in bibtex_types:
@@ -67,35 +67,23 @@ def validate_reference(ref):
 def author_validator(author):
     """Validates that the name is in an acceptable format (e.g. John O'Smith; Smith, John)."""
     pattern = r"([A-Z][a-zA-Z'-]*(\s+[A-Z][a-zA-Z'-]*)*)|([A-Z][a-zA-Z'-]*(\s+[A-Z][a-zA-Z'-]*)*,\s+[A-Z][a-zA-Z'-]*(\s+[A-Z][a-zA-Z'-]*)*)"
-    authors = [a.strip() for a in author.split(' and ')]
+    authors = [a.strip() for a in author.split(" and ")]
     return all(bool(re.fullmatch(pattern, author)) for author in authors)
 
 
-def is_valid_reference(
-        maybe_reference: dict[str: list[str] | str | int]
-) -> bool:
-    required_keys = [
-        "year",
-        "author",
-        "title",
-        "type"
-    ]
+def is_valid_reference(maybe_reference: dict[str : list[str] | str | int]) -> bool:
+    required_keys = ["year", "author", "title", "type"]
 
     validator_iter: Iterator[bool] = map(
-        lambda x: _is_valid_reference_helper(
-            maybe_reference, x
-        ),
-        required_keys
+        lambda x: _is_valid_reference_helper(maybe_reference, x), required_keys
     )
     return all(validator_iter)
 
 
 def _is_valid_reference_helper(
-        maybe_reference: dict[str: list[str]],
-        key: str
+    maybe_reference: dict[str : list[str]], key: str
 ) -> bool:
-    if key in maybe_reference.keys()\
-       and maybe_reference[key] is not []:
+    if key in maybe_reference.keys() and maybe_reference[key] is not []:
         return True
     else:
         return False

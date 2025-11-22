@@ -33,8 +33,7 @@ def create_new_reference():
 
     try:
         repo.create_reference(
-            int(args["year"][0]
-                ), args["author"][0], args["title"][0], args["type"][0]
+            int(args["year"][0]), args["author"][0], args["title"][0], args["type"][0]
         )
         return jsonify({"message": "reference created succesfully"})
     except Exception as err:

@@ -4,7 +4,7 @@ import os
 
 
 def reset_db():
-    """"Clears all contents from the database table reference_values for testing purposes"""
+    """ "Clears all contents from the database table reference_values for testing purposes"""
     print(f"Clearing contents from table reference_values")
     sql = text(f"DELETE FROM reference_values")
     db.session.execute(sql)
@@ -26,8 +26,8 @@ def tables():
 
 def setup_db():
     """
-      Creating the database
-      If database tables already exist, those are dropped before the creation
+    Creating the database
+    If database tables already exist, those are dropped before the creation
     """
     tables_in_db = tables()
     if len(tables_in_db) > 0:
@@ -40,8 +40,8 @@ def setup_db():
     print("Creating database")
 
     # Read schema from schema.sql file
-    schema_path = os.path.join(os.path.dirname(__file__), 'schema.sql')
-    with open(schema_path, 'r') as f:
+    schema_path = os.path.join(os.path.dirname(__file__), "schema.sql")
+    with open(schema_path, "r") as f:
         schema_sql = f.read().strip()
 
     sql = text(schema_sql)
