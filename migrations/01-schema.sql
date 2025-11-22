@@ -5,5 +5,5 @@ CREATE TABLE IF NOT EXISTS reference_values(
   year INT NOT NULL,
   author VARCHAR(255) NOT NULL,
   title VARCHAR(255) NOT NULL,
-  type VARCHAR(50) NOT NULL
+  reftype VARCHAR(50) NOT NULL
 )

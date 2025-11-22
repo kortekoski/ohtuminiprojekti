@@ -3,7 +3,7 @@ from flask import jsonify, request
 
 from entities.reference import Reference
 from repositories import reference_repository as repo
-from util import is_valid_reference
+from util import RefField, is_valid_reference
 
 HTTP_200_SUCCESS = 200
 HTTP_400_BAD_REQUEST = 400
@@ -26,7 +26,7 @@ def create_new_reference():
 
     try:
         repo.create_reference(
-            int(args["year"][0]), args["author"][0], args["title"][0], args["type"][0]
+            int(args[RefField.YEAR][0]), args[RefField.AUTHOR][0], args[RefField.TITLE][0], args[RefField.REFTYPE][0]
         )
         return jsonify({"message": "reference created succesfully"})
     except Exception as err:

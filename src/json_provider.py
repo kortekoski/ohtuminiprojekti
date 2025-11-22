@@ -9,7 +9,7 @@ def _default(item):
             "year": item.year,
             "author": item.author,
             "title": item.title,
-            "type": item.type,
+            "reftype": item.reftype,
         }
     else:
         return DefaultJSONProvider.default(item)
@@ -19,7 +19,7 @@ def _loads(item):
     if isinstance(item, dict):
         try:
             ref = Reference(
-                item["id"], item["year"], item["author"], item["title"], item["type"]
+                item["id"], item["year"], item["author"], item["title"], item["reftype"]
             )
             return ref
         except:
