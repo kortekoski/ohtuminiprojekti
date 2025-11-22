@@ -6,6 +6,12 @@ Retrospektiivissä käsiteltiin ensimmäisen sprintin työskentelyprosessia Glad
 
 Yleisesti ottaen tiimi oli tyytyväinen siihen, miten sprintti oli sujunut. Keskustelussa kiiteltiin ryhmän yleistä ilmapiiriä, hyvää kommunikaatiota ja tasaista vastuunjakoa. Yhteiset työskentelysäännöt olivat myös selkeät, joten yhteistyö sujui hyvin esimerkiksi eri branchien kanssa.
 
+![retro 1](https://retro1.tiiny.site/retro1.png)
+
+*Laput pöydällä alueille sijoiteltuna.*
+
+<br>
+
 ### Kehitystoimenpiteet
 
 Esille nousi myös muutama ”surua” herättänyt asia, joihin sovittiin kehitystoimenpiteitä:
