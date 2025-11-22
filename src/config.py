@@ -1,7 +1,7 @@
+from os import getenv
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
-from os import getenv
 from json_provider import CustomJSONProvider
 
 API_ROOT = "/api"

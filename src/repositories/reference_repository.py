@@ -1,3 +1,4 @@
+"""Repository module for managing reference data in the database."""
 from config import db
 from sqlalchemy import text
 
@@ -51,9 +52,9 @@ def get_reference_by_id(reference_id):
     sql = text(
         f"""
         SELECT id, 
-        {RefField.YEAR.value}, 
-        {RefField.AUTHOR.value}, 
-        {RefField.TITLE.value}, 
+        {RefField.YEAR.value},
+        {RefField.AUTHOR.value},
+        {RefField.TITLE.value},
         {RefField.REFTYPE.value}
         FROM reference_values
         WHERE id = :id

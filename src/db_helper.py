@@ -1,12 +1,13 @@
-from config import db, app
-from sqlalchemy import text
+"""Database helper functions for setting up and managing the database."""
 import os
+from sqlalchemy import text
+from config import db, app
 
 
 def reset_db():
     """ "Clears all contents from the database table reference_values for testing purposes"""
-    print(f"Clearing contents from table reference_values")
-    sql = text(f"DELETE FROM reference_values")
+    print("Clearing contents from table reference_values")
+    sql = text("DELETE FROM reference_values")
     db.session.execute(sql)
     db.session.commit()
 

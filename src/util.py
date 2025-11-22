@@ -1,3 +1,4 @@
+"""Utility functions and classes for reference validation and management."""
 from datetime import datetime
 from enum import Enum
 import re
@@ -38,12 +39,10 @@ class UserInputError(Exception):
 
     pass
 
-
 class ValueError(Exception):
-    """Exception raised for errors in the value types."""
+    """Exception raised for errors in the value type."""
 
     pass
-
 
 def validate_reference(ref):
     """Validates the reference information provided by the user according to the specified rules."""
@@ -67,7 +66,8 @@ def validate_reference(ref):
     # Author must be in format First Last or Last, First
     if not author_validator(ref.author):
         raise UserInputError(
-            "Author must be in format John Smith or Smith, John (or multiple authors separated by ' and ')"
+            """Author must be in format John Smith or Smith, 
+            John (or multiple authors separated by ' and ')"""
         )
 
     # Title should be at least 10 characters long?
@@ -99,7 +99,8 @@ def validate_reference(ref):
 
 
 def author_validator(author):
-    """Validates that the name is in an acceptable format (e.g. John O'Smith; Smith, John)."""
+    """Validates that the name is in an acceptable format 
+    (e.g. John O'Smith; Smith, John)."""
     pattern = r"([A-Z][a-zA-Z'-]*(\s+[A-Z][a-zA-Z'-]*)*)|([A-Z][a-zA-Z'-]*(\s+[A-Z][a-zA-Z'-]*)*,\s+[A-Z][a-zA-Z'-]*(\s+[A-Z][a-zA-Z'-]*)*)"
     authors = [a.strip() for a in author.split(" and ")]
     return all(bool(re.fullmatch(pattern, author)) for author in authors)
@@ -116,11 +117,6 @@ def is_valid_reference(maybe_reference: dict[str: list[str] | str | int]) -> boo
     return all(validator_iter)
 
 
-def _is_valid_reference_helper(
-    maybe_reference: dict[str: list[str]], key: str
-) -> bool:
-    """Helper function for is_valid_reference to check for individual keys."""
-    if key in maybe_reference.keys() and maybe_reference[key] is not []:
-        return True
-    else:
-        return False
+def _is_valid_reference_helper(maybe_reference: dict[str, list[str]], key: str) -> bool:
+    return key in maybe_reference and maybe_reference[key] != []
+
