@@ -10,6 +10,7 @@ from db_helper import setup_db
 from sqlalchemy import text
 from tests.test_data import TestData
 
+
 class TestAPI(unittest.TestCase):
 
     @classmethod
@@ -99,4 +100,3 @@ class TestAPI(unittest.TestCase):
             refs,
             "Loaded references do not match inserted references.",
         )
-

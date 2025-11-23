@@ -46,4 +46,3 @@ def create_reference(year, author, title, reftype):
         },
     )
     db.session.commit()
-

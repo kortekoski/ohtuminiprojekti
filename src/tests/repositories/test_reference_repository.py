@@ -5,10 +5,7 @@ from sqlalchemy import text
 from config import app, db
 from db_helper import setup_db
 
-from repositories.reference_repository import (
-    get_references,
-    create_reference
-)
+from repositories.reference_repository import get_references, create_reference
 
 
 class TestReferenceRepository(unittest.TestCase):

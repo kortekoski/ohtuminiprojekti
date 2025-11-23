@@ -32,7 +32,7 @@ class TestAddReference(unittest.TestCase):
         ref = TestData.valid_reference()
 
         self.assertTrue(validate_reference(ref))
-    
+
     def test_cannot_add_empty_reference(self):
         """Tests that reference fields are not empty."""
         ref = TestData.empty_reference()
@@ -85,7 +85,7 @@ class TestAddReference(unittest.TestCase):
         """Test that creating a valid reference redirects to home"""
         response = self.client.post(
             "/create_reference",
-            data = TestData.valid_reference_json(),
+            data=TestData.valid_reference_json(),
         )
         # Should redirect to home on success (302 or 303)
         self.assertIn(response.status_code, [302, 303])
@@ -93,10 +93,7 @@ class TestAddReference(unittest.TestCase):
 
     def test_create_reference_appears_on_index(self):
         """Test that created reference appears on the index page"""
-        self.client.post(
-            "/create_reference",
-                data=TestData.valid_reference_json()
-        )
+        self.client.post("/create_reference", data=TestData.valid_reference_json())
 
         response = self.client.get("/")
         self.assertIn(b"Bad Dude", response.data)
