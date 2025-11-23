@@ -38,12 +38,3 @@ def create_new_reference():
             jsonify({"error": "internal server error"}),
             HTTP_500_INTERNAL_SERVER_ERROR,
         )
-
-
-def get_reference_by_id(reference_id: int):
-    ref: Reference | None = repo.get_reference_by_id(reference_id)
-
-    if ref is None:
-        return jsonify({"error": "reference not found"}), HTTP_404_NOT_FOUND
-
-    return jsonify(ref), HTTP_200_SUCCESS

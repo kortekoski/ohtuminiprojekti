@@ -7,6 +7,7 @@ from app import app
 from db_helper import setup_db, reset_db
 from util import validate_reference, UserInputError, ValueError, RefField
 from entities.reference import Reference
+from tests.test_data import TestData
 
 # Add src directory to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
@@ -28,22 +29,22 @@ class TestAddReference(unittest.TestCase):
 
     def test_valid_reference_goes_through(self):
         """Tests that a valid reference passes validation."""
-        ref = Reference(None, 2001, "Bad Dude", "all out of gum", "book")
+        ref = TestData.valid_reference()
 
         self.assertTrue(validate_reference(ref))
-
+    
     def test_cannot_add_empty_reference(self):
         """Tests that reference fields are not empty."""
-        ref = Reference("", "", "", "")
+        ref = TestData.empty_reference()
         with self.assertRaises(UserInputError):
             self.assertRaises(validate_reference(ref))
 
     def test_cannot_add_wrong_value_types(self):
         """Tests that fields have correct types."""
-        ref1 = Reference(None, "string", "Bad Dude", "all out of gum", "book")
-        ref2 = Reference(None, 2001, 1, "all out of gum", "book")
-        ref3 = Reference(None, 2001, "Bad Dude", 1, "book")
-        ref4 = Reference(None, 2001, "Bad Dude", "all out of gum", 1)
+        ref1 = TestData.wrong_year()
+        ref2 = TestData.wrong_author()
+        ref3 = TestData.wrong_title()
+        ref4 = TestData.wrong_type()
 
         for ref in [ref1, ref2, ref3, ref4]:
             with self.assertRaises(ValueError):
@@ -51,46 +52,31 @@ class TestAddReference(unittest.TestCase):
 
     def test_year_must_be_in_valid_range(self):
         """Tests that year is within valid range."""
-        ref1 = Reference(None, 1, "Bad Dude", "all out of gum", "book")
-        ref2 = Reference(None, 2077, "Bad Dude", "all out of gum", "book")
-
-        for ref in [ref1, ref2]:
+        for ref in TestData.invalid_year_references():
             with self.assertRaises(UserInputError):
                 self.assertRaises(validate_reference(ref))
 
     def test_author_must_be_in_correct_format(self):
         """Tests that author name is in correct format."""
-        ref1 = Reference(None, 2001, "bad dude", "all out of gum", "book")
-        ref2 = Reference(None, 2001, "baddude", "all out of gum", "book")
-        ref3 = Reference(None, 2001, "dude, bad", "all out of gum", "book")
-        ref4 = Reference(None, 2001, "Bad Dude1", "all out of gum", "book")
-
-        for ref in [ref1, ref2, ref3, ref4]:
+        for ref in TestData.invalid_author_references():
             with self.assertRaises(UserInputError):
                 self.assertRaises(validate_reference(ref))
 
     def test_multiple_authors_accepted(self):
         """Tests that multiple authors are accepted."""
-        ref1 = Reference(
-            None,
-            2001,
-            "Bad Dude and Duke Nukem and Max, Pepsi",
-            "all out of gum",
-            "book",
-        )
-
+        ref1 = TestData.valid_multiple_authors_reference()
         self.assertTrue(validate_reference(ref1))
 
     def test_title_must_be_10_characters_long(self):
         """Tests that title is at least 10 characters long."""
-        ref = Reference(None, 2001, "Bad Dude", "gum", "book")
+        ref = TestData.too_short_title()
 
         with self.assertRaises(UserInputError):
             self.assertRaises(validate_reference(ref))
 
     def test_type_must_be_bibtex_type(self):
         """Tests that reference type is a valid BibTeX type."""
-        ref = Reference(None, 2001, "Bad Dude", "all out of gum", "value")
+        ref = TestData.invalid_bibtex_type()
 
         with self.assertRaises(UserInputError):
             self.assertRaises(validate_reference(ref))
@@ -99,12 +85,7 @@ class TestAddReference(unittest.TestCase):
         """Test that creating a valid reference redirects to home"""
         response = self.client.post(
             "/create_reference",
-            data={
-                RefField.YEAR.value: "2001",
-                RefField.AUTHOR.value: "Bad Dude",
-                RefField.TITLE.value: "all out of gum",
-                RefField.REFTYPE.value: "book",
-            },
+            data = TestData.valid_reference_json(),
         )
         # Should redirect to home on success (302 or 303)
         self.assertIn(response.status_code, [302, 303])
@@ -114,12 +95,7 @@ class TestAddReference(unittest.TestCase):
         """Test that created reference appears on the index page"""
         self.client.post(
             "/create_reference",
-            data={
-                RefField.YEAR.value: "2001",
-                RefField.AUTHOR.value: "Bad Dude",
-                RefField.TITLE.value: "all out of gum",
-                RefField.REFTYPE.value: "book",
-            },
+                data=TestData.valid_reference_json()
         )
 
         response = self.client.get("/")

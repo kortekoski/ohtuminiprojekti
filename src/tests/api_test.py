@@ -8,8 +8,7 @@ from api.routes import (
 from config import app, db
 from db_helper import setup_db
 from sqlalchemy import text
-from util import RefField, RefType
-
+from tests.test_data import TestData
 
 class TestAPI(unittest.TestCase):
 
@@ -79,52 +78,9 @@ class TestAPI(unittest.TestCase):
     # Test cases
     # ------------------------------------------------------------------
 
-    def test_create_and_get_reference(self):
-        """Create a reference and fetch it back by ID."""
-        ref = {
-            RefField.AUTHOR.value: "cool author",
-            RefField.YEAR.value: 2025,
-            RefField.TITLE.value: "title fit for a cool author",
-            RefField.REFTYPE.value: RefType.BOOK.value,
-        }
-
-        # Create reference
-        self._create_reference(ref)
-
-        # Fetch from DB
-        loaded = self._get_reference(1)
-
-        # Remove DB-assigned ID for comparison
-        loaded.pop("id", None)
-
-        self.assertEqual(
-            loaded,
-            ref,
-            f"Returned reference does not match expected.\nExpected: {ref}\nActual:   {loaded}",
-        )
-
     def test_create_multiple_and_get_all(self):
         """Create multiple references and fetch them all."""
-        refs = [
-            {
-                RefField.AUTHOR.value: "cool author 1",
-                RefField.YEAR.value: 2025,
-                RefField.TITLE.value: "title fit for a cool author 1",
-                RefField.REFTYPE.value: RefType.BOOK.value,
-            },
-            {
-                RefField.AUTHOR.value: "cool author 2",
-                RefField.YEAR.value: 2024,
-                RefField.TITLE.value: "title fit for a cool author 2",
-                RefField.REFTYPE.value: RefType.BOOK.value,
-            },
-            {
-                RefField.AUTHOR.value: "cool author 3",
-                RefField.YEAR.value: 2023,
-                RefField.TITLE.value: "title fit for a cool author 3",
-                RefField.REFTYPE.value: RefType.BOOK.value,
-            },
-        ]
+        refs = TestData.valid_multiple_references_json()
 
         # Create all references
         for ref in refs:
@@ -144,18 +100,3 @@ class TestAPI(unittest.TestCase):
             "Loaded references do not match inserted references.",
         )
 
-    def test_get_nonexistent_reference(self):
-        """Fetching a nonexistent reference should return 404."""
-        url = f"{REFERENCES_LOCATION}/255"
-        response = self.client.get(url)
-
-        self.assertEqual(
-            response.status_code,
-            404,
-            f"Expected 404 for nonexistent reference; got {response.status_code}",
-        )
-        self.assertNotEqual(
-            response.get_data(as_text=True),
-            "",
-            "404 response should contain an error message.",
-        )
