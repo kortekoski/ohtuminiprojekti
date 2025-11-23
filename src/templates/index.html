@@ -11,17 +11,15 @@ Reference app
 {% if references|length == 0 %}
   <p>No references found!</p>
 {% else %}
-  <ul>
+  <ol class="list-group list-group-numbered">
     {% for reference in references %}
         {% if reference.reftype == 'book' %}
-          <li style="display: flex">
-            <div>
-              [{{ reference.id }}] {{ reference.author }}. <i>{{ reference.title }}</i>.{{ reference.year }}.
-            </div>
+          <li class="list-group-item">
+            {{ reference.author }}. <i>{{ reference.title }}</i>.{{ reference.year }}.
           </li>
         {% endif %}
     {% endfor %}
-  </ul>
+  </ol>
 {% endif %}
 
 <div>
