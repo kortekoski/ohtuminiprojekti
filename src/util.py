@@ -51,14 +51,17 @@ def validate_reference(ref):
     """Validates the reference information provided by the user according to the specified rules."""
 
     # Check first that there are no empty entries
-    for entry in [ref.year, ref.author, ref.title, ref.reftype]:
+    for entry in [ref.citation_key, ref.year, ref.author, ref.title, ref.reftype]:
         if not entry:
             raise UserInputError("All fields must be non-empty")
 
     # Check variable reftypes
     if not isinstance(ref.year, int):
         raise ValueError("Incorrect value reftype")
-    if not all(isinstance(x, str) for x in [ref.author, ref.title, ref.reftype]):
+    if not all(
+        isinstance(x, str)
+        for x in [ref.citation_key, ref.author, ref.title, ref.reftype]
+    ):
         raise ValueError("Incorrect value reftype")
 
     # Year must be within a reasonable range
@@ -111,7 +114,13 @@ def author_validator(author):
 
 def is_valid_reference(maybe_reference: dict[str : list[str] | str | int]) -> bool:
     """Checks that the provided dictionary has all required keys for a reference."""
-    required_keys = [RefField.YEAR, RefField.AUTHOR, RefField.TITLE, RefField.REFTYPE]
+    required_keys = [
+        RefField.CITATION_KEY,
+        RefField.YEAR,
+        RefField.AUTHOR,
+        RefField.TITLE,
+        RefField.REFTYPE,
+    ]
 
     validator_iter: Iterator[bool] = map(
         lambda x: _is_valid_reference_helper(maybe_reference, x), required_keys

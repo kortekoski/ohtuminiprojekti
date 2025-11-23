@@ -7,6 +7,7 @@ def _default(item):
         """Converts a Reference object to a dictionary for JSON serialization."""
         return {
             "id": item.id,
+            "citation_key": item.citation_key,
             "year": item.year,
             "author": item.author,
             "title": item.title,
@@ -21,7 +22,12 @@ def _loads(item):
         """Attempts to reconstruct a Reference object from a dictionary."""
         try:
             ref = Reference(
-                item["id"], item["year"], item["author"], item["title"], item["reftype"]
+                item["id"],
+                item["citation_key"],
+                item["year"],
+                item["author"],
+                item["title"],
+                item["reftype"],
             )
             return ref
         except:

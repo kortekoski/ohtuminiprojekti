@@ -23,16 +23,16 @@ def new():
 @app.route("/create_reference", methods=["POST"])
 def reference_creation():
     """Handles the creation of a new reference."""
+    citation_key = request.form.get(RefField.CITATION_KEY.value)
     year = int(request.form.get(RefField.YEAR.value))
     author = request.form.get(RefField.AUTHOR.value)
     title = request.form.get(RefField.TITLE.value)
     reftype = request.form.get(RefField.REFTYPE.value)
 
     try:
-        new_reference = Reference(None, year, author, title, reftype)
+        new_reference = Reference(None, citation_key, year, author, title, reftype)
         validate_reference(new_reference)
-        # Pitäisikö muuttaa käyttämään referenceä?
-        create_reference(year, author, title, reftype)
+        create_reference(citation_key, year, author, title, reftype)
         flash("Reference created successfully!")
         return redirect("/")
     except Exception as error:
@@ -56,10 +56,11 @@ if test_env:
     @app.route("/add_test_reference", methods=["POST"])
     def add_test_reference():
         """Adds a reference for testing purposes."""
+        citation_key = request.form.get(RefField.CITATION_KEY.value)
         year = int(request.form.get(RefField.YEAR.value))
         author = request.form.get(RefField.AUTHOR.value)
         title = request.form.get(RefField.TITLE.value)
         reftype = request.form.get(RefField.REFTYPE.value)
 
-        create_reference(year, author, title, reftype)
+        create_reference(citation_key, year, author, title, reftype)
         return jsonify({"message": "reference registered"})

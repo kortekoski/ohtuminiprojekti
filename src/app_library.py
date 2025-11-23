@@ -9,12 +9,14 @@ class app_library:
 
     def add_test_reference(
         self,
+        citation_key="Test2025",
         year=2025,
         author="Guybrush Threepwood",
         title="Different types of clover in Melee island",
         reftype="book",
     ):
         data = {
+            RefField.CITATION_KEY.value: "Test2025",
             RefField.YEAR.value: year,
             RefField.AUTHOR.value: author,
             RefField.TITLE.value: title,

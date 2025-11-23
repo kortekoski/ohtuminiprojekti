@@ -21,6 +21,7 @@ One reference is shown after adding it via input
     Input Text  author  John Trimmer
     Input Text  title  How to Avoid Huge Ships
     Input Text  year  1982
+    Input Text  citation_key  Trimmer1982
     Select From List By Value  reftype  book
     Click Button  Create
     Title Should Be  Reference app
