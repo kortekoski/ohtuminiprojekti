@@ -3,27 +3,30 @@ from db_helper import reset_db
 from entities.reference import Reference
 from repositories.reference_repository import get_references, create_reference
 from config import app, test_env
-from util import validate_reference
+from util import RefField, validate_reference
 from api import routes
 
 
 @app.route("/")
 def index():
+    """Renders the index page with all references."""
     references: list[Reference] = get_references()
     return render_template("index.html", references=references)
 
 
 @app.route("/new_reference")
 def new():
+    """Renders the new reference creation form."""
     return render_template("new_reference.html")
 
 
 @app.route("/create_reference", methods=["POST"])
 def reference_creation():
-    year = int(request.form.get("year"))
-    author = request.form.get("author")
-    title = request.form.get("title")
-    reftype = request.form.get("reftype")
+    """Handles the creation of a new reference."""
+    year = int(request.form.get(RefField.YEAR.value))
+    author = request.form.get(RefField.AUTHOR.value)
+    title = request.form.get(RefField.TITLE.value)
+    reftype = request.form.get(RefField.REFTYPE.value)
 
     try:
         new_reference = Reference(None, year, author, title, reftype)
@@ -42,6 +45,7 @@ if test_env:
 
     @app.route("/reset_db")
     def reset_database():
+        """Resets the database to an empty state."""
         reset_db()
         return jsonify({"message": "db reset"})
 
@@ -51,10 +55,11 @@ if test_env:
 
     @app.route("/add_test_reference", methods=["POST"])
     def add_test_reference():
-        year = int(request.form.get("year"))
-        author = request.form.get("author")
-        title = request.form.get("title")
-        reftype = request.form.get("reftype")
+        """Adds a reference for testing purposes."""
+        year = int(request.form.get(RefField.YEAR.value))
+        author = request.form.get(RefField.AUTHOR.value)
+        title = request.form.get(RefField.TITLE.value)
+        reftype = request.form.get(RefField.REFTYPE.value)
 
         create_reference(year, author, title, reftype)
         return jsonify({"message": "reference registered"})

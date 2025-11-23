@@ -1,12 +1,14 @@
-from config import db, app
-from sqlalchemy import text
+"""Database helper functions for setting up and managing the database."""
+
 import os
+from sqlalchemy import text
+from config import db, app
 
 
 def reset_db():
     """ "Clears all contents from the database table reference_values for testing purposes"""
-    print(f"Clearing contents from table reference_values")
-    sql = text(f"DELETE FROM reference_values")
+    print("Clearing contents from table reference_values")
+    sql = text("DELETE FROM reference_values")
     db.session.execute(sql)
     db.session.commit()
 
@@ -40,7 +42,8 @@ def setup_db():
     print("Creating database")
 
     # Read schema from schema.sql file
-    schema_path = os.path.join(os.path.dirname(__file__), "schema.sql")
+    base_path = os.path.dirname(os.path.dirname(__file__))
+    schema_path = os.path.join(base_path, "migrations", "01-schema.sql")
     with open(schema_path, "r") as f:
         schema_sql = f.read().strip()
 

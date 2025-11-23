@@ -13,7 +13,7 @@ Reference app
 {% else %}
   <ul>
     {% for reference in references %}
-        {% if reference.type == 'book' %}
+        {% if reference.reftype == 'book' %}
           <li style="display: flex">
             <div>
               [{{ reference.id }}] {{ reference.author }}. <i>{{ reference.title }}</i>.{{ reference.year }}.

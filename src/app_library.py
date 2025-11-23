@@ -1,5 +1,5 @@
 import requests
-from repositories.reference_repository import create_reference
+from util import RefField
 
 
 class app_library:
@@ -14,6 +14,11 @@ class app_library:
         title="Different types of clover in Melee island",
         reftype="book",
     ):
-        data = {"year": year, "author": author, "title": title, "reftype": reftype}
+        data = {
+            RefField.YEAR.value: year,
+            RefField.AUTHOR.value: author,
+            RefField.TITLE.value: title,
+            RefField.REFTYPE.value: reftype,
+        }
 
         requests.post(f"{self._base_url}/add_test_reference", data=data)

@@ -4,12 +4,13 @@ from flask.json.provider import DefaultJSONProvider
 
 def _default(item):
     if isinstance(item, Reference):
+        """Converts a Reference object to a dictionary for JSON serialization."""
         return {
             "id": item.id,
             "year": item.year,
             "author": item.author,
             "title": item.title,
-            "type": item.type,
+            "reftype": item.reftype,
         }
     else:
         return DefaultJSONProvider.default(item)
@@ -17,9 +18,10 @@ def _default(item):
 
 def _loads(item):
     if isinstance(item, dict):
+        """Attempts to reconstruct a Reference object from a dictionary."""
         try:
             ref = Reference(
-                item["id"], item["year"], item["author"], item["title"], item["type"]
+                item["id"], item["year"], item["author"], item["title"], item["reftype"]
             )
             return ref
         except:
@@ -32,6 +34,8 @@ def _loads(item):
 
 
 class CustomJSONProvider(DefaultJSONProvider):
+    """Custom JSON provider to handle Reference objects."""
+
     default = staticmethod(_default)
 
     def loads(self, s, **kwargs):
