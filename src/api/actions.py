@@ -26,6 +26,7 @@ def create_new_reference():
 
     try:
         repo.create_reference(
+            args[RefField.CITATION_KEY][0],
             int(args[RefField.YEAR][0]),
             args[RefField.AUTHOR][0],
             args[RefField.TITLE][0],

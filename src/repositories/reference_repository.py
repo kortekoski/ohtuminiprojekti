@@ -12,6 +12,7 @@ def get_references():
     sql = text(
         f"""
                SELECT id, 
+               {RefField.CITATION_KEY.value},
                {RefField.YEAR.value},
                {RefField.AUTHOR.value},
                {RefField.TITLE.value},
@@ -21,24 +22,26 @@ def get_references():
     )
     result = db.session.execute(sql)
     rows = result.fetchall()
-    return [Reference(row[0], row[1], row[2], row[3], row[4]) for row in rows]
+    return [Reference(row[0], row[1], row[2], row[3], row[4], row[5]) for row in rows]
 
 
-def create_reference(year, author, title, reftype):
+def create_reference(citation_key, year, author, title, reftype):
     """Creates a new reference in the database."""
     sql = text(
         f"""
         INSERT INTO reference_values ( 
+        {RefField.CITATION_KEY.value},
         {RefField.YEAR.value},
         {RefField.AUTHOR.value},
         {RefField.TITLE.value},
         {RefField.REFTYPE.value})
-        VALUES (:year, :author, :title, :reftype)
+        VALUES (:citation_key, :year, :author, :title, :reftype)
         """
     )
     db.session.execute(
         sql,
         {
+            RefField.CITATION_KEY.value: citation_key,
             RefField.YEAR.value: year,
             RefField.AUTHOR.value: author,
             RefField.TITLE.value: title,

@@ -6,6 +6,7 @@ from config import app, db
 from db_helper import setup_db
 
 from repositories.reference_repository import get_references, create_reference
+from tests.test_data import TestData
 
 
 class TestReferenceRepository(unittest.TestCase):
@@ -38,7 +39,7 @@ class TestReferenceRepository(unittest.TestCase):
 
     def test_create_and_get_reference(self):
         """Tests creating and retrieving a reference."""
-        create_reference(2024, "Test Author", "Test Title", "book")
+        create_reference("Test2024", 2024, "Test Author", "Test Title", "book")
 
         refs = get_references()
         self.assertEqual(len(refs), 1)
