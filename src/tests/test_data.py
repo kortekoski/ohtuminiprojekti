@@ -91,7 +91,7 @@ class TestData:
 
     @staticmethod
     def empty_reference():
-        return Reference(None, "", "", "", "book")
+        return Reference(None, "", "", "", "")
 
     @staticmethod
     def wrong_year():
