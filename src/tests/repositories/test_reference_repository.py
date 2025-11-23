@@ -5,11 +5,7 @@ from sqlalchemy import text
 from config import app, db
 from db_helper import setup_db
 
-from repositories.reference_repository import (
-    get_references,
-    create_reference,
-    get_reference_by_id,
-)
+from repositories.reference_repository import get_references, create_reference
 
 
 class TestReferenceRepository(unittest.TestCase):
@@ -51,21 +47,6 @@ class TestReferenceRepository(unittest.TestCase):
         self.assertEqual(ref.year, 2024)
         self.assertEqual(ref.author, "Test Author")
         self.assertEqual(ref.title, "Test Title")
-
-    def test_get_reference_by_id(self):
-        """Tests fetching a reference by its ID."""
-        create_reference(2021, "Alice", "Book A", "book")
-        create_reference(2022, "Bob", "Book B", "book")
-
-        ref = get_reference_by_id(2)
-        self.assertIsNotNone(ref)
-        self.assertEqual(ref.author, "Bob")
-        self.assertEqual(ref.year, 2022)
-
-    def test_get_reference_by_id_not_found(self):
-        """Tests fetching a non-existent reference by ID."""
-        ref = get_reference_by_id(999)
-        self.assertIsNone(ref)
 
 
 if __name__ == "__main__":

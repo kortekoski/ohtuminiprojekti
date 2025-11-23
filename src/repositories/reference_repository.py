@@ -46,24 +46,3 @@ def create_reference(year, author, title, reftype):
         },
     )
     db.session.commit()
-
-
-def get_reference_by_id(reference_id):
-    """Fetches a reference by its ID."""
-    sql = text(
-        f"""
-        SELECT id, 
-        {RefField.YEAR.value},
-        {RefField.AUTHOR.value},
-        {RefField.TITLE.value},
-        {RefField.REFTYPE.value}
-        FROM reference_values
-        WHERE id = :id
-    """
-    )
-    row = db.session.execute(sql, {"id": reference_id}).fetchone()
-
-    if row:
-        return Reference(row[0], row[1], row[2], row[3], row[4])
-
-    return None
