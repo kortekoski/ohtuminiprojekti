@@ -16,6 +16,7 @@ docker compose down -v
 docker compose up
 ```` 
 
+## Testaaminen 
 Yksikkötestit suoritetaan komennolla:
 ````
 pytest src/tests
@@ -28,6 +29,14 @@ Coverage-kattavuus suoritetaan komennolla:
 ```` 
 coverage run --branch -m pytest; coverage html
 ```` 
+Kaikki testit suoritetaan komennolla:
+````
+sh ./src/scripts/run-tests.sh
+````
+
+
+## Tyylit ja formatointi
+
 Pylint komennolla:
 ```` 
 poetry run pylint .
