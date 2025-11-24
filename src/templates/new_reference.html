@@ -5,42 +5,88 @@ Create a new reference
 {% endblock %}
 
 {% block body %}
+<div class="create-bg">
+  <div class="d-flex flex-column justify-content-center align-items-center vh-100 vw-50">
+    <div class="border border-secondary-subtle rounded-4 p-5 bg-light">
+      <h2 class="mb-5">Create a new reference</h2>
+      <form action="/create_reference" method="post">
+        <div class="row mb-1">
+          <label for="author" class="col-sm-3 col-form-label">Author</label><br>
+          <div class="col-sm-9">
+            <input type="text" id="author" name="author" class="form-control" required placeholder="Example: John Smith or Smith, John"><br>
+          </div>
+        </div>
+        <div class="row mb-1">
+          <label for="title" class="col-sm-3 col-form-label">Title</label><br>
+          <div class="col-sm-9">
+            <input 
+              type="text" 
+              id="title"
+              name="title"
+              required minlength="10"
+              placeholder="Book name (minimum. 10 characters)"
+              class="form-control"
+            ><br>
+          </div>
+        </div>
+        <div class="row mb-1">
+          <label for="citation_key" class="col-sm-3 col-form-label">Citation Key</label><br>
+          <div class="col-sm-9">
+            <input 
+              type="text" 
+              id="citation_key" 
+              name="citation_key" 
+              required placeholder="Example: Smith2024"
+              class="form-control"
+            ><br>
+          </div>
+        </div>
+        <div class="row mb-1">
+          <label for="year" class="col-sm-3 col-form-label">Year</label><br>
+          <div class="col-sm-9">
+            <input 
+              type="number"
+              id="year"
+              name="year"
+              required min="1000"
+              max="9999"
+              class="form-control"
+            ><br>
+          </div>
+        </div>
+        <div class="row mb-1">
+          <label for="reftype" class="col-sm-3 col-form-label">Type:</label><br>
+          <div class="col-sm-9">
+            <select class="form-select" id="reftype" name="reftype">
+              <option value="article">Article</option>
+              <option value="book">Book</option>
+              <option value="booklet">Booklet</option>
+              <option value="conference">Conference</option>
+              <option value="inbook">Inbook</option>
+              <option value="incollection">Works published in a book (incollection)</option>
+              <option value="inproceedings">Papers published in conference proceedings (inproceedings)</option>
+              <option value="manual">Manual</option>
+              <option value="mastersthesis">Masters thesis</option>
+              <option value="misc">Misc</option>
+              <option value="phdthesis">PhD thesis</option>
+              <option value="proceedings">Proceedings</option>
+              <option value="techreport">Techreport</option>
+              <option value="unpublished">Unpublished</option>
+            </select>
+          </div>
+          <br><br>
+        </div>
+        <div class="row mt-3 pt-3">
+          <div class="col-sm-9">
+            <button type="submit" class="btn btn-primary btn-lg">
+              Create
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 
-<h2>Create a new reference</h2>
-
-<form action="/create_reference" method="post">
-  <label for="author">Author:</label><br>
-  <input type="text" id="author" name="author" required placeholder="Example: John Smith or Smith, John"><br>
-  
-  <label for="title">Title:</label><br>
-  <input type="text" id="title" name="title" required minlength="10" placeholder="Book name (minimum. 10 characters)"><br>
-  
-  <label for="citation_key">Citation Key:</label><br>
-  <input type="text" id="citation_key" name="citation_key" required placeholder="Example: Smith2024"><br>
-
-  <label for="year">Year:</label><br>
-  <input type="number" id="year" name="year" required min="1000" max="9999"><br>
-  <label for="reftype">Type:</label><br>
-  <select id="reftype" name="reftype">
-    <option value="article">Article</option>
-    <option value="book">Book</option>
-    <option value="booklet">Booklet</option>
-    <option value="conference">Conference</option>
-    <option value="inbook">Inbook</option>
-    <option value="incollection">Works published in a book (incollection)</option>
-    <option value="inproceedings">Papers published in conference proceedings (inproceedings)</option>
-    <option value="manual">Manual</option>
-    <option value="mastersthesis">Masters thesis</option>
-    <option value="misc">Misc</option>
-    <option value="phdthesis">PhD thesis</option>
-    <option value="proceedings">Proceedings</option>
-    <option value="techreport">Techreport</option>
-    <option value="unpublished">Unpublished</option>
-    </select>
-  <br><br>
-  <button type="submit">
-    Create
-  </button>
-</form>
 
 {% endblock %}
