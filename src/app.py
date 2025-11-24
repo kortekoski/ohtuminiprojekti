@@ -1,4 +1,4 @@
-from flask import redirect, render_template, request, jsonify, flash
+from flask import Response, redirect, render_template, request, jsonify, flash
 from db_helper import reset_db
 from entities.reference import Reference
 from repositories.reference_repository import get_references, create_reference
@@ -38,6 +38,48 @@ def reference_creation():
     except Exception as error:
         flash(str(error))
         return redirect("/new_reference")
+
+
+# TODO csrf, use url for safety, xss protection frontend, rate limit, DoS
+@app.route("/download_bibtex")
+def download_bibtex():
+    refs = [
+        Reference(
+            id=1,
+            citation_key="Doe2020",
+            year="2020",
+            author="John Doe",
+            title="Introduction to Testing",
+        ),
+        Reference(
+            id=2,
+            citation_key="Smith2021",
+            year="2021",
+            author="Anna Smith",
+            title="Advanced Testing in Python",
+        ),
+    ]
+
+    bibtex_entries = []
+    for ref in refs:
+        if ref.reftype.name.lower() == "book":  # RefType.BOOK
+            entry = (
+                f"@book{{{ref.citation_key},\n"
+                f"  author = {{{ref.author}}},\n"
+                f"  title = {{{ref.title}}},\n"
+                f"  year = {{{ref.year}}}\n"
+                f"}}\n"
+            )
+            bibtex_entries.append(entry)
+
+    bibtex_content = "\n".join(bibtex_entries)
+
+    flash(str("BibTeX file generated successfully!"))
+    return Response(
+        bibtex_content,
+        mimetype="text/plain",
+        headers={"Content-Disposition": "attachment; filename=references.bib"},
+    )
 
 
 # testausta varten oleva reitti
