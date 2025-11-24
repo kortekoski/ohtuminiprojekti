@@ -3,6 +3,7 @@ from db_helper import reset_db
 from entities.reference import Reference
 from repositories.reference_repository import get_references, create_reference
 from config import app, test_env
+from services.reference_service import ReferenceService
 from util import RefField, validate_reference
 from api import routes
 
@@ -43,36 +44,8 @@ def reference_creation():
 # TODO csrf, use url for safety, xss protection frontend, rate limit, DoS
 @app.route("/download_bibtex")
 def download_bibtex():
-    refs = [
-        Reference(
-            id=1,
-            citation_key="Doe2020",
-            year="2020",
-            author="John Doe",
-            title="Introduction to Testing",
-        ),
-        Reference(
-            id=2,
-            citation_key="Smith2021",
-            year="2021",
-            author="Anna Smith",
-            title="Advanced Testing in Python",
-        ),
-    ]
-
-    bibtex_entries = []
-    for ref in refs:
-        if ref.reftype.name.lower() == "book":  # RefType.BOOK
-            entry = (
-                f"@book{{{ref.citation_key},\n"
-                f"  author = {{{ref.author}}},\n"
-                f"  title = {{{ref.title}}},\n"
-                f"  year = {{{ref.year}}}\n"
-                f"}}\n"
-            )
-            bibtex_entries.append(entry)
-
-    bibtex_content = "\n".join(bibtex_entries)
+    refs = get_references()
+    bibtex_content = ReferenceService.generate_bibtex(refs)
 
     flash(str("BibTeX file generated successfully!"))
     return Response(
