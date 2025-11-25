@@ -52,3 +52,16 @@ def create_reference(citation_key, year, author, title, reftype):
         },
     )
     db.session.commit()
+
+
+def get_citation_keys() -> list[str]:
+    """Fetches all citation keys from the database."""
+    sql = text(
+        f"""
+               SELECT {RefField.CITATION_KEY.value}
+               FROM reference_values
+               """
+    )
+    result = db.session.execute(sql)
+    rows = result.fetchall()
+    return [row[0] for row in rows]
