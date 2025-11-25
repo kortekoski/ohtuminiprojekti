@@ -1,9 +1,10 @@
-# from logging import debug, info, warn, error
-from flask import jsonify, request
+"""API actions for managing references."""
 
+from flask import jsonify, request
 from entities.reference import Reference
 from repositories import reference_repository as repo
-from util import RefField, is_valid_reference
+from services.validation_service import ValidationService
+from util import RefField
 
 HTTP_200_SUCCESS = 200
 HTTP_400_BAD_REQUEST = 400
@@ -20,7 +21,7 @@ def create_new_reference():
     # We don't flatten the arguments since a reference
     # can have multiple authors.
     args = request.args.to_dict(flat=False)
-    if not is_valid_reference(args):
+    if not ValidationService.is_valid_reference(args):
         # debug(f"Failed to parse reference: \"{args}\"")
         return jsonify({"error": "invalid reference"}), HTTP_400_BAD_REQUEST
 

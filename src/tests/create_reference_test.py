@@ -5,7 +5,8 @@ import os
 # Import app from app.py to ensure routes are registered
 from app import app
 from db_helper import setup_db, reset_db
-from util import validate_reference, UserInputError, ValueError, RefField
+from services.validation_service import ValidationService
+from util import UserInputError, ValueError, RefField
 from entities.reference import Reference
 from tests.test_data import TestData
 
@@ -31,13 +32,13 @@ class TestAddReference(unittest.TestCase):
         """Tests that a valid reference passes validation."""
         ref = TestData.valid_reference()
 
-        self.assertTrue(validate_reference(ref))
+        self.assertTrue(ValidationService.validate_reference(ref))
 
     def test_cannot_add_empty_reference(self):
         """Tests that reference fields are not empty."""
         ref = TestData.empty_reference()
         with self.assertRaises(UserInputError):
-            self.assertRaises(validate_reference(ref))
+            ValidationService.validate_reference(ref)
 
     def test_cannot_add_wrong_value_types(self):
         """Tests that fields have correct types."""
@@ -48,38 +49,38 @@ class TestAddReference(unittest.TestCase):
 
         for ref in [ref1, ref2, ref3, ref4]:
             with self.assertRaises(ValueError):
-                self.assertRaises(validate_reference(ref))
+                ValidationService.validate_reference(ref)
 
     def test_year_must_be_in_valid_range(self):
         """Tests that year is within valid range."""
         for ref in TestData.invalid_year_references():
             with self.assertRaises(UserInputError):
-                self.assertRaises(validate_reference(ref))
+                ValidationService.validate_reference(ref)
 
     def test_author_must_be_in_correct_format(self):
         """Tests that author name is in correct format."""
         for ref in TestData.invalid_author_references():
             with self.assertRaises(UserInputError):
-                self.assertRaises(validate_reference(ref))
+                ValidationService.validate_reference(ref)
 
     def test_multiple_authors_accepted(self):
         """Tests that multiple authors are accepted."""
         ref1 = TestData.valid_multiple_authors_reference()
-        self.assertTrue(validate_reference(ref1))
+        self.assertTrue(ValidationService.validate_reference(ref1))
 
     def test_title_must_be_10_characters_long(self):
         """Tests that title is at least 10 characters long."""
         ref = TestData.too_short_title()
 
         with self.assertRaises(UserInputError):
-            self.assertRaises(validate_reference(ref))
+            ValidationService.validate_reference(ref)
 
     def test_type_must_be_bibtex_type(self):
         """Tests that reference type is a valid BibTeX type."""
         ref = TestData.invalid_bibtex_type()
 
         with self.assertRaises(UserInputError):
-            self.assertRaises(validate_reference(ref))
+            ValidationService.validate_reference(ref)
 
     def test_create_valid_reference_redirects_to_home(self):
         """Test that creating a valid reference redirects to home"""

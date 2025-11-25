@@ -1,10 +1,15 @@
 from flask import Response, redirect, render_template, request, jsonify, flash
 from db_helper import reset_db
 from entities.reference import Reference
-from repositories.reference_repository import get_references, create_reference
+from repositories.reference_repository import (
+    get_citation_keys,
+    get_references,
+    create_reference,
+)
 from config import app, test_env
 from services.reference_service import ReferenceService
-from util import RefField, validate_reference
+from services.validation_service import ValidationService
+from util import RefField
 from api import routes
 
 
@@ -30,9 +35,11 @@ def reference_creation():
     title = request.form.get(RefField.TITLE.value)
     reftype = request.form.get(RefField.REFTYPE.value)
 
+    existing_citation_keys = get_citation_keys()
+
     try:
         new_reference = Reference(None, citation_key, year, author, title, reftype)
-        validate_reference(new_reference)
+        ValidationService.validate_reference(new_reference, existing_citation_keys)
         create_reference(citation_key, year, author, title, reftype)
         flash("Reference created successfully!", "success")
         return redirect("/")
