@@ -24,21 +24,21 @@
   </head>
   <body class="bg-light">
 	  {% with messages = get_flashed_messages(with_categories=true) %}
-		{% if messages %}
-		  <ul class="list-group">
-		  {% for category, message in messages %}
-        {% if category == "success" %}
-          <li class="list-group-item text-success">{{ message }}</li>
-        {% elif category == "error" %}
-          <li class="list-group-item text-danger">{{ message }}</li>
-        {% else %}
-			  <li class="list-group-item">{{ message }}</li>
-        {% endif %}
-		  {% endfor %}
-		  </ul>
-		{% endif %}
-	  {% endwith %}
-    {% block body %}{% endblock %}
+      {% if messages %}
+        <ul class="list-group">
+        {% for category, message in messages %}
+          {% if category == "success" %}
+            <li class="list-group-item text-success">{{ message }}</li>
+          {% elif category == "error" %}
+            <li class="list-group-item text-danger">{{ message }}</li>
+          {% else %}
+          <li class="list-group-item">{{ message }}</li>
+          {% endif %}
+        {% endfor %}
+        </ul>
+      {% endif %}
+      {% endwith %}
+      {% block body %}{% endblock %}
     <div class="container">
       <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 bg-light fixed-bottom border-top border-secondary-subtle">
         <div class="col-md-4 d-flex align-items-center ps-3">
