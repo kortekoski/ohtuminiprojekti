@@ -12,7 +12,7 @@ class ReferenceService:
         entries = []
         for ref in refs:
             entry = (
-                f"@{ref.reftype.value}{{{ref.citation_key},\n"
+                f"@{ref.reftype}{{{ref.citation_key},\n"
                 f"  {RefField.AUTHOR.value} = {{{ref.author}}},\n"
                 f"  {RefField.TITLE.value} = {{{ref.title}}},\n"
                 f"  {RefField.YEAR.value} = {{{ref.year}}}\n"
