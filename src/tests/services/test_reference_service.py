@@ -14,7 +14,7 @@ class TestReferenceService(unittest.TestCase):
                 year=1998,
                 author="Zelda",
                 title="Tunes for the harp, ocarina and violin",
-                reftype=RefType.BOOK,
+                reftype=RefType.BOOK.value,
             ),
             Reference(
                 id=2,
@@ -22,7 +22,7 @@ class TestReferenceService(unittest.TestCase):
                 year=1998,
                 author="Gordon Freeman",
                 title="Bending reality - a scientific approach",
-                reftype=RefType.ARTICLE,
+                reftype=RefType.ARTICLE.value,
             ),
         ]
 
