@@ -11,7 +11,7 @@ class Reference:
     year: int
     author: str
     title: str
-    reftype: RefType = RefType.BOOK
+    reftype: str = RefType.BOOK.value
 
     def __str__(self):
         return f"{self.year}, {self.author}, {self.title}"
