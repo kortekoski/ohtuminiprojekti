@@ -32,9 +32,22 @@
       footer {
           flex-shrink: 0;
       }
+      .nav-item.active {
+        font-weight: 800;
+      }
     </style>
   </head>
   <body class="bg-light">
+    <nav class="navbar navbar-expand justify-content-center shadow-sm">
+      <ul class="navbar-nav">
+        <li class="nav-item {% if request.path == '/' %} active {%endif%}">
+          <a class="nav-link" href="/"> Home</a>
+        </li>
+        <li class="nav-item {% if request.path == '/new_reference' %}active{% endif %}">
+          <a class="nav-link" href="/new_reference">Create Reference</a>
+        </li>
+      </ul>
+    </nav>
     <main>
       {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
