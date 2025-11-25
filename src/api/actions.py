@@ -1,9 +1,9 @@
-# from logging import debug, info, warn, error
-from flask import jsonify, request
+"""API actions for managing references."""
 
+from flask import jsonify, request
 from entities.reference import Reference
 from repositories import reference_repository as repo
-from util import RefField, is_valid_reference
+from util import RefField
 
 HTTP_200_SUCCESS = 200
 HTTP_400_BAD_REQUEST = 400

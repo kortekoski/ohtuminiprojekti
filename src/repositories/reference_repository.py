@@ -4,7 +4,7 @@ from config import db
 from sqlalchemy import text
 
 from entities.reference import Reference
-from util import RefField, RefType
+from util import RefField
 
 
 def get_references(order_by: RefField = None) -> list[Reference]:
@@ -18,8 +18,8 @@ def get_references(order_by: RefField = None) -> list[Reference]:
                {RefField.TITLE.value},
                {RefField.REFTYPE.value}
                FROM reference_values
-               ORDER BY {order_by.value 
-                         if order_by 
+               ORDER BY {order_by.value
+                         if order_by
                          else RefField.CITATION_KEY.value}
                """
     )
