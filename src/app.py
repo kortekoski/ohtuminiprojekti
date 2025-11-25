@@ -54,12 +54,19 @@ def download_bibtex():
     refs = get_references()
     bibtex_content = ReferenceService.generate_bibtex(refs)
 
-    flash(str("BibTeX file generated successfully!"))
     return Response(
         bibtex_content,
         mimetype="text/plain",
-        headers={"Content-Disposition": "attachment; filename=references.bib"},
+        headers={
+            "Content-Disposition": "attachment; filename=references.bib",
+        },
     )
+
+
+@app.route("/download_bibtex_start")
+def download_bibtex_start():
+    flash("BibTeX file generated successfully!", "success")
+    return redirect("/")
 
 
 # testausta varten oleva reitti

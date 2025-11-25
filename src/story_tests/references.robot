@@ -1,8 +1,15 @@
 *** Settings ***
+Library          OperatingSystem
+Library          RequestsLibrary
 Resource         resource.robot
-Suite Setup      Open And Configure Browser
+Suite Setup      Setup Suite
 Suite Teardown   Close Browser
 Test Setup       Reset References
+
+*** Keywords ***
+Setup Suite
+    Open And Configure Browser
+    Create Session    app    ${HOME_URL}
 
 *** Test Cases ***
 At start there are no references
@@ -39,3 +46,15 @@ Get to frontpage via navbar
     Go To  ${HOME_URL}/new_reference
     Click Link  Home
     Title Should Be  Reference app
+
+BibTeX is downloadable for a reference
+    Add Test Reference
+    Go To  ${HOME_URL}
+    Page Should Contain  Download BibTeX file
+    ${response}=  GET On Session    app    /download_bibtex
+    Should Be Equal As Integers  ${response.status_code}  200
+    ${bibtex_content}=  Set Variable  ${response.text}
+    Should Contain  ${bibtex_content}  @book{Test2025,
+    Should Contain  ${bibtex_content}  author = {Guybrush Threepwood},
+    Should Contain  ${bibtex_content}  title = {Different types of clover in Melee island},
+    Should Contain  ${bibtex_content}  year = {2025}
