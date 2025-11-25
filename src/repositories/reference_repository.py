@@ -58,9 +58,9 @@ def get_citation_keys() -> list[str]:
     """Fetches all citation keys from the database."""
     sql = text(
         f"""
-               SELECT {RefField.CITATION_KEY.value}
-               FROM reference_values
-               """
+        SELECT {RefField.CITATION_KEY.value}
+        FROM reference_values
+        """
     )
     result = db.session.execute(sql)
     rows = result.fetchall()
