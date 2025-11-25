@@ -4,10 +4,10 @@ from config import db
 from sqlalchemy import text
 
 from entities.reference import Reference
-from util import RefField
+from util import RefField, RefType
 
 
-def get_references():
+def get_references(order_by: RefField = None) -> list[Reference]:
     """Fetches all references from the database."""
     sql = text(
         f"""
@@ -18,6 +18,9 @@ def get_references():
                {RefField.TITLE.value},
                {RefField.REFTYPE.value}
                FROM reference_values
+               ORDER BY {order_by.value 
+                         if order_by 
+                         else RefField.CITATION_KEY.value}
                """
     )
     result = db.session.execute(sql)

@@ -6,4 +6,5 @@ CREATE TABLE IF NOT EXISTS reference_values(
   author VARCHAR(255) NOT NULL,
   title VARCHAR(255) NOT NULL,
   reftype VARCHAR(50) NOT NULL
-)
+  --extra JSONB DEFAULT '{}'::jsonb -- the rest of the fields can go here
+);
