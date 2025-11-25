@@ -18,6 +18,14 @@ services:
       interval: 2s
       timeout: 3s
       retries: 10
+  web:
+    build: .
+    environment:
+      TEST_ENV: false
+    ports:
+      - "5001:5001"
+    depends_on:
+      - db
 
 volumes:
   pgdata:
