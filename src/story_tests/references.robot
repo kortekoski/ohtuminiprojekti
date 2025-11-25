@@ -29,3 +29,13 @@ One reference is shown after adding it via input
     Page Should Contain  John Trimmer
     Page Should Contain  How to Avoid Huge Ships
     Page Should Contain  1982
+
+Get to create reference via navbar
+    Go To  ${HOME_URL}
+    Click Link  Create Reference
+    Title Should Be  Create a new reference
+
+Get to frontpage via navbar
+    Go To  ${HOME_URL}/new_reference
+    Click Link  Home
+    Title Should Be  Reference app
