@@ -23,7 +23,6 @@ One reference is shown after adding it via input
     Input Text  year  1982
     Input Text  citation_key  Trimmer1982
     Select From List By Value  reftype  book
-    Scroll Element Into View    xpath=//button[@type='submit']
     Click Button  Create
     Title Should Be  Reference app
     Page Should Contain  Reference created successfully!
