@@ -5,31 +5,38 @@ Reference app
 {% endblock %}
 
 {% block body %}
+<div class="container mt-4">
+  <h2 class="mb-4">Reference app</h2>
+  <h4>Book references</h4>
+  <div class="container border border-secondary-subtle rounded-4 p-3 bg-white">
+    {% if references|length == 0 %}
+      <p>No references found!</p>
+    {% else %}
+      <ol class="list-group list-group-numbered list-group-flush">
+        {% for reference in references %}
+            {% if reference.reftype == 'book' %}
+              <li class="list-group-item">
+                <div class="d-flex w-100 justify-content-between mt-3">
+                  <h5 class="mb-2">{{ reference.title }}.</h5>
+                </div>
+                <p class="mb-2">{{ reference.author }}. {{ reference.year }}.</p>
+                <small>@{{ reference.citation_key }}</small>
+              </li>
+            {% endif %}
+        {% endfor %}
+      </ol>
+    {% endif %}
+  </div>
 
-<h2>Reference app</h2>
-<h3>Book references:</h3>
-{% if references|length == 0 %}
-  <p>No references found!</p>
-{% else %}
-  <ol class="list-group list-group-numbered">
-    {% for reference in references %}
-        {% if reference.reftype == 'book' %}
-          <li class="list-group-item">
-            {{ reference.author }}. <i>{{ reference.title }}</i>.{{ reference.year }}.
-          </li>
-        {% endif %}
-    {% endfor %}
-  </ol>
-{% endif %}
+  <div class="mt-3">
+    <a class="btn btn-primary" href="/new_reference">Create new reference</a>
+  </div>
 
-<div>
-  <a href="/new_reference">Create new reference</a>
-</div>
-
-<div class="mt-3">
-  <a class="btn btn-primary" href="{{ url_for('download_bibtex') }}">
-    Download BibTeX file
-  </a>
+  <div class="mt-3">
+    <a class="btn btn-primary" href="{{ url_for('download_bibtex') }}">
+      Download BibTeX file
+    </a>
+  </div>
 </div>
 
 {% endblock %}

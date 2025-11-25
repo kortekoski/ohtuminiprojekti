@@ -34,10 +34,10 @@ def reference_creation():
         new_reference = Reference(None, citation_key, year, author, title, reftype)
         validate_reference(new_reference)
         create_reference(citation_key, year, author, title, reftype)
-        flash("Reference created successfully!")
+        flash("Reference created successfully!", "success")
         return redirect("/")
     except Exception as error:
-        flash(str(error))
+        flash(str(error), "error")
         return redirect("/new_reference")
 
 
