@@ -51,7 +51,12 @@ def reference_creation():
 # TODO csrf, use url for safety, xss protection frontend, rate limit, DoS
 @app.route("/download_bibtex")
 def download_bibtex():
+    """
+    Docstring for download_bibtex
 
+    :param refs: Description
+    """
+    refs = get_references()
     bibtex_content = ReferenceService.generate_bibtex(refs)
     try:
         return Response(
