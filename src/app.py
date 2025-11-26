@@ -52,6 +52,11 @@ def reference_creation():
 @app.route("/download_bibtex")
 def download_bibtex():
     refs = get_references()
+
+    if not refs:
+        flash("No references available to download", "error")
+        return redirect("/")
+    
     bibtex_content = ReferenceService.generate_bibtex(refs)
     try:
         return Response(
@@ -68,7 +73,7 @@ def download_bibtex():
 
 @app.route("/download_bibtex_start")
 def download_bibtex_start():
-    flash("Bibtex file generating...", "success")
+    flash("Bibtex generated successfully", "success")
     return redirect("/")
 
 
