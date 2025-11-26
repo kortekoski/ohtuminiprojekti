@@ -50,7 +50,7 @@ Get to frontpage via navbar
 BibTeX is downloadable for a reference
     Add Test Reference
     Go To  ${HOME_URL}
-    Page Should Contain  Download BibTeX file
+    Page Should Contain  Download BibTeX
     ${response}=  GET On Session    app    /download_bibtex
     Should Be Equal As Integers  ${response.status_code}  200
     ${bibtex_content}=  Set Variable  ${response.text}
