@@ -61,25 +61,32 @@ Backlogit: https://docs.google.com/spreadsheets/d/1YLn6Z2UjyHvtpES_IHdXTMnKivLhK
 
 
 ## Versionhallintakäytännöt
-- Hae uusin main 
-  - `git checkout main` 
+- Hae uusin `dev`
+  - `git fetch`
+  - `git checkout dev`
   - `git pull`
 - Luo taskista uusi branch 
   - `git checkout -b omanimi/taskin-nimi`
   - `git add oma_muutos.py`
   - `git commit -m "oma commit"`
-  - git push --set-upstream origin omanimitaskin-nimi
-- Mahdollisimman usein kannattaa hakea uusin main
+  - `git push --set-upstream origin omanimitaskin-nimi`
+- Mahdollisimman usein kannattaa hakea uusin dev (ja aina ennen PR:n luomista)
    - `git fetch origin`
-   - `git merge origin/main`
+   - `git merge origin/dev`
    - resolvaa mahdolliset konfliktit
    - `git push`
 - Githubissa luo uusi Pull Request 
    - Lisää muut tiimiläiset katselmoijiksi 
    - Linkkaa PR Discordiin muille tiedoksi
    - Varmista, että CI-testit menevät läpi 
-   - Mergeä mainiin 
+   - Mergeä deviin
    - Tuhoa branch githubista 
+
+### Sprint release 
+- Sprintin lopuksi luodaan toimivasta `dev` branchista release `main`-haaraan     
+- Lisätään version tag: git tag -a v1.0.0 -m "Release 1.0.0"     
+- Luo PR dev -> main      
+- Koko tiimi katselmoi     
 
 
 ## Asennusohjeet
