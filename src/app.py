@@ -53,14 +53,17 @@ def reference_creation():
 def download_bibtex():
     refs = get_references()
     bibtex_content = ReferenceService.generate_bibtex(refs)
-
-    return Response(
-        bibtex_content,
-        mimetype="text/plain",
-        headers={
-            "Content-Disposition": "attachment; filename=references.bib",
-        },
-    )
+    try:
+        return Response(
+            bibtex_content,
+            mimetype="text/plain",
+            headers={
+                "Content-Disposition": "attachment; filename=references.bib",
+            },
+        )
+    except Exception as error:
+        flash(str(error), "error")
+        return redirect("/")
 
 
 @app.route("/download_bibtex_start")
