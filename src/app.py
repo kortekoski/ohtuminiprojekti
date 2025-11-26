@@ -65,7 +65,7 @@ def download_bibtex():
 
 @app.route("/download_bibtex_start")
 def download_bibtex_start():
-    flash("BibTeX file generated successfully!", "success")
+    flash("Bibtex file generating...", "success")
     return redirect("/")
 
 
