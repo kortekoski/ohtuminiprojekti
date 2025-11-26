@@ -23,7 +23,7 @@ services:
     environment:
       TEST_ENV: false
     ports:
-      - "5001:5001"
+      - "5002:5001"
     depends_on:
       - db
 
