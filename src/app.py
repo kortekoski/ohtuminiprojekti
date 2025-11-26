@@ -51,11 +51,6 @@ def reference_creation():
 # TODO csrf, use url for safety, xss protection frontend, rate limit, DoS
 @app.route("/download_bibtex")
 def download_bibtex():
-    refs = get_references()
-
-    if not refs:
-        flash("No references available to download", "error")
-        return redirect("/")
 
     bibtex_content = ReferenceService.generate_bibtex(refs)
     try:
@@ -73,6 +68,11 @@ def download_bibtex():
 
 @app.route("/download_bibtex_start")
 def download_bibtex_start():
+    refs = get_references()
+    print("refs:", refs)
+    if not refs:
+        flash("No references available to download", "error")
+        return redirect("/")
     flash("Bibtex generated successfully", "success")
     return redirect("/")
 
