@@ -56,7 +56,7 @@ def download_bibtex():
     if not refs:
         flash("No references available to download", "error")
         return redirect("/")
-    
+
     bibtex_content = ReferenceService.generate_bibtex(refs)
     try:
         return Response(
