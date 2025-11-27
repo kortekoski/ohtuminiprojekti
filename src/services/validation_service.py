@@ -3,7 +3,6 @@
 from datetime import datetime
 import re
 from entities.reference import Reference
-from repositories.reference_repository import get_citation_keys
 from util import RefField, RefType, UserInputError, ValueError
 
 
@@ -133,26 +132,3 @@ class ValidationService:
             raise UserInputError("Incorrect bibtex reference reftype")
 
         return True
-
-    @staticmethod
-    def _is_valid_reference_helper(maybe_reference: dict, key: str) -> bool:
-        """Helper function to check that a key exists and is non-empty in a dictionary."""
-        return key in maybe_reference and maybe_reference[key] != []
-
-    @staticmethod
-    def is_valid_reference(maybe_reference: dict[str, list[str] | str | int]) -> bool:
-        """Checks that the provided dictionary has all required keys for a reference."""
-        required_keys = [
-            RefField.CITATION_KEY,
-            RefField.YEAR,
-            RefField.AUTHOR,
-            RefField.TITLE,
-            RefField.REFTYPE,
-        ]
-
-        validator_iter = map(
-            lambda x: ValidationService._is_valid_reference_helper(maybe_reference, x),
-            required_keys,
-        )
-
-        return all(validator_iter)

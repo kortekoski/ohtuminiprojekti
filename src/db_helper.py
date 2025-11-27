@@ -41,7 +41,6 @@ def setup_db():
 
     print("Creating database")
 
-    # Read schema from schema.sql file
     base_path = os.path.dirname(os.path.dirname(__file__))
     schema_path = os.path.join(base_path, "migrations", "01-schema.sql")
     with open(schema_path, "r") as f:

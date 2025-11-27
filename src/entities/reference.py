@@ -1,3 +1,5 @@
+"""Reference entity module."""
+
 from dataclasses import dataclass
 from util import RefType
 
