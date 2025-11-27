@@ -2,19 +2,17 @@ import unittest
 import sys
 import os
 
-# Import app from app.py to ensure routes are registered
+# Add src directory to path - go up two levels from integration folder
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
+
 from app import app
 from db_helper import setup_db, reset_db
 from services.validation_service import ValidationService
-from util import UserInputError, ValueError, RefField
-from entities.reference import Reference
+from util import UserInputError, ValueError
 from tests.test_data import TestData
 
-# Add src directory to path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-
-class TestAddReference(unittest.TestCase):
+class TestReferenceRoutes(unittest.TestCase):
     def setUp(self):
         """Set up test client and database before each test"""
         app.config["TESTING"] = True
