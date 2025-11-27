@@ -21,7 +21,7 @@ flowchart TB
     end
 
     subgraph DB["Database"]
-        SQL[(PostgreSQL / SQLite)]
+        SQL[(PostgreSQL)]
     end
 
     %% Connections
@@ -35,7 +35,9 @@ flowchart TB
 
 <br><br>
 
-# Sequence diagram: API → Service → Repository → Database
+# Sekvenssikaavio: 
+## API → Service → Repository → Database
+
 ````mermaid
 
 sequenceDiagram
@@ -66,12 +68,22 @@ sequenceDiagram
 ````mermaid
 flowchart TB
 
-    RF["Robot Framework testit (.robot)"] --> AL["app_library.py (Custom Keywords)"]
-    AL --> AppPy["app.py (API Routes)"]
-    AL --> IndexPy["index.py (Application Startup)"]
+    RF["references.robot<br/>(varsinaiset testit)"]
+    RES["resource.robot<br/>(konfiguraatio / avainsanat)"]
+    AL["app_library.py<br/>(mukautettu toiminnallisuus)"]
+    AppPy["app.py<br/>(API Routes)"]
+    IndexPy["index.py<br/>(Sovelluksen käynnistäminen)"]
+    Services["Services Layer"]
+    Repos["Repositories Layer"]
+    DB["Test Database"]
 
-    AppPy --> Services["Services Layer"]
-    Services --> Repos["Repositories Layer"]
-    Repos --> DB["Test Database"]
+    RF --> RES
+    RES --> AL
+    AL --> AppPy
+    AL --> IndexPy
+
+    AppPy --> Services
+    Services --> Repos
+    Repos --> DB
 
 ````
