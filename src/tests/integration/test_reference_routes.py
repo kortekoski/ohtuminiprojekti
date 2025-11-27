@@ -7,8 +7,6 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../.
 
 from app import app
 from db_helper import setup_db, reset_db
-from services.validation_service import ValidationService
-from util import UserInputError, ValueError
 from tests.test_data import TestData
 
 
