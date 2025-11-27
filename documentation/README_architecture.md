@@ -87,3 +87,70 @@ flowchart TB
     Repos --> DB
 
 ````
+
+<br><br>
+
+````mermaid
+flowchart TB
+
+    %% === APPLICATION LAYERS ===
+    subgraph API["API Layer"]
+        APP["app.py"]
+    end
+
+    subgraph SERVICE["Service Layer"]
+        RS["reference_service.py"]
+        VS["validation_service.py"]
+    end
+
+    subgraph REPO["Repository Layer"]
+        RR["reference_repository.py"]
+    end
+
+
+    DB["Database (SQLite / PostgreSQL)"]
+
+
+    %% === TEST LAYERS (mirroring app structure) ===
+    subgraph TAPI["API Integration Tests"]
+        T_ROUTE["integration/test_reference_routes.py"]
+    end
+
+    subgraph TSERVICE["Service Tests"]
+        T_RS["services/test_reference_service.py"]
+        T_VS["services/test_validation_service.py"]
+    end
+
+    subgraph TREPO["Repository Tests"]
+        T_REPO["repositories/test_reference_repository.py"]
+    end
+
+    subgraph TDATA["Jaettu testiaineisto"]
+        TD["test_data.py"]
+    end
+
+
+    %% === MAPPINGS: Tests → Code ===
+    %% API tests call app.py (routes)
+    T_ROUTE --> APP
+
+    %% Service tests target service layer
+    T_RS --> RS
+    T_VS --> VS
+
+    %% Repository test targets repository layer
+    T_REPO --> RR
+
+    %% Shared test data is used by all tests
+    TD --> T_ROUTE
+    TD --> T_RS
+    TD --> T_VS
+    TD --> T_REPO
+
+    %% Application dependencies
+    RS --> RR
+    VS --> RR
+    RR --> DB
+
+
+````
