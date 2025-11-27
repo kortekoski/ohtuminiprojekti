@@ -10,7 +10,6 @@ from config import app, test_env
 from services.reference_service import ReferenceService
 from services.validation_service import ValidationService
 from util import RefField
-from api import routes
 
 
 @app.route("/")
