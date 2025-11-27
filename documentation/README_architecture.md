@@ -1,18 +1,21 @@
 # Arkkitehtuurikaavio: UI > Service > Repository > Database 
-````mermaid
-flowchart LR
+Projektissa on käytössä kerrosarkkitehtuuri. Lue aiheesta lisää täältä: 
+[HY Ohjelmistotuotannon kurssi - Kerrosarkkitehtuuri](https://ohjelmistotuotanto-hy.github.io/osa4/#kerrosarkkitehtuuri)
 
-    subgraph UI["UI Layer"]
+````mermaid
+flowchart TB
+
+    subgraph UI["Templates (Presentation)"]
         Tmpl[HTML Templates<br/>Static files]
         AppPy[app.py<br/>API + reitit]
     end
 
-    subgraph Service["Service Layer"]
+    subgraph Service["Services  (Business logic)"]
         RefSvc[reference_service]
         ValSvc[validation_service]
     end
 
-    subgraph Repo["Repository Layer"]
+    subgraph Repo["Repositories (Persistence)"]
         RefRepo[reference_repository]
        
     end
