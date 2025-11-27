@@ -1,5 +1,12 @@
 # Ohtun miniprojekti, syksy 2025 (team Neliapila)
 [![GHA workflow_badge](https://github.com/kortekoski/ohtuminiprojekti/actions/workflows/ci.yaml/badge.svg)](https://github.com/kortekoski/ohtuminiprojekti/actions)
+
+# Coverage raportti   
+HTML-muotoinen testikattavuusraportti:
+
+**[Avaa kattavuusraportti (htmlcov/index.html)](./htmlcov/index.html)**  
+(avaa selaimessa)
+
 ## Ohjelman käynnistäminen
 
 Sovellus käynnistetään Poetry-virtuaaliympäristössä komennolla

@@ -3,31 +3,24 @@ source = src
 branch = True
 
 omit =
-    # Exclude app startup
-    src/app.py
-    src/index.py
+    src/htmlcov/*
+    htmlcov/*
+    */__pycache__/*
+    # Testit ja testidatat
+    src/tests/*
+    src/test_*.py
 
-    # Exclude configuration and setup
+    # App startup / infra
+    src/index.py
+    src/app.py
     src/config.py
     src/db_helper.py
-
-    # Exclude all tests and helper files
-    src/tests/*
-    */__init__.py
     src/app_library.py
-
-    # Exclude TODO app
-    src/repositories/todo_repository.py
-    src/entities/todo.py
-    
 
 [report]
 exclude_lines =
-    # Don't complain about missing debug-only code:
     if __name__ == .__main__.:
-
-    # Ignore abstract methods or unimplemented stubs
     raise NotImplementedError
 
-show_missing = True
 precision = 2
+show_missing = True
