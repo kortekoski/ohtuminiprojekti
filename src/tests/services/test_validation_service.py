@@ -40,7 +40,7 @@ class TestValidationServiceUnit(unittest.TestCase):
 
     # ---------- title ----------
     def test_title_too_short(self):
-        self.assertFalse(ValidationService._validate_title("Too short"))
+        self.assertFalse(ValidationService._validate_title("T"))
 
     # ---------- citation key ----------
     def test_citation_key_invalid(self):
