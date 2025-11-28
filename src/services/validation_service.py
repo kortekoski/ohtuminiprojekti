@@ -46,8 +46,8 @@ class ValidationService:
 
     @staticmethod
     def _validate_title(title):
-        """Validates that the title is at least 10 characters long."""
-        return len(title) >= 10
+        """Validates that the title is at least 2 characters long."""
+        return len(title) >= 2
 
     @staticmethod
     def _validate_citation_key(citation_key):
