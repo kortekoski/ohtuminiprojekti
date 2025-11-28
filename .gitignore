@@ -7,6 +7,5 @@ output.xml
 report.html
 selenium-screenshot*
 possu.sh
-htmlcov/
 .coverage
 coverage.xml
