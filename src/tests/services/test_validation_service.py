@@ -42,6 +42,9 @@ class TestValidationServiceUnit(unittest.TestCase):
     def test_title_too_short(self):
         self.assertFalse(ValidationService._validate_title("T"))
 
+    def test_title_exactly_2_characters(self):
+        self.assertTrue(ValidationService._validate_title("Ok"))
+
     # ---------- citation key ----------
     def test_citation_key_invalid(self):
         self.assertFalse(ValidationService._validate_citation_key("Invalid Key!"))
