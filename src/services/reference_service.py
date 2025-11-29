@@ -27,7 +27,7 @@ class ReferenceService:
     ):
         """Creates a new reference in the repository."""
 
-        if citation_key_exists(citation_key):
+        if self._repo.citation_key_exists(citation_key):
             raise ValueError(f"Citation key '{citation_key}' already exists.")
 
         return self._repo.create_reference(citation_key, year, author, title, reftype)
