@@ -61,6 +61,28 @@ class TestReferenceRepository(unittest.TestCase):
         self.assertEqual(db_ref.title, ref.title)
         self.assertEqual(db_ref.reftype, ref.reftype)
 
+    def test_delete_reference_removes_row_from_db(self):
+        """Repository.delete_reference should remove the correct row from the database."""
+
+        ref = TestData.valid_reference()
+
+        self.repo.create_reference(
+            ref.citation_key,
+            ref.year,
+            ref.author,
+            ref.title,
+            ref.reftype,
+        )
+
+        inserted = self.repo.get_references()
+        self.assertEqual(len(inserted), 1)
+
+        # Act
+        self.repo.delete_reference(ref.citation_key)
+
+        remaining = self.repo.get_references()
+        self.assertEqual(len(remaining), 0)
+
 
 if __name__ == "__main__":
     unittest.main()
