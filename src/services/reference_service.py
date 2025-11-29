@@ -4,7 +4,6 @@ from util import RefField
 from entities.reference import Reference
 from repositories.reference_repository import (
     ReferenceRepository,
-    citation_key_exists,
 )
 
 
