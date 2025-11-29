@@ -44,7 +44,6 @@ def reference_creation():
     title = request.form.get(RefField.TITLE.value)
     reftype = request.form.get(RefField.REFTYPE.value)
 
-    
     reference_service = get_reference_service()
     existing_citation_keys = reference_service.get_citation_keys()
 

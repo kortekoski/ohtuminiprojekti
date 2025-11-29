@@ -37,7 +37,7 @@ class ReferenceService:
         """Fetches all citation keys from the repository."""
         references = self._repo.get_references()
         return [ref.citation_key for ref in references]
-    
+
     def citation_key_exists(self, citation_key: str) -> bool:
         """Checks if a citation key exists in the repository."""
         return citation_key in self.get_citation_keys()

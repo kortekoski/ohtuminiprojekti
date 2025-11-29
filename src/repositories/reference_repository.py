@@ -68,7 +68,6 @@ class ReferenceRepository:
         rows = result.fetchall()
         return [row[0] for row in rows]
 
-
     def citation_key_exists(self, citation_key: str) -> bool:
         """Checks if a citation key exists in the database."""
         sql = text(
