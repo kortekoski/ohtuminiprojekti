@@ -6,7 +6,7 @@ Retrospektiivissä käsiteltiin ensimmäisen sprintin työskentelyprosessia Glad
 
 Yleisesti ottaen tiimi oli tyytyväinen siihen, miten sprintti oli sujunut. Keskustelussa kiiteltiin ryhmän yleistä ilmapiiriä, hyvää kommunikaatiota ja tasaista vastuunjakoa. Yhteiset työskentelysäännöt olivat myös selkeät, joten yhteistyö sujui hyvin esimerkiksi eri branchien kanssa.
 
-![retro 1](https://retro1.tiiny.site/retro1.png)
+![retro 1](https://i.ibb.co/VcSJRVqC/retro1.jpg)
 
 *Laput pöydällä alueille sijoiteltuna.*
 
@@ -20,3 +20,30 @@ Esille nousi myös muutama ”surua” herättänyt asia, joihin sovittiin kehit
 -	**Pull requestit**: Edellisen keskustelun rönsyssä todettiin, että suoraan mergeäminen mainiin ei ole siistiä. Sovittiin, että jokainen PR on hyväksyttävä Githubissa ennen mergeämistä. Lisäksi toivottiin, että koodista voisi nostaa esiin huomioita reviewissä.
 -	**Testaaminen**: Nykyisellään testaus on ollut työlästä, koska se vaatii paljon komentojen syöttämistä (docker ylös, sovellus ylös, yksikkötestit, robot-testit). Kehitystoimenpiteenä toteutetaan Poetryn scripti, joka käynnistää kaiken ja ajelee testit läpi.
 -	**Linttaus**: Koodi on sotkuista, eikä pylint-pisteitä heru. Sovittiin Black-formatterin käyttöönotosta commit hookina, jotta koodi vähän selkeytyy.
+
+<br>
+
+## Sprintti 2
+
+Toisen sprintin retrospektiivissä kokeiltiin Aloita, Lopeta, Jatka, Lisää, Vähemmän -tekniikkaa. Keskustelun tarkoituksena oli löytää konkreettisia työtapoihin ja projektiin liittyviä asioita, joita tulisi tehdä tai olla tekemättä. Tämä toimi vastapainona edeltävälle retrospektiiville, jossa tunnusteltiin Mad, Sad, Glad -metodilla myös tiimin tuntemuksia.
+
+![retro 2](https://i.ibb.co/k2X69txZ/retro2.jpg)
+
+Kuvassa näkyy, mitä aiheita nousi pinnalle eri sektoreille:
+- Aloita: arkkitehtuurikaavio, Copilot-approvet vähintään
+- Lopeta: API
+- Jatka: Discord-keskustelu, uusien asioiden kommentointi
+- Lisää: focusia featureihin
+- Vähemmän: viime hetken korjauksia
+
+<br>
+
+### Kehitystoimenpiteet
+
+Työskentelyprosessiin esitettiin siis useita konkreettisia kehitystoimenpiteitä:
+- Sovelluksen arkkitehtuurista tehdään kaavio, jotta kaikki pysyvät siitä kärryillä.
+- Copilotia voidaan hyödyntää pienten committien hyväksymiseen. Mergeämiseen tarvitaan siis vähintään Copilotin hyväksyminen, toisten tiimiläisten approvea ei välttämättä tarvitse enää odottaa.
+- Sovellus ei käytä apia, joten se voidaan poistaa sekoittamasta pakkaa.
+- Työskentelyssä tulisi pyrkiä keskittymään juuri työstettäviin ominaisuuksiin. Todettiin, että aikaa on käytetty myös toiminnallisuuksien kannalta "ylimääräiseen" työhön.
+- Viime hetken muutoksia/korjauksia tulisi välttää, sillä yksi toiminnallisuus hajosi juuri ennen viimeisintä asiakastapaamista.
+
