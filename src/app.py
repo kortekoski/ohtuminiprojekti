@@ -3,11 +3,11 @@ from db_helper import reset_db
 from entities.reference import Reference
 from repositories.reference_repository import (
     get_citation_keys,
-    get_references,
     create_reference,
 )
 from config import app, test_env
 from services.bibtex_service import BibtexService
+from repositories.reference_repository import ReferenceRepository
 from services.reference_service import ReferenceService
 from services.validation_service import ValidationService
 from util import RefField
@@ -16,7 +16,7 @@ from util import RefField
 @app.route("/")
 def index():
     """Renders the index page with all references."""
-    references: list[Reference] = get_references()
+    references: list[Reference] = ReferenceService().get_all_references()
     return render_template("index.html", references=references)
 
 
@@ -50,7 +50,7 @@ def reference_creation():
 
 @app.route("/download_bibtex")
 def download_bibtex():
-    refs = get_references()
+    refs = ReferenceService().get_all_references()
 
     if not refs:
         flash("No references available to download", "error")
