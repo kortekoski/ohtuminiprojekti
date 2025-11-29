@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from util import RefType
 
+from typing import Optional
+
 
 @dataclass
 class Reference:
@@ -12,6 +14,15 @@ class Reference:
     author: str
     title: str
     reftype: str = RefType.BOOK.value
+    attributes: dict[str, str] = dict()
+
+    def get(self, attribute: str, default: Optional[str] = None) -> Optional[str]:
+        self.attributes.get(attribute, default)
 
     def __str__(self):
-        return f"{self.year}, {self.author}, {self.title}"
+        string = f"{self.citation_key}: {self.year}, {self.author}, {self.title}"
+
+        for key, item in self.attributes:
+            string += f" {key}={item}"
+
+        return string
