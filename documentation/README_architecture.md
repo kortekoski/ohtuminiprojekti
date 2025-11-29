@@ -51,21 +51,30 @@ flowchart TB
 
 sequenceDiagram
     participant User as User/Browser
-    participant App as app.py (API)
-    participant Val as validation_service
-    participant Svc as reference_service
-    participant Repo as reference_repository
+    participant App as app.py (Route)
+    participant G as Flask g
+    participant Svc as ReferenceService
+    participant Val as ValidationService
+    participant Repo as ReferenceRepository
     participant DB as Database
 
-    User ->> App: POST /create_reference<br/>form data
+    User ->> App: POST /create_reference <br/> form data
 
-    App ->> App: read form fields
-    App ->> Repo: get_citation_keys()
+    App ->> App: Read form fields
+
+    Note over App: Acquire service through DI helper
+    App ->> G: get_reference_service()
+    G ->> G: Create ReferenceService() if missing
+    G ->> App: return cached service (Svc)
+
+    App ->> Svc: get_citation_keys()
+    Svc ->> Repo: get_citation_keys()
     Repo ->> DB: SELECT citation_key FROM reference_values
-    DB -->> Repo: list of keys
-    Repo -->> App: existing keys
+    DB -->> Repo: list of citation keys
+    Repo -->> Svc: citation_key list
+    Svc -->> App: citation_key list
 
-    App ->> App: new Reference(...)
+    App ->> App: Construct Reference object
 
     App ->> Val: validate_reference(ref, existing_keys)
     Val -->> App: validation OK
@@ -74,14 +83,11 @@ sequenceDiagram
 
     Svc ->> Repo: create_reference(...)
     Repo ->> DB: INSERT INTO reference_values (...)
-
     DB -->> Repo: commit OK
     Repo -->> Svc: success
     Svc -->> App: success
 
-    App -->> User: redirect to "/"
-
-
+    App -->> User: Redirect to "/"
 ```
 <br><br>
 

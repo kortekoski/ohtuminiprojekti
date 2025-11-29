@@ -41,7 +41,7 @@ class ReferenceRepository:
             {RefField.AUTHOR.value},
             {RefField.TITLE.value},
             {RefField.REFTYPE.value})
-            VALUES (:citation_key, :year, :author, :title, :reftype)
+            VALUES (:{RefField.CITATION_KEY.value}, :{RefField.YEAR.value}, :{RefField.AUTHOR.value}, :{RefField.TITLE.value}, :{RefField.REFTYPE.value})
             """
         )
         db.session.execute(
@@ -74,8 +74,19 @@ class ReferenceRepository:
             f"""
             SELECT 1
             FROM reference_values
-            WHERE {RefField.CITATION_KEY.value} = :citation_key
+            WHERE {RefField.CITATION_KEY.value} = :{RefField.CITATION_KEY.value}
             """
         )
         result = db.session.execute(sql, {RefField.CITATION_KEY.value: citation_key})
         return result.first() is not None
+
+    def delete_reference(self, citation_key: str):
+        """Deletes a reference from the database."""
+        sql = text(
+            f"""
+            DELETE FROM reference_values
+            WHERE {RefField.CITATION_KEY.value} = :{RefField.CITATION_KEY.value}
+            """
+        )
+        db.session.execute(sql, {RefField.CITATION_KEY.value: citation_key})
+        db.session.commit()
