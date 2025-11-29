@@ -56,28 +56,27 @@ class ReferenceRepository:
         )
         db.session.commit()
 
+    def get_citation_keys(self) -> list[str]:
+        """Fetches all citation keys from the database."""
+        sql = text(
+            f"""
+            SELECT {RefField.CITATION_KEY.value}
+            FROM reference_values
+            """
+        )
+        result = db.session.execute(sql)
+        rows = result.fetchall()
+        return [row[0] for row in rows]
 
-def citation_key_exists(citation_key: str) -> bool:
-    """Checks if a citation key exists in the database."""
-    sql = text(
-        f"""
-        SELECT 1
-        FROM reference_values
-        WHERE {RefField.CITATION_KEY.value} = :citation_key
-        """
-    )
-    result = db.session.execute(sql, {RefField.CITATION_KEY.value: citation_key})
-    return result.first() is not None
 
-
-def get_citation_keys() -> list[str]:
-    """Fetches all citation keys from the database."""
-    sql = text(
-        f"""
-        SELECT {RefField.CITATION_KEY.value}
-        FROM reference_values
-        """
-    )
-    result = db.session.execute(sql)
-    rows = result.fetchall()
-    return [row[0] for row in rows]
+    def citation_key_exists(self, citation_key: str) -> bool:
+        """Checks if a citation key exists in the database."""
+        sql = text(
+            f"""
+            SELECT 1
+            FROM reference_values
+            WHERE {RefField.CITATION_KEY.value} = :citation_key
+            """
+        )
+        result = db.session.execute(sql, {RefField.CITATION_KEY.value: citation_key})
+        return result.first() is not None

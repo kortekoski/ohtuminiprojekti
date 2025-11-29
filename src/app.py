@@ -1,7 +1,6 @@
 from flask import Response, redirect, render_template, request, jsonify, flash, g
 from db_helper import reset_db
 from entities.reference import Reference
-from repositories.reference_repository import get_citation_keys
 from config import app, test_env
 from services.bibtex_service import BibtexService
 from services.reference_service import ReferenceService
@@ -22,8 +21,6 @@ def get_reference_service() -> ReferenceService:
 # ---------------------------
 # Routes
 # ---------------------------
-
-
 @app.route("/")
 def index():
     """Renders the index page with all references."""
@@ -47,8 +44,9 @@ def reference_creation():
     title = request.form.get(RefField.TITLE.value)
     reftype = request.form.get(RefField.REFTYPE.value)
 
-    existing_citation_keys = get_citation_keys()
+    
     reference_service = get_reference_service()
+    existing_citation_keys = reference_service.get_citation_keys()
 
     try:
         new_reference = Reference(None, citation_key, year, author, title, reftype)

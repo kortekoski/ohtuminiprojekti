@@ -32,3 +32,12 @@ class ReferenceService:
             raise ValueError(f"Citation key '{citation_key}' already exists.")
 
         return self._repo.create_reference(citation_key, year, author, title, reftype)
+
+    def get_citation_keys(self) -> list[str]:
+        """Fetches all citation keys from the repository."""
+        references = self._repo.get_references()
+        return [ref.citation_key for ref in references]
+    
+    def citation_key_exists(self, citation_key: str) -> bool:
+        """Checks if a citation key exists in the repository."""
+        return citation_key in self.get_citation_keys()
