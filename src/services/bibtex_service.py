@@ -18,10 +18,13 @@ class BibtexService:
                 f"@{reftype}{{{ref.citation_key},\n"
                 f"  {RefField.AUTHOR.value} = {{{ref.author}}},\n"
                 f"  {RefField.TITLE.value} = {{{ref.title}}},\n"
-                f"  {RefField.YEAR.value} = {{{ref.year}}}\n"
-                f"}}\n"
+                f"  {RefField.YEAR.value} = {{{ref.year}}}"
             )
 
+            for key, value in ref.extra:
+                entry += f",\n  {key} = {{{value}}}"
+
+            entry += f"\n}}\n"
             entries.append(entry)
 
         bibtex_content = "\n".join(entries)
