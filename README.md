@@ -8,12 +8,12 @@ python src/index.py
 ````
 Tietokanta käynnistetään projektin juuressa (erillisessä terminaalissa) komennolla 
 ````
-docker compose up
+docker compose up db
 ````
 Huomaa, että jos tietokantaskeeman taulujen ja entiteettien rakenne muuttuu, tietokanta kannattaa tuhota ja luoda se uudestaan. Tietokantaan ajetaan automaattisesti migraatiot kansiosta `migrations` aakkosjärjestyksessä, kun se ensimmäistä kertaa luodaan.
 ```` 
 docker compose down -v
-docker compose up
+docker compose up db
 ```` 
 
 ## Testaaminen 
@@ -42,6 +42,12 @@ Pylint komennolla:
 poetry run pylint .
 ````
 Formatointi blackilla:
+* Asenna `pre-commit`. Black suoritetaan automaattisesti jokaisen commitin yhteydessä:
+
+````
+pre-commit install
+````
+
 ```` 
 poetry run black .
 ````
