@@ -24,3 +24,17 @@ class TestReferenceService(unittest.TestCase):
         mock_repo.get_references.assert_called_once()
         self.assertEqual(len(result), 1)
         self.assertEqual(result[0].citation_key, "Key2024")
+
+    def test_delete_reference(self):
+        """Service should call repository.delete_reference() with correct citation key."""
+
+        # Arrange
+        mock_repo = Mock()
+        service = ReferenceService(repo=mock_repo)
+        citation_key_to_delete = "Key2024"
+
+        # Act
+        service.delete_reference(citation_key_to_delete)
+
+        # Assert – ensure correct repository interaction
+        mock_repo.delete_reference.assert_called_once_with(citation_key_to_delete)

@@ -32,6 +32,10 @@ class ReferenceService:
 
         return self._repo.create_reference(citation_key, year, author, title, reftype)
 
+    def delete_reference(self, citation_key: str):
+        """Deletes a reference from the repository."""
+        self._repo.delete_reference(citation_key)
+
     def get_citation_keys(self) -> list[str]:
         """Fetches all citation keys from the repository."""
         references = self._repo.get_references()

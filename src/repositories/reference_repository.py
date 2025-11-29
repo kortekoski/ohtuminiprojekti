@@ -79,3 +79,14 @@ class ReferenceRepository:
         )
         result = db.session.execute(sql, {RefField.CITATION_KEY.value: citation_key})
         return result.first() is not None
+
+    def delete_reference(self, citation_key: str):
+        """Deletes a reference from the database."""
+        sql = text(
+            f"""
+            DELETE FROM reference_values
+            WHERE citation_key = :citation_key
+            """
+        )
+        db.session.execute(sql, {"citation_key": citation_key})
+        db.session.commit()
