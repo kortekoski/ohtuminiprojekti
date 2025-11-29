@@ -5,7 +5,6 @@ from entities.reference import Reference
 from repositories.reference_repository import (
     ReferenceRepository,
     citation_key_exists,
-    create_reference,
 )
 
 
@@ -32,4 +31,4 @@ class ReferenceService:
         if citation_key_exists(citation_key):
             raise ValueError(f"Citation key '{citation_key}' already exists.")
 
-        return create_reference(citation_key, year, author, title, reftype)
+        return self._repo.create_reference(citation_key, year, author, title, reftype)

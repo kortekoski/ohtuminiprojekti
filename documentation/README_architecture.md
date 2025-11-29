@@ -2,7 +2,7 @@
 Projektissa on käytössä kerrosarkkitehtuuri. Lue aiheesta lisää täältä: 
 [HY Ohjelmistotuotannon kurssi - Kerrosarkkitehtuuri](https://ohjelmistotuotanto-hy.github.io/osa4/#kerrosarkkitehtuuri)
 
-````mermaid
+```mermaid
 flowchart TB
 
     subgraph UI["Templates (Presentation)"]
@@ -40,14 +40,14 @@ flowchart TB
     RefSvc --> RefRepo
     RefRepo --> SQL
 
-````
+```
 
 <br><br>
 
 # Sekvenssikaavio: 
 ## API → Service → Repository → Database
 
-````mermaid
+```mermaid
 
 sequenceDiagram
     participant User as User/Browser
@@ -57,24 +57,38 @@ sequenceDiagram
     participant Repo as reference_repository
     participant DB as Database
 
-    User ->> App: HTTP GET /reference/{id}
-    App ->> Val: validate(request)
+    User ->> App: POST /create_reference<br/>form data
+
+    App ->> App: read form fields
+    App ->> Repo: get_citation_keys()
+    Repo ->> DB: SELECT citation_key FROM reference_values
+    DB -->> Repo: list of keys
+    Repo -->> App: existing keys
+
+    App ->> App: new Reference(...)
+
+    App ->> Val: validate_reference(ref, existing_keys)
     Val -->> App: validation OK
 
-    App ->> Svc: get_reference(id)
-    Svc ->> Repo: fetch_reference(id)
-    Repo ->> DB: SELECT * FROM reference WHERE id = ?
+    App ->> Svc: create_reference(citation_key, year, author, title, reftype)
 
-    DB -->> Repo: result row
-    Repo -->> Svc: entity mapped
-    Svc -->> App: entity DTO
-    App -->> User: JSON/HTML response
+    Svc ->> Repo: create_reference(...)
+    Repo ->> DB: INSERT INTO reference_values (...)
 
-````
+    DB -->> Repo: commit OK
+    Repo -->> Svc: success
+    Svc -->> App: success
+
+    App -->> User: redirect to "/"
+
+
+```
 <br><br>
 
+
+
 # Kaavio: Robot Framework -testit käyttävät app_librarya
-````mermaid
+```mermaid
 flowchart TB
 
     RF["references.robot<br/>(varsinaiset testit)"]
@@ -95,13 +109,13 @@ flowchart TB
     Services --> Repos
     Repos --> DB
 
-````
+```
 
 <br><br>
 
 # Testit ja niiden suhde ohjelmakoodiin
 
-````mermaid
+```mermaid
 flowchart TB
 
     %% === APPLICATION LAYERS ===
@@ -169,4 +183,4 @@ flowchart TB
     %% === CUSTOM STYLE FOR TEST NODES ===
     classDef testnode fill:#fdf6e3,stroke:#b58900,stroke-width:2px,color:#333,font-weight:bold;
 
-````
+```

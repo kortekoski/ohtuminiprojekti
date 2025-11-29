@@ -3,7 +3,7 @@ from sqlalchemy import text
 
 from config import app, db
 from db_helper import setup_db
-from repositories.reference_repository import ReferenceRepository, create_reference
+from repositories.reference_repository import ReferenceRepository
 from tests.test_data import TestData
 
 
@@ -40,7 +40,7 @@ class TestReferenceRepository(unittest.TestCase):
         ref = TestData.valid_reference()
 
         # Insert into test database using existing create_reference()
-        create_reference(
+        self.repo.create_reference(
             ref.citation_key,
             ref.year,
             ref.author,
