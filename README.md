@@ -47,6 +47,7 @@ Formatointi blackilla:
 ````
 pre-commit install
 ````
+* Blackin voi myös suorittaa manuaalisesti:
 
 ```` 
 poetry run black .
