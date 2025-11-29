@@ -14,6 +14,7 @@ class app_library:
         author="Guybrush Threepwood",
         title="Different types of clover in Melee island",
         reftype="book",
+        extra: dict[str, str] = {},
     ):
         data = {
             RefField.CITATION_KEY.value: "Test2025",
@@ -21,6 +22,7 @@ class app_library:
             RefField.AUTHOR.value: author,
             RefField.TITLE.value: title,
             RefField.REFTYPE.value: reftype,
+            RefField.EXTRA.value: extra,
         }
 
         requests.post(f"{self._base_url}/add_test_reference", data=data)

@@ -11,6 +11,7 @@ class RefField(str, Enum):
     AUTHOR = "author"
     TITLE = "title"
     REFTYPE = "reftype"
+    EXTRA = "extra"
 
 
 class RefType(str, Enum):

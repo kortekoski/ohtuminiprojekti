@@ -6,10 +6,14 @@ from sqlalchemy import text
 from entities.reference import Reference
 from util import RefField
 
+import json
+
 
 class ReferenceRepository:
 
-    def get_references(self, order_by: RefField = None) -> list[Reference]:
+    def get_references(
+        self, order_by: RefField = RefField.CITATION_KEY
+    ) -> list[Reference]:
         """Fetches all references from the database."""
         sql = text(
             f"""
@@ -18,20 +22,32 @@ class ReferenceRepository:
                 {RefField.YEAR.value},
                 {RefField.AUTHOR.value},
                 {RefField.TITLE.value},
-                {RefField.REFTYPE.value}
+                {RefField.REFTYPE.value},
+                {RefField.EXTRA.value}
                 FROM reference_values
-                ORDER BY {order_by.value
-                            if order_by
-                            else RefField.CITATION_KEY.value}
+                ORDER BY {order_by.value}
                 """
         )
+
         result = db.session.execute(sql)
         rows = result.fetchall()
+
+        # jsonb is automagically converted to a python
+        # object so we don't have to call json.loads.
         return [
-            Reference(row[0], row[1], row[2], row[3], row[4], row[5]) for row in rows
+            Reference(row[0], row[1], row[2], row[3], row[4], row[5], row[6])
+            for row in rows
         ]
 
-    def create_reference(self, citation_key, year, author, title, reftype):
+    def create_reference(
+        self,
+        citation_key: str,
+        year: int,
+        author: str,
+        title: str,
+        reftype: str,
+        extra: dict[str, str] = {},
+    ):
         """Creates a new reference in the database."""
         sql = text(
             f"""
@@ -40,8 +56,9 @@ class ReferenceRepository:
             {RefField.YEAR.value},
             {RefField.AUTHOR.value},
             {RefField.TITLE.value},
-            {RefField.REFTYPE.value})
-            VALUES (:citation_key, :year, :author, :title, :reftype)
+            {RefField.REFTYPE.value},
+            {RefField.EXTRA.value})
+            VALUES (:citation_key, :year, :author, :title, :reftype, :extra)
             """
         )
         db.session.execute(
@@ -52,6 +69,7 @@ class ReferenceRepository:
                 RefField.AUTHOR.value: author,
                 RefField.TITLE.value: title,
                 RefField.REFTYPE.value: reftype,
+                RefField.EXTRA.value: json.dumps(extra),
             },
         )
         db.session.commit()

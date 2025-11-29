@@ -1,6 +1,4 @@
-"""Reference entity module."""
-
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from util import RefType
 
 from typing import Optional
@@ -16,15 +14,15 @@ class Reference:
     author: str
     title: str
     reftype: str = RefType.BOOK.value
-    attributes: dict[str, str] = dict()
+    extra: dict[str, str] = field(default_factory=dict)
 
     def get(self, attribute: str, default: Optional[str] = None) -> Optional[str]:
-        self.attributes.get(attribute, default)
+        self.extra.get(attribute, default)
 
-    def __str__(self):
+    def __str__(self) -> str:
         string = f"{self.citation_key}: {self.year}, {self.author}, {self.title}"
 
-        for key, item in self.attributes:
+        for key, item in self.extra:
             string += f" {key}={item}"
 
         return string
