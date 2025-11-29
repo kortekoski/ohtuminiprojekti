@@ -56,14 +56,9 @@ class ReferenceRepository:
             {RefField.YEAR.value},
             {RefField.AUTHOR.value},
             {RefField.TITLE.value},
-<<<<<<< HEAD
             {RefField.REFTYPE.value},
             {RefField.EXTRA.value})
-            VALUES (:citation_key, :year, :author, :title, :reftype, :extra)
-=======
-            {RefField.REFTYPE.value})
-            VALUES (:{RefField.CITATION_KEY.value}, :{RefField.YEAR.value}, :{RefField.AUTHOR.value}, :{RefField.TITLE.value}, :{RefField.REFTYPE.value})
->>>>>>> ae36683743e9b32b8ad9d79dae073f9ccdf25d9b
+            VALUES (:{RefField.CITATION_KEY.value}, :{RefField.YEAR.value}, :{RefField.AUTHOR.value}, :{RefField.TITLE.value}, :{RefField.REFTYPE.value}, :{RefField.EXTRA.value})
             """
         )
         db.session.execute(
