@@ -1,50 +1,26 @@
 import unittest
-from entities.reference import Reference
-from util import RefType, RefField
+from unittest.mock import Mock
 from services.reference_service import ReferenceService
+from entities.reference import Reference
 
 
 class TestReferenceService(unittest.TestCase):
 
-    def test_generate_bibtex(self):
-        refs = [
-            Reference(
-                id=1,
-                citation_key="Zelda1998",
-                year=1998,
-                author="Zelda",
-                title="Tunes for the harp, ocarina and violin",
-                reftype=RefType.BOOK.value,
-            ),
-            Reference(
-                id=2,
-                citation_key="Freeman1998",
-                year=1998,
-                author="Gordon Freeman",
-                title="Bending reality - a scientific approach",
-                reftype=RefType.ARTICLE.value,
-            ),
+    def test_service_returns_references_from_repository(self):
+        """Service should use repository.get_references() and return its result."""
+
+        # Arrange – mock repository
+        mock_repo = Mock()
+        mock_repo.get_references.return_value = [
+            Reference(1, "Key2024", 2024, "Author", "Title", "book")
         ]
 
-        bibtex = ReferenceService.generate_bibtex(refs)
+        service = ReferenceService(repo=mock_repo)
 
-        expected = (
-            "@book{Zelda1998,\n"
-            f"  {RefField.AUTHOR.value} = {{Zelda}},\n"
-            f"  {RefField.TITLE.value} = {{Tunes for the harp, ocarina and violin}},\n"
-            f"  {RefField.YEAR.value} = {{1998}}\n"
-            "}\n"
-            "\n"
-            "@article{Freeman1998,\n"
-            f"  {RefField.AUTHOR.value} = {{Gordon Freeman}},\n"
-            f"  {RefField.TITLE.value} = {{Bending reality - a scientific approach}},\n"
-            f"  {RefField.YEAR.value} = {{1998}}\n"
-            "}\n"
-        )
+        # Act
+        result = service.get_all_references()
 
         # Assert
-        self.assertEqual(bibtex.strip(), expected.strip())
-
-
-if __name__ == "__main__":
-    unittest.main()
+        mock_repo.get_references.assert_called_once()
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0].citation_key, "Key2024")
