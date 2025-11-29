@@ -1,7 +1,7 @@
 import unittest
 from entities.reference import Reference
+from services.bibtex_service import BibtexService
 from util import RefType, RefField
-from services.reference_service import ReferenceService
 
 
 class TestReferenceService(unittest.TestCase):
@@ -26,7 +26,7 @@ class TestReferenceService(unittest.TestCase):
             ),
         ]
 
-        bibtex = ReferenceService.generate_bibtex(refs)
+        bibtex = BibtexService.generate_bibtex(refs)
 
         expected = (
             "@book{Zelda1998,\n"

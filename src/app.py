@@ -7,6 +7,7 @@ from repositories.reference_repository import (
     create_reference,
 )
 from config import app, test_env
+from services.bibtex_service import BibtexService
 from services.reference_service import ReferenceService
 from services.validation_service import ValidationService
 from util import RefField
@@ -56,7 +57,7 @@ def download_bibtex():
         return redirect("/")
 
     try:
-        bibtex_content = ReferenceService.generate_bibtex(refs)
+        bibtex_content = BibtexService.generate_bibtex(refs)
         return Response(
             bibtex_content,
             mimetype="text/plain",

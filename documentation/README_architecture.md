@@ -13,11 +13,11 @@ flowchart TB
     subgraph Service["Services  (Business logic)"]
         RefSvc[reference_service]
         ValSvc[validation_service]
+        BibSvc[bibtex_service]
     end
 
     subgraph Repo["Repositories (Persistence)"]
         RefRepo[reference_repository]
-       
     end
 
     subgraph DB["Database"]
@@ -26,11 +26,20 @@ flowchart TB
 
     %% Connections
     Tmpl --> AppPy
+
+    %% UI -> Services
     AppPy --> ValSvc
-    ValSvc --> AppPy
     AppPy --> RefSvc
+    AppPy --> BibSvc
+
+    %% Service -> UI
+    ValSvc --> AppPy
+    BibSvc --> AppPy
+
+    %% Service -> Repository -> DB
     RefSvc --> RefRepo
     RefRepo --> SQL
+
 ````
 
 <br><br>
@@ -103,56 +112,61 @@ flowchart TB
     subgraph SERVICE["Service Layer"]
         RS["reference_service.py"]
         VS["validation_service.py"]
+        BS["bibtex_service.py"]
     end
 
     subgraph REPO["Repository Layer"]
         RR["reference_repository.py"]
     end
 
+    DB["Database (PostgreSQL)"]
 
-    DB["Database (SQLite / PostgreSQL)"]
 
-
-    %% === TEST LAYERS (mirroring app structure) ===
-    subgraph TAPI["API Integration Tests"]
-        T_ROUTE["integration/test_reference_routes.py"]
+    %% === TEST LAYERS (mirroring app hierarchy) ===
+    subgraph TAPI["integration"]
+        T_ROUTE["test_reference_routes.py"]:::testnode
     end
 
-    subgraph TSERVICE["Service Tests"]
-        T_RS["services/test_reference_service.py"]
-        T_VS["services/test_validation_service.py"]
+    subgraph TSERVICE["services"]
+        T_RS["test_reference_service.py"]:::testnode
+        T_VS["test_validation_service.py"]:::testnode
+        T_BS["test_bibtex_service.py"]:::testnode
     end
 
-    subgraph TREPO["Repository Tests"]
-        T_REPO["repositories/test_reference_repository.py"]
+    subgraph TREPO["repositories"]
+        T_REPO["test_reference_repository.py"]:::testnode
     end
 
     subgraph TDATA["Jaettu testiaineisto"]
-        TD["test_data.py"]
+        TD["test_data.py"]:::testnode
     end
 
 
-    %% === MAPPINGS: Tests → Code ===
-    %% API tests call app.py (routes)
+    %% === TEST → CODE MAPPINGS ===
     T_ROUTE --> APP
 
-    %% Service tests target service layer
+    %% === APPLICATION DEPENDENCIES ===
+    APP --> RS
+    APP --> VS
+    APP --> BS
+
     T_RS --> RS
     T_VS --> VS
+    T_BS --> BS
 
-    %% Repository test targets repository layer
     T_REPO --> RR
 
-    %% Shared test data is used by all tests
     TD --> T_ROUTE
     TD --> T_RS
     TD --> T_VS
+    TD --> T_BS
     TD --> T_REPO
 
-    %% Application dependencies
     RS --> RR
-    VS --> RR
     RR --> DB
 
+
+    %% === CUSTOM STYLE FOR TEST NODES ===
+    classDef testnode fill:#fdf6e3,stroke:#b58900,stroke-width:2px,color:#333,font-weight:bold;
 
 ````
