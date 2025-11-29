@@ -1,5 +1,6 @@
 {% extends "layout.html" %}
 
+{% import "reference_form_template.html" as forms %}
 {% block title %}
 Create a new reference
 {% endblock %}
@@ -87,6 +88,7 @@ Create a new reference
     </div>
   </div>
 </div>
-
+Testing
+{{ forms.form_main(schemas) }}
 
 {% endblock %}

@@ -1,0 +1,52 @@
+{% macro form_main(items) %}
+  {% for item in items %}
+    {% set name = item.attribute.value[0] %}
+    {% set display = item.attribute.value[1] %}
+    {% set type = item.attribute.value[2].value %}
+    {% set required = item.required %}
+    <label for="{{ name }}">{{ display }}</label><br>
+    <div>
+      {% if type == "literal" %}
+        {{ form_literal(name, required, display) }}
+      {% elif type == "integer" %}
+        {{ form_integer(name, required, display) }}
+      {% elif type == "name_list" %}
+        {{ form_list(name, required, display) }}
+      {% endif %}
+      <br>
+    </div>
+  {% endfor %}
+{% endmacro %}
+
+{% macro form_literal(name, required, display) %}
+  <input
+    type="text"
+    id="{{ name }}"
+    name="{{ name }}"
+    {% if required %}
+      required
+    {% endif %}
+    >
+{% endmacro %}
+
+{% macro form_integer(name, required, display) %}
+  <input
+    type="number"
+    id="{{ name }}"
+    name="{{ name }}"
+    {% if required %}
+      required
+    {% endif %}
+    >
+{% endmacro %}
+
+{% macro form_list(name, required, display) %}
+  <input
+    type="text"
+    id="{{ name }}"
+    name="{{ name }}"
+    {% if required %}
+      required
+    {% endif %}
+    >
+{% endmacro %}

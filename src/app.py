@@ -6,7 +6,8 @@ from config import app, test_env
 from services.bibtex_service import BibtexService
 from services.reference_service import ReferenceService
 from services.validation_service import ValidationService
-from util import RefField
+from services.template_service import TemplateService
+from util import RefField, RefType
 
 
 # ---------------------------
@@ -33,7 +34,9 @@ def index():
 @app.route("/new_reference")
 def new():
     """Renders the new reference creation form."""
-    return render_template("new_reference.html")
+    return render_template(
+        "new_reference.html", schemas=TemplateService.relevant_attributes(RefType.BOOK)
+    )
 
 
 @app.route("/create_reference", methods=["POST"])
