@@ -1,3 +1,4 @@
+import re
 from flask import Response, redirect, render_template, request, jsonify, flash, g
 from db_helper import reset_db
 from entities.reference import Reference
@@ -44,14 +45,30 @@ def reference_creation():
     title = request.form.get(RefField.TITLE.value)
     reftype = request.form.get(RefField.REFTYPE.value)
 
+    extra = dict()
+    for key, value, *_ in request.form.to_dict():
+        if key in [
+            RefField.CITATION_KEY.value,
+            RefField.YEAR.value,
+            RefField.AUTHOR.value,
+            RefField.TITLE.value,
+            RefField.REFTYPE.value,
+        ]:
+            continue
+        extra[key] = value
+
     reference_service = get_reference_service()
     existing_citation_keys = reference_service.get_citation_keys()
 
     try:
-        new_reference = Reference(None, citation_key, year, author, title, reftype)
+        new_reference = Reference(
+            None, citation_key, year, author, title, reftype, extra
+        )
 
         ValidationService.validate_reference(new_reference, existing_citation_keys)
-        reference_service.create_reference(citation_key, year, author, title, reftype)
+        reference_service.create_reference(
+            citation_key, year, author, title, reftype, extra
+        )
 
         flash("Reference created successfully!", "success")
         return redirect("/")
