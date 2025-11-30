@@ -1,29 +1,53 @@
-from repositories.reference_repository import create_reference, get_references
-from util import RefField, RefType
+"""Service layer for reference management."""
+
+from util import RefField
 from entities.reference import Reference
+from repositories.reference_repository import (
+    ReferenceRepository,
+)
+
+from typing import Optional
 
 
 class ReferenceService:
     """Business logic for reading and formatting references."""
 
-    @staticmethod
-    def generate_bibtex(refs: list[Reference]) -> str:
+    def __init__(self, repo=None):
+        self._repo = repo or ReferenceRepository()
 
-        entries = []
-        for ref in refs:
-            reftype = (
-                ref.reftype.value if isinstance(ref.reftype, RefType) else ref.reftype
-            )
+    def get_all_references(
+        self, order_by: RefField = RefField.CITATION_KEY
+    ) -> list[Reference]:
+        """Fetches all references from the repository."""
+        return self._repo.get_references(order_by)
 
-            entry = (
-                f"@{reftype}{{{ref.citation_key},\n"
-                f"  {RefField.AUTHOR.value} = {{{ref.author}}},\n"
-                f"  {RefField.TITLE.value} = {{{ref.title}}},\n"
-                f"  {RefField.YEAR.value} = {{{ref.year}}}\n"
-                f"}}\n"
-            )
+    def create_reference(
+        self,
+        citation_key: str,
+        year: int,
+        author: str,
+        title: str,
+        reftype: str,
+        extra: dict[str, str] = {},
+    ):
+        """Creates a new reference in the repository."""
 
-            entries.append(entry)
+        if self._repo.citation_key_exists(citation_key):
+            raise ValueError(f"Citation key '{citation_key}' already exists.")
 
-        bibtex_content = "\n".join(entries)
-        return bibtex_content
+        return self._repo.create_reference(
+            citation_key, year, author, title, reftype, extra
+        )
+
+    def delete_reference(self, citation_key: str):
+        """Deletes a reference from the repository."""
+        self._repo.delete_reference(citation_key)
+
+    def get_citation_keys(self) -> list[str]:
+        """Fetches all citation keys from the repository."""
+        references = self._repo.get_references()
+        return [ref.citation_key for ref in references]
+
+    def citation_key_exists(self, citation_key: str) -> bool:
+        """Checks if a citation key exists in the repository."""
+        return citation_key in self.get_citation_keys()

@@ -109,9 +109,9 @@ class ValidationService:
                 John (or multiple authors separated by ' and ')"""
             )
 
-        # Title should be at least 10 characters long?
+        # Title should be at least 2 characters long
         if not ValidationService._validate_title(ref.title):
-            raise UserInputError("Title must be at least 10 characters long")
+            raise UserInputError("Title must be at least 2 characters long")
 
         # validate citation key
         if not ValidationService._validate_citation_key(ref.citation_key):
