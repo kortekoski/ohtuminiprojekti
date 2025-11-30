@@ -108,3 +108,34 @@ class ReferenceRepository:
         )
         db.session.execute(sql, {RefField.CITATION_KEY.value: citation_key})
         db.session.commit()
+
+    def update_reference(
+        self,
+        citation_key: str,
+        author: str,
+        title: str,
+        reftype: str,
+        extra: dict[str, str] = {},
+    ):
+        """Updates an existing reference in the database."""
+        sql = text(
+            f"""
+            UPDATE reference_values
+            SET {RefField.AUTHOR.value} = :{RefField.AUTHOR.value},
+                {RefField.TITLE.value} = :{RefField.TITLE.value},
+                {RefField.REFTYPE.value} = :{RefField.REFTYPE.value},
+                {RefField.EXTRA.value} = :{RefField.EXTRA.value}
+            WHERE {RefField.CITATION_KEY.value} = :{RefField.CITATION_KEY.value}
+            """
+        )
+        db.session.execute(
+            sql,
+            {
+                RefField.CITATION_KEY.value: citation_key,
+                RefField.AUTHOR.value: author,
+                RefField.TITLE.value: title,
+                RefField.REFTYPE.value: reftype,
+                RefField.EXTRA.value: json.dumps(extra),
+            },
+        )
+        db.session.commit()
