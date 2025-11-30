@@ -45,7 +45,7 @@ jobs:
              poetry run pylint --errors-only src
              poetry run black --check .
       - name: Run unit tests
-        run: poetry run pytest src/tests
+        run: poetry run coverage run --branch -m pytest
       - name: Coverage report
         run: poetry run coverage xml
       - name: Coverage report to Codecov
