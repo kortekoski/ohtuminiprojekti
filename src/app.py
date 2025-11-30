@@ -74,7 +74,8 @@ def reference_creation():
         return redirect("/")
     except Exception as error:
         flash(str(error), "error")
-        return redirect("/new_reference")    
+        return redirect("/new_reference")
+
 
 @app.route("/delete_reference/<citation_key>", methods=["POST"])
 def delete_reference(citation_key):
@@ -89,6 +90,7 @@ def delete_reference(citation_key):
     except Exception as error:
         flash(str(error), "error")
     return redirect("/")
+
 
 @app.route("/update_reference/<int:ref_id>", methods=["POST"])
 def update_reference(ref_id):
