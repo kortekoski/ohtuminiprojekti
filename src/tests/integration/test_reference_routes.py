@@ -56,7 +56,7 @@ class TestReferenceRoutes(unittest.TestCase):
         # Deletion returns the proper status code
         response = self.client.post("/delete_reference/Test2024")
         self.assertIn(response.status_code, [302, 303])
-        
+
         # Index no longer contains the reference
         response = self.client.get("/")
         self.assertNotIn(b"Bad Dude", response.data)
