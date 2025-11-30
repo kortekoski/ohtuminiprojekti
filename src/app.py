@@ -85,6 +85,9 @@ def delete_reference(citation_key):
     """
     service = get_reference_service()
     try:
+        if not service.citation_key_exists(citation_key):
+            flash(f"Reference {citation_key} not found.", "error")
+            return redirect("/")
         service.delete_reference(citation_key)
         flash(f"Reference {citation_key} deleted successfully!", "success")
     except Exception as error:
