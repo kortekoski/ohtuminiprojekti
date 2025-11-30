@@ -39,6 +39,30 @@ class ReferenceRepository:
             for row in rows
         ]
 
+    def get_reference_by_citation_key(self, citation_key: str) -> Reference:
+        """Fetches a single reference by its citation key."""
+        sql = text(
+            f"""
+                SELECT id, 
+                {RefField.CITATION_KEY.value},
+                {RefField.YEAR.value},
+                {RefField.AUTHOR.value},
+                {RefField.TITLE.value},
+                {RefField.REFTYPE.value},
+                {RefField.EXTRA.value}
+                FROM reference_values
+                WHERE {RefField.CITATION_KEY.value} = :{RefField.CITATION_KEY.value}
+                """
+        )
+
+        result = db.session.execute(sql, {RefField.CITATION_KEY.value: citation_key})
+        row = result.fetchone()
+
+        if row is None:
+            return None
+
+        return Reference(row[0], row[1], row[2], row[3], row[4], row[5], row[6])
+
     def create_reference(
         self,
         citation_key: str,
@@ -73,6 +97,8 @@ class ReferenceRepository:
             },
         )
         db.session.commit()
+
+        return self.get_reference_by_citation_key(citation_key).id
 
     def get_citation_keys(self) -> list[str]:
         """Fetches all citation keys from the database."""
@@ -111,31 +137,43 @@ class ReferenceRepository:
 
     def update_reference(
         self,
+        id: int,
         citation_key: str,
-        author: str,
-        title: str,
-        reftype: str,
-        extra: dict[str, str] = {},
+        year: int = None,
+        author: str = None,
+        title: str = None,
+        reftype: str = None,
+        extra: dict[str, str] = None,
     ):
-        """Updates an existing reference in the database."""
+        """Updates only fields that are not None."""
+
+        updates = {}
+        if citation_key is not None:
+            updates["citation_key"] = citation_key
+        if year is not None:
+            updates["year"] = year
+        if author is not None:
+            updates["author"] = author
+        if title is not None:
+            updates["title"] = title
+        if reftype is not None:
+            updates["reftype"] = reftype
+        if extra is not None:
+            updates["extra"] = json.dumps(extra)
+
+        if not updates:
+            return  # nothing to update
+
+        set_clause = ", ".join([f"{field} = :{field}" for field in updates.keys()])
+
         sql = text(
             f"""
             UPDATE reference_values
-            SET {RefField.AUTHOR.value} = :{RefField.AUTHOR.value},
-                {RefField.TITLE.value} = :{RefField.TITLE.value},
-                {RefField.REFTYPE.value} = :{RefField.REFTYPE.value},
-                {RefField.EXTRA.value} = :{RefField.EXTRA.value}
-            WHERE {RefField.CITATION_KEY.value} = :{RefField.CITATION_KEY.value}
-            """
+            SET {set_clause}
+            WHERE id = :id
+        """
         )
-        db.session.execute(
-            sql,
-            {
-                RefField.CITATION_KEY.value: citation_key,
-                RefField.AUTHOR.value: author,
-                RefField.TITLE.value: title,
-                RefField.REFTYPE.value: reftype,
-                RefField.EXTRA.value: json.dumps(extra),
-            },
-        )
+
+        updates["id"] = id
+        db.session.execute(sql, updates)
         db.session.commit()

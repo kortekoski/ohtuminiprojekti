@@ -88,12 +88,8 @@ class TestReferenceRepository(unittest.TestCase):
 
         ref = TestData.valid_reference()
 
-        self.repo.create_reference(
-            ref.citation_key,
-            ref.year,
-            ref.author,
-            ref.title,
-            ref.reftype,
+        id = self.repo.create_reference(
+            ref.citation_key, ref.year, ref.author, ref.title, ref.reftype, {}
         )
 
         # Act
@@ -101,10 +97,7 @@ class TestReferenceRepository(unittest.TestCase):
         new_title = "New Title"
         new_reftype = "book"
         self.repo.update_reference(
-            ref.citation_key,
-            new_author,
-            new_title,
-            new_reftype,
+            id, ref.citation_key, ref.year, new_author, new_title, new_reftype, {}
         )
 
         updated = self.repo.get_references()
