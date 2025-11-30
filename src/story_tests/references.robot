@@ -37,6 +37,16 @@ One reference is shown after adding it via input
     Page Should Contain  How to Avoid Huge Ships
     Page Should Contain  1982
 
+Reference is not visible after deletion
+    Add Test Reference
+    Go To  ${HOME_URL}
+    Click Button  delete
+    Alert Should Be Present
+    Title Should Be  Reference app
+    Page Should Contain  deleted successfully!
+    Page Should Not Contain  Threepwood
+    Page Should Not Contain  clover
+
 Get to create reference via navbar
     Go To  ${HOME_URL}
     Click Link  Create Reference
