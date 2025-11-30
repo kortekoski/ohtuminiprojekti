@@ -25,12 +25,13 @@ One reference is shown after adding it
 
 One reference is shown after adding it via input
     Go To  ${HOME_URL}/new_reference
+    Click Link  Book
+    Title Should Be  Create a new reference
     Input Text  author  John Trimmer
     Input Text  title  How to Avoid Huge Ships
     Input Text  year  1982
     Input Text  citation_key  Trimmer1982
-    Select From List By Value  reftype  book
-    Click Button  Create
+    Click Button  Create Reference
     Title Should Be  Reference app
     Page Should Contain  created successfully!
     Page Should Contain  John Trimmer
@@ -50,7 +51,7 @@ Reference is not visible after deletion
 Get to create reference via navbar
     Go To  ${HOME_URL}
     Click Link  Create Reference
-    Title Should Be  Create a new reference
+    Title Should Be  Choose reference type
 
 Get to frontpage via navbar
     Go To  ${HOME_URL}/new_reference

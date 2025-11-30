@@ -31,10 +31,13 @@ def index():
 
 
 @app.route("/new_reference")
-def new():
+def new_type_selection():
     """Renders the new reference creation form."""
     return render_template("new_reference.html")
 
+@app.route("/new_reference/<reftype>")
+def new(reftype):
+    return render_template(f"add_{reftype}.html")
 
 @app.route("/create_reference", methods=["POST"])
 def reference_creation():
