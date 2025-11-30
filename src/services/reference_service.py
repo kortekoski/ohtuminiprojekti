@@ -6,8 +6,6 @@ from repositories.reference_repository import (
     ReferenceRepository,
 )
 
-from typing import Optional
-
 
 class ReferenceService:
     """Business logic for reading and formatting references."""
@@ -20,6 +18,10 @@ class ReferenceService:
     ) -> list[Reference]:
         """Fetches all references from the repository."""
         return self._repo.get_references(order_by)
+
+    def get_reference_by_id(self, id: int) -> Reference:
+        """Fetches a single reference by its ID from the repository."""
+        return self._repo.get_reference_by_id(id)
 
     def create_reference(
         self,
@@ -43,6 +45,26 @@ class ReferenceService:
         """Deletes a reference from the repository."""
         self._repo.delete_reference(citation_key)
 
+    def update_reference_by_id(
+        self,
+        id: int,
+        citation_key: str,
+        year: int = None,
+        author: str = None,
+        title: str = None,
+        reftype: str = None,
+        extra: dict[str, str] = None,
+    ):
+        """Updates an existing reference in the repository.
+        If citation_key is changed, ensures the new key does not already exist.
+        Otherwise we might end up with duplicate citation keys.
+        """
+        if self.citation_key_exists(citation_key):
+            raise ValueError(f"Citation key '{citation_key}' already exists.")
+        self._repo.update_reference(
+            id, citation_key, year, author, title, reftype, extra
+        )
+
     def get_citation_keys(self) -> list[str]:
         """Fetches all citation keys from the repository."""
         references = self._repo.get_references()
@@ -51,3 +73,8 @@ class ReferenceService:
     def citation_key_exists(self, citation_key: str) -> bool:
         """Checks if a citation key exists in the repository."""
         return citation_key in self.get_citation_keys()
+
+    def id_exists(self, id: int) -> bool:
+        """Checks if an ID exists in the repository."""
+        references = self._repo.get_references()
+        return any(ref.id == id for ref in references)
