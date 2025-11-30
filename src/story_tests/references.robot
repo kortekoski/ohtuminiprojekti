@@ -40,7 +40,7 @@ One reference is shown after adding it via input
 Reference is not visible after deletion
     Add Test Reference
     Go To  ${HOME_URL}
-    Click Button  delete
+    Click Button  delete-Test2025
     Alert Should Be Present
     Title Should Be  Reference app
     Page Should Contain  deleted successfully!
