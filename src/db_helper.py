@@ -50,6 +50,22 @@ def setup_db():
     db.session.execute(sql)
     db.session.commit()
 
+    # ----------------------------------------------------------------------
+    # Reset all sequences (like AUTO_INCREMENT reset to 1)
+    # ----------------------------------------------------------------------
+    sequences = [
+        "reference_values_id_seq",
+        # If you add more tables with SERIAL fields, add them here:
+        # "some_other_table_id_seq",
+    ]
+
+    for seq in sequences:
+        try:
+            print(f"Resetting sequence {seq}")
+            db.session.execute(text(f"ALTER SEQUENCE {seq} RESTART WITH 1"))
+        except Exception as e:
+            print(f"Could not reset sequence {seq}: {e}")
+
 
 if __name__ == "__main__":
     with app.app_context():

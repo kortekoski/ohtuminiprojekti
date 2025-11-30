@@ -39,6 +39,30 @@ class ReferenceRepository:
             for row in rows
         ]
 
+    def get_reference_by_id(self, id: int) -> Reference:
+        """Fetches a single reference by its ID."""
+        sql = text(
+            f"""
+                SELECT id, 
+                {RefField.CITATION_KEY.value},
+                {RefField.YEAR.value},
+                {RefField.AUTHOR.value},
+                {RefField.TITLE.value},
+                {RefField.REFTYPE.value},
+                {RefField.EXTRA.value}
+                FROM reference_values
+                WHERE id = :id
+                """
+        )
+
+        result = db.session.execute(sql, {"id": id})
+        row = result.fetchone()
+
+        if row is None:
+            return None
+
+        return Reference(row[0], row[1], row[2], row[3], row[4], row[5], row[6])
+
     def get_reference_by_citation_key(self, citation_key: str) -> Reference:
         """Fetches a single reference by its citation key."""
         sql = text(
