@@ -34,6 +34,8 @@ class ReferenceService:
 
     def delete_reference(self, citation_key: str):
         """Deletes a reference from the repository."""
+        if not self._repo.citation_key_exists(citation_key):
+            raise ValueError(f"Citation key '{citation_key}' does not exist.")
         self._repo.delete_reference(citation_key)
 
     def get_citation_keys(self) -> list[str]:

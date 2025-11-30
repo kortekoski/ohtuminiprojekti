@@ -60,6 +60,23 @@ def reference_creation():
         return redirect("/new_reference")
 
 
+@app.route("/delete_reference", methods=["POST"])
+def delete_reference():
+    """Handles the deletion of a reference."""
+    citation_key = request.form.get(RefField.CITATION_KEY.value)
+
+    reference_service = get_reference_service()
+
+    try:
+        reference_service.delete_reference(citation_key)
+
+        flash("Reference deleted successfully!", "success")
+        return redirect("/")
+    except Exception as error:
+        flash(str(error), "error")
+        return redirect("/")
+
+
 @app.route("/download_bibtex")
 def download_bibtex():
     reference_service = get_reference_service()

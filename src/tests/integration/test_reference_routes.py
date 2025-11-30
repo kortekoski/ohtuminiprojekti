@@ -42,3 +42,10 @@ class TestReferenceRoutes(unittest.TestCase):
         self.assertIn(b"Bad Dude", response.data)
         self.assertIn(b"all out of gum", response.data)
         self.assertIn(b"2001", response.data)
+
+    def delete_reference(self, citation_key: str):
+        """Helper method to delete a reference by citation key"""
+        return self.client.post(
+            "/delete_reference",
+            data={"citation_key": citation_key},
+        )
