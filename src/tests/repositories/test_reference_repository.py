@@ -83,6 +83,38 @@ class TestReferenceRepository(unittest.TestCase):
         remaining = self.repo.get_references()
         self.assertEqual(len(remaining), 0)
 
+    def test_update_reference_modifies_existing_row(self):
+        """Repository.update_reference should modify the correct row in the database."""
+
+        ref = TestData.valid_reference()
+
+        self.repo.create_reference(
+            ref.citation_key,
+            ref.year,
+            ref.author,
+            ref.title,
+            ref.reftype,
+        )
+
+        # Act
+        new_author = "New Author"
+        new_title = "New Title"
+        new_reftype = "book"
+        self.repo.update_reference(
+            ref.citation_key,
+            new_author,
+            new_title,
+            new_reftype,
+        )
+
+        updated = self.repo.get_references()
+        self.assertEqual(len(updated), 1)
+        updated_ref = updated[0]
+
+        self.assertEqual(updated_ref.author, new_author)
+        self.assertEqual(updated_ref.title, new_title)
+        self.assertEqual(updated_ref.reftype, new_reftype)
+
 
 if __name__ == "__main__":
     unittest.main()
