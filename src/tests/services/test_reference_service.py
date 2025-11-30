@@ -122,30 +122,34 @@ class TestReferenceService(unittest.TestCase):
             data[RefField.EXTRA.value],
         )
 
-    def test_update_fails_if_citation_key_unchanged(self):
-        """Updating should fail when trying to use an already existing citation_key."""
+    def test_update_fails_if_citation_key_belongs_to_another_reference(self):
+        """Updating should fail ONLY when changing to a citation_key
+        that belongs to a different reference."""
 
         # Arrange
         mock_repo = Mock()
 
         # Two existing references in database
-        existing_refs = TestData.valid_multiple_reference_objects()
-        old = existing_refs[0]  # id=1, citation_key="Test2024"
-        other = existing_refs[1]  # id=2, citation_key="Test2025"
+        refs = TestData.valid_multiple_reference_objects()
+        old = refs[0]  # id=1, citation_key="Test2024"
+        other = refs[1]  # id=2, citation_key="Test2025"
 
-        # Service should see all existing citation keys
-        mock_repo.get_references.return_value = existing_refs
+        # Repository returns both references
+        mock_repo.get_references.return_value = refs
 
-        # Mock: this citation key already exists → update MUST fail
-        mock_repo.citation_key_exists.return_value = True
+        # Mock: citation_key_exists("Test2025") → True
+        # This simulates trying to change key to another reference's key
+        mock_repo.citation_key_exists.side_effect = (
+            lambda key: key == other.citation_key
+        )
 
         service = ReferenceService(repo=mock_repo)
 
-        # Attempt to update using SAME citation key "Test2024"
+        # ACT + ASSERT — Trying to update old.id to use other's key
         with self.assertRaises(ValueError) as ctx:
             service.update_reference_by_id(
                 id=old.id,
-                citation_key=old.citation_key,  # <-- SAME, not allowed
+                citation_key=other.citation_key,  # <-- belongs to ID 2
                 year=old.year,
                 author=old.author,
                 title=old.title,
@@ -153,8 +157,8 @@ class TestReferenceService(unittest.TestCase):
                 extra=old.extra,
             )
 
-        # Correct error message
+        # Ensure error explains the situation
         self.assertIn("already exists", str(ctx.exception))
 
-        # Ensure repository.update_reference was NEVER called
+        # Repository update must NEVER be called
         mock_repo.update_reference.assert_not_called()

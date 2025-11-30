@@ -188,7 +188,21 @@ class ReferenceRepository:
         if not updates:
             return  # nothing to update
 
-        set_clause = ", ".join([f"{field} = :{field}" for field in updates.keys()])
+        field_mapping = {
+            "citation_key": RefField.CITATION_KEY.value,
+            "year": RefField.YEAR.value,
+            "author": RefField.AUTHOR.value,
+            "title": RefField.TITLE.value,
+            "reftype": RefField.REFTYPE.value,
+            "extra": RefField.EXTRA.value,
+        }
+        set_clause = ", ".join(
+            [
+                f"{field_mapping[field]} = :{field}"
+                for field in updates.keys()
+                if field in field_mapping
+            ]
+        )
 
         sql = text(
             f"""
