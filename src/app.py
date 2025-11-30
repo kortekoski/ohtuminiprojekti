@@ -82,8 +82,9 @@ def delete_reference(citation_key):
     Handles the deletion of a reference by citation key.
     The citation key is chosen as the parameter due to it being unique between all references.
     """
+    service = get_reference_service()
     try:
-        ReferenceService.delete_reference_by_citation_key(citation_key)
+        service.delete_reference(citation_key)
         flash(f"Reference {citation_key} deleted successfully!", "success")
     except Exception as error:
         flash(str(error), "error")
