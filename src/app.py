@@ -77,6 +77,24 @@ def reference_creation():
         return redirect("/new_reference")
 
 
+@app.route("/delete_reference/<citation_key>", methods=["POST"])
+def delete_reference(citation_key):
+    """
+    Handles the deletion of a reference by citation key.
+    The citation key is chosen as the parameter due to it being unique between all references.
+    """
+    service = get_reference_service()
+    try:
+        if not service.citation_key_exists(citation_key):
+            flash(f"Reference {citation_key} not found.", "error")
+            return redirect("/")
+        service.delete_reference(citation_key)
+        flash(f"Reference {citation_key} deleted successfully!", "success")
+    except Exception as error:
+        flash(str(error), "error")
+    return redirect("/")
+
+
 @app.route("/update_reference/<int:ref_id>", methods=["POST"])
 def update_reference(ref_id):
     """Handles the updating of an existing reference."""
