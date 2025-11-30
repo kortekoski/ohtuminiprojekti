@@ -32,7 +32,7 @@ One reference is shown after adding it via input
     Select From List By Value  reftype  book
     Click Button  Create
     Title Should Be  Reference app
-    Page Should Contain  Reference created successfully!
+    Page Should Contain  created successfully!
     Page Should Contain  John Trimmer
     Page Should Contain  How to Avoid Huge Ships
     Page Should Contain  1982

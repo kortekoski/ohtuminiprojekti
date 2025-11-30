@@ -58,3 +58,22 @@ class TestReferenceRoutes(unittest.TestCase):
         self.assertNotIn(b"all out of gum", response.data)
         self.assertNotIn(b"2001", response.data)
         
+    def test_update_reference_redirects_to_home(self):
+        # Create reference first
+        self.client.post("/create_reference", data=TestData.valid_reference_json())
+
+        # Update reference
+        response = self.client.post(
+            "/update_reference/1",
+            data=TestData.updated_reference_json(),
+            follow_redirects=False,
+        )
+
+        # Validate redirect
+        self.assertIn(response.status_code, (302, 303))
+        self.assertEqual(response.location, "/")
+
+        # Load homepage to check updated values
+        home = self.client.get("/")
+        self.assertNotIn(b"Bad Dude", home.data)
+        self.assertIn(b"Good Dude", home.data)
