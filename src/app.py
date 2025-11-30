@@ -48,7 +48,7 @@ def reference_creation():
     title = request.form.get(RefField.TITLE.value)
     reftype = request.form.get(RefField.REFTYPE.value)
 
-    extra = dict()
+    extra = {}
     for key, value, *_ in request.form.to_dict():
         if key in [
             RefField.CITATION_KEY.value,
@@ -111,7 +111,7 @@ def update_reference(ref_id):
     title = request.form.get(RefField.TITLE.value)
     reftype = request.form.get(RefField.REFTYPE.value)
 
-    extra = dict()
+    extra = {}
     for key, value, *_ in request.form.to_dict():
         if key in [
             RefField.CITATION_KEY.value,
@@ -152,7 +152,7 @@ def update_reference(ref_id):
         return redirect("/")
     except Exception as error:
         flash(str(error), "error")
-        return redirect(f"/")
+        return redirect("/")
 
 
 @app.route("/download_bibtex")
