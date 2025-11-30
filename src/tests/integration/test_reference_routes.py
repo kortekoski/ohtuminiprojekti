@@ -47,12 +47,17 @@ class TestReferenceRoutes(unittest.TestCase):
         """Test that a deleted reference does not appear on the index page."""
         self.client.post("/create_reference", data=TestData.valid_reference_json())
 
+        # First assert that the created ref is visible
         response = self.client.get("/")
         self.assertIn(b"Bad Dude", response.data)
         self.assertIn(b"all out of gum", response.data)
         self.assertIn(b"2001", response.data)
 
-        self.client.post("/delete_reference/Test2024")
+        # Deletion returns the proper status code
+        response = self.client.post("/delete_reference/Test2024")
+        self.assertIn(response.status_code, [302, 303])
+
+        # Index no longer contains the reference
         response = self.client.get("/")
         self.assertNotIn(b"Bad Dude", response.data)
         self.assertNotIn(b"all out of gum", response.data)
