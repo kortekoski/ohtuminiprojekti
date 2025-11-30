@@ -42,3 +42,19 @@ class TestReferenceRoutes(unittest.TestCase):
         self.assertIn(b"Bad Dude", response.data)
         self.assertIn(b"all out of gum", response.data)
         self.assertIn(b"2001", response.data)
+
+    def test_deleted_reference_not_on_index(self):
+        """Test that a deleted reference does not appear on the index page."""
+        self.client.post("/create_reference", data=TestData.valid_reference_json())
+
+        response = self.client.get("/")
+        self.assertIn(b"Bad Dude", response.data)
+        self.assertIn(b"all out of gum", response.data)
+        self.assertIn(b"2001", response.data)
+
+        self.client.post("/delete_reference/Test2024")
+        response = self.client.get("/")
+        self.assertNotIn(b"Bad Dude", response.data)
+        self.assertNotIn(b"all out of gum", response.data)
+        self.assertNotIn(b"2001", response.data)
+        
