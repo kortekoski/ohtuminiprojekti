@@ -1,4 +1,3 @@
-import re
 from flask import Response, redirect, render_template, request, jsonify, flash, g
 from db_helper import reset_db
 from entities.reference import Reference
@@ -37,6 +36,7 @@ def new_type_selection():
 
 @app.route("/new_reference/<reftype>")
 def new(reftype):
+    """renders the addition form for the selected type"""
     return render_template(f"add_{reftype}.html")
 
 @app.route("/create_reference", methods=["POST"])
@@ -150,13 +150,14 @@ def update_reference(ref_id):
 
         flash(f"Reference {old_ref.citation_key} updated successfully!", "success")
         return redirect("/")
-    except Exception as error:
+    except Exception as error:  # pylint: disable=broad-exception-caught
         flash(str(error), "error")
         return redirect("/")
 
 
 @app.route("/download_bibtex")
 def download_bibtex():
+    """generates and gives the BibTex file"""
     reference_service = get_reference_service()
     refs = reference_service.get_all_references()
 
@@ -173,7 +174,7 @@ def download_bibtex():
                 "Content-Disposition": "attachment; filename=references.bib",
             },
         )
-    except Exception as error:
+    except Exception as error:  # pylint: disable=broad-exception-caught
         flash(str(error), "error")
         return redirect("/")
 
