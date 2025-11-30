@@ -1,4 +1,7 @@
-"""main application defining routes and reference logic"""
+"""
+main application defining routes and reference logic
+"""
+
 from flask import Response, redirect, render_template, request, jsonify, flash, g
 from db_helper import reset_db
 from entities.reference import Reference
@@ -35,10 +38,12 @@ def new_type_selection():
     """Renders the new reference creation form."""
     return render_template("new_reference.html")
 
+
 @app.route("/new_reference/<reftype>")
 def new(reftype):
     """renders the addition form for the selected type"""
     return render_template(f"add_{reftype}.html")
+
 
 @app.route("/create_reference", methods=["POST"])
 def reference_creation():
