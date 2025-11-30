@@ -1,3 +1,4 @@
+"""main application defining routes and reference logic"""
 from flask import Response, redirect, render_template, request, jsonify, flash, g
 from db_helper import reset_db
 from entities.reference import Reference
@@ -75,7 +76,7 @@ def reference_creation():
 
         flash(f"Reference {citation_key} created successfully!", "success")
         return redirect("/")
-    except Exception as error:
+    except Exception as error:  # pylint: disable=broad-exception-caught
         flash(str(error), "error")
         return redirect("/new_reference")
 
@@ -93,7 +94,7 @@ def delete_reference(citation_key):
             return redirect("/")
         service.delete_reference(citation_key)
         flash(f"Reference {citation_key} deleted successfully!", "success")
-    except Exception as error:
+    except Exception as error:  # pylint: disable=broad-exception-caught
         flash(str(error), "error")
     return redirect("/")
 
