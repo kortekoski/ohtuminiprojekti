@@ -14,7 +14,6 @@ Reference app
     {% else %}
       <ol class="list-group list-group-numbered list-group-flush">
         {% for reference in references %}
-            {% if reference.reftype == 'book' %}
               <li class="list-group-item">
                 <div class="d-flex w-100 justify-content-between mt-3">
                   <h5 class="mb-2">{{ reference.title }}.</h5>
@@ -32,7 +31,6 @@ Reference app
                   </form>
                 </div>
               </li>
-            {% endif %}
         {% endfor %}
       </ol>
     {% endif %}
