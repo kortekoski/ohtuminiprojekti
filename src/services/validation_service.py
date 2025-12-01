@@ -3,7 +3,6 @@
 from datetime import datetime
 import re
 from entities.reference import Reference
-from repositories.reference_repository import get_citation_keys
 from util import RefField, RefType, UserInputError, ValueError
 
 
@@ -47,8 +46,8 @@ class ValidationService:
 
     @staticmethod
     def _validate_title(title):
-        """Validates that the title is at least 10 characters long."""
-        return len(title) >= 10
+        """Validates that the title is at least 2 characters long."""
+        return len(title) >= 2
 
     @staticmethod
     def _validate_citation_key(citation_key):
@@ -110,9 +109,9 @@ class ValidationService:
                 John (or multiple authors separated by ' and ')"""
             )
 
-        # Title should be at least 10 characters long?
+        # Title should be at least 2 characters long
         if not ValidationService._validate_title(ref.title):
-            raise UserInputError("Title must be at least 10 characters long")
+            raise UserInputError("Title must be at least 2 characters long")
 
         # validate citation key
         if not ValidationService._validate_citation_key(ref.citation_key):
@@ -133,26 +132,3 @@ class ValidationService:
             raise UserInputError("Incorrect bibtex reference reftype")
 
         return True
-
-    @staticmethod
-    def _is_valid_reference_helper(maybe_reference: dict, key: str) -> bool:
-        """Helper function to check that a key exists and is non-empty in a dictionary."""
-        return key in maybe_reference and maybe_reference[key] != []
-
-    @staticmethod
-    def is_valid_reference(maybe_reference: dict[str, list[str] | str | int]) -> bool:
-        """Checks that the provided dictionary has all required keys for a reference."""
-        required_keys = [
-            RefField.CITATION_KEY,
-            RefField.YEAR,
-            RefField.AUTHOR,
-            RefField.TITLE,
-            RefField.REFTYPE,
-        ]
-
-        validator_iter = map(
-            lambda x: ValidationService._is_valid_reference_helper(maybe_reference, x),
-            required_keys,
-        )
-
-        return all(validator_iter)

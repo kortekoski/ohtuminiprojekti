@@ -29,8 +29,7 @@ a:hover {
 
 .create-bg {
   margin: 0;
-  height: 100vh;
-  overflow: hidden;
+  min-height: 100vh;
   background-color: #A39A92;
 }
 

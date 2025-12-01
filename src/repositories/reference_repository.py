@@ -6,62 +6,212 @@ from sqlalchemy import text
 from entities.reference import Reference
 from util import RefField
 
-
-def get_references(order_by: RefField = None) -> list[Reference]:
-    """Fetches all references from the database."""
-    sql = text(
-        f"""
-               SELECT id, 
-               {RefField.CITATION_KEY.value},
-               {RefField.YEAR.value},
-               {RefField.AUTHOR.value},
-               {RefField.TITLE.value},
-               {RefField.REFTYPE.value}
-               FROM reference_values
-               ORDER BY {order_by.value
-                         if order_by
-                         else RefField.CITATION_KEY.value}
-               """
-    )
-    result = db.session.execute(sql)
-    rows = result.fetchall()
-    return [Reference(row[0], row[1], row[2], row[3], row[4], row[5]) for row in rows]
+import json
 
 
-def create_reference(citation_key, year, author, title, reftype):
-    """Creates a new reference in the database."""
-    sql = text(
-        f"""
-        INSERT INTO reference_values ( 
-        {RefField.CITATION_KEY.value},
-        {RefField.YEAR.value},
-        {RefField.AUTHOR.value},
-        {RefField.TITLE.value},
-        {RefField.REFTYPE.value})
-        VALUES (:citation_key, :year, :author, :title, :reftype)
+class ReferenceRepository:
+
+    def get_references(
+        self, order_by: RefField = RefField.CITATION_KEY
+    ) -> list[Reference]:
+        """Fetches all references from the database."""
+        sql = text(
+            f"""
+                SELECT id, 
+                {RefField.CITATION_KEY.value},
+                {RefField.YEAR.value},
+                {RefField.AUTHOR.value},
+                {RefField.TITLE.value},
+                {RefField.REFTYPE.value},
+                {RefField.EXTRA.value}
+                FROM reference_values
+                ORDER BY {order_by.value}
+                """
+        )
+
+        result = db.session.execute(sql)
+        rows = result.fetchall()
+
+        # jsonb is automagically converted to a python
+        # object so we don't have to call json.loads.
+        return [
+            Reference(row[0], row[1], row[2], row[3], row[4], row[5], row[6])
+            for row in rows
+        ]
+
+    def get_reference_by_id(self, id: int) -> Reference:
+        """Fetches a single reference by its ID."""
+        sql = text(
+            f"""
+                SELECT id, 
+                {RefField.CITATION_KEY.value},
+                {RefField.YEAR.value},
+                {RefField.AUTHOR.value},
+                {RefField.TITLE.value},
+                {RefField.REFTYPE.value},
+                {RefField.EXTRA.value}
+                FROM reference_values
+                WHERE id = :id
+                """
+        )
+
+        result = db.session.execute(sql, {"id": id})
+        row = result.fetchone()
+
+        if row is None:
+            return None
+
+        return Reference(row[0], row[1], row[2], row[3], row[4], row[5], row[6])
+
+    def get_reference_by_citation_key(self, citation_key: str) -> Reference:
+        """Fetches a single reference by its citation key."""
+        sql = text(
+            f"""
+                SELECT id, 
+                {RefField.CITATION_KEY.value},
+                {RefField.YEAR.value},
+                {RefField.AUTHOR.value},
+                {RefField.TITLE.value},
+                {RefField.REFTYPE.value},
+                {RefField.EXTRA.value}
+                FROM reference_values
+                WHERE {RefField.CITATION_KEY.value} = :{RefField.CITATION_KEY.value}
+                """
+        )
+
+        result = db.session.execute(sql, {RefField.CITATION_KEY.value: citation_key})
+        row = result.fetchone()
+
+        if row is None:
+            return None
+
+        return Reference(row[0], row[1], row[2], row[3], row[4], row[5], row[6])
+
+    def create_reference(
+        self,
+        citation_key: str,
+        year: int,
+        author: str,
+        title: str,
+        reftype: str,
+        extra: dict[str, str] = {},
+    ):
+        """Creates a new reference in the database."""
+        sql = text(
+            f"""
+            INSERT INTO reference_values ( 
+            {RefField.CITATION_KEY.value},
+            {RefField.YEAR.value},
+            {RefField.AUTHOR.value},
+            {RefField.TITLE.value},
+            {RefField.REFTYPE.value},
+            {RefField.EXTRA.value})
+            VALUES (:{RefField.CITATION_KEY.value}, :{RefField.YEAR.value}, :{RefField.AUTHOR.value}, :{RefField.TITLE.value}, :{RefField.REFTYPE.value}, :{RefField.EXTRA.value})
+            """
+        )
+        db.session.execute(
+            sql,
+            {
+                RefField.CITATION_KEY.value: citation_key,
+                RefField.YEAR.value: year,
+                RefField.AUTHOR.value: author,
+                RefField.TITLE.value: title,
+                RefField.REFTYPE.value: reftype,
+                RefField.EXTRA.value: json.dumps(extra),
+            },
+        )
+        db.session.commit()
+
+        return self.get_reference_by_citation_key(citation_key).id
+
+    def get_citation_keys(self) -> list[str]:
+        """Fetches all citation keys from the database."""
+        sql = text(
+            f"""
+            SELECT {RefField.CITATION_KEY.value}
+            FROM reference_values
+            """
+        )
+        result = db.session.execute(sql)
+        rows = result.fetchall()
+        return [row[0] for row in rows]
+
+    def citation_key_exists(self, citation_key: str) -> bool:
+        """Checks if a citation key exists in the database."""
+        sql = text(
+            f"""
+            SELECT 1
+            FROM reference_values
+            WHERE {RefField.CITATION_KEY.value} = :{RefField.CITATION_KEY.value}
+            """
+        )
+        result = db.session.execute(sql, {RefField.CITATION_KEY.value: citation_key})
+        return result.first() is not None
+
+    def delete_reference(self, citation_key: str):
+        """Deletes a reference from the database."""
+        sql = text(
+            f"""
+            DELETE FROM reference_values
+            WHERE {RefField.CITATION_KEY.value} = :{RefField.CITATION_KEY.value}
+            """
+        )
+        db.session.execute(sql, {RefField.CITATION_KEY.value: citation_key})
+        db.session.commit()
+
+    def update_reference(
+        self,
+        id: int,
+        citation_key: str,
+        year: int = None,
+        author: str = None,
+        title: str = None,
+        reftype: str = None,
+        extra: dict[str, str] = None,
+    ):
+        """Updates only fields that are not None."""
+
+        updates = {}
+        if citation_key is not None:
+            updates["citation_key"] = citation_key
+        if year is not None:
+            updates["year"] = year
+        if author is not None:
+            updates["author"] = author
+        if title is not None:
+            updates["title"] = title
+        if reftype is not None:
+            updates["reftype"] = reftype
+        if extra is not None:
+            updates["extra"] = json.dumps(extra)
+
+        if not updates:
+            return  # nothing to update
+
+        field_mapping = {
+            "citation_key": RefField.CITATION_KEY.value,
+            "year": RefField.YEAR.value,
+            "author": RefField.AUTHOR.value,
+            "title": RefField.TITLE.value,
+            "reftype": RefField.REFTYPE.value,
+            "extra": RefField.EXTRA.value,
+        }
+        set_clause = ", ".join(
+            [
+                f"{field_mapping[field]} = :{field}"
+                for field in updates.keys()
+                if field in field_mapping
+            ]
+        )
+
+        sql = text(
+            f"""
+            UPDATE reference_values
+            SET {set_clause}
+            WHERE id = :id
         """
-    )
-    db.session.execute(
-        sql,
-        {
-            RefField.CITATION_KEY.value: citation_key,
-            RefField.YEAR.value: year,
-            RefField.AUTHOR.value: author,
-            RefField.TITLE.value: title,
-            RefField.REFTYPE.value: reftype,
-        },
-    )
-    db.session.commit()
+        )
 
-
-def get_citation_keys() -> list[str]:
-    """Fetches all citation keys from the database."""
-    sql = text(
-        f"""
-        SELECT {RefField.CITATION_KEY.value}
-        FROM reference_values
-        """
-    )
-    result = db.session.execute(sql)
-    rows = result.fetchall()
-    return [row[0] for row in rows]
+        updates["id"] = id
+        db.session.execute(sql, updates)
+        db.session.commit()

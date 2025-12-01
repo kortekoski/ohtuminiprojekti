@@ -2,7 +2,6 @@ from os import getenv
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
-from json_provider import CustomJSONProvider
 
 API_ROOT = "/api"
 
@@ -17,5 +16,4 @@ if location := getenv("API_ROOT"):
 app = Flask(__name__)
 app.secret_key = getenv("SECRET_KEY")
 app.config["SQLALCHEMY_DATABASE_URI"] = getenv("DATABASE_URL")
-app.json = CustomJSONProvider(app)
 db = SQLAlchemy(app)
