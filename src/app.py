@@ -1,4 +1,7 @@
-import re
+"""
+main application defining routes and reference logic
+"""
+
 from flask import Response, redirect, render_template, request, jsonify, flash, g
 from db_helper import reset_db
 from entities.reference import Reference
@@ -31,9 +34,15 @@ def index():
 
 
 @app.route("/new_reference")
-def new():
+def new_type_selection():
     """Renders the new reference creation form."""
     return render_template("new_reference.html")
+
+
+@app.route("/new_reference/<reftype>")
+def new(reftype):
+    """renders the addition form for the selected type"""
+    return render_template(f"add_{reftype}.html")
 
 
 @app.route("/create_reference", methods=["POST"])
@@ -45,7 +54,7 @@ def reference_creation():
     title = request.form.get(RefField.TITLE.value)
     reftype = request.form.get(RefField.REFTYPE.value)
 
-    extra = dict()
+    extra = {}
     for key, value, *_ in request.form.to_dict():
         if key in [
             RefField.CITATION_KEY.value,
@@ -72,7 +81,7 @@ def reference_creation():
 
         flash(f"Reference {citation_key} created successfully!", "success")
         return redirect("/")
-    except Exception as error:
+    except Exception as error:  # pylint: disable=broad-exception-caught
         flash(str(error), "error")
         return redirect("/new_reference")
 
@@ -90,7 +99,7 @@ def delete_reference(citation_key):
             return redirect("/")
         service.delete_reference(citation_key)
         flash(f"Reference {citation_key} deleted successfully!", "success")
-    except Exception as error:
+    except Exception as error:  # pylint: disable=broad-exception-caught
         flash(str(error), "error")
     return redirect("/")
 
@@ -108,7 +117,7 @@ def update_reference(ref_id):
     title = request.form.get(RefField.TITLE.value)
     reftype = request.form.get(RefField.REFTYPE.value)
 
-    extra = dict()
+    extra = {}
     for key, value, *_ in request.form.to_dict():
         if key in [
             RefField.CITATION_KEY.value,
@@ -147,13 +156,14 @@ def update_reference(ref_id):
 
         flash(f"Reference {old_ref.citation_key} updated successfully!", "success")
         return redirect("/")
-    except Exception as error:
+    except Exception as error:  # pylint: disable=broad-exception-caught
         flash(str(error), "error")
-        return redirect(f"/")
+        return redirect("/")
 
 
 @app.route("/download_bibtex")
 def download_bibtex():
+    """generates and gives the BibTex file"""
     reference_service = get_reference_service()
     refs = reference_service.get_all_references()
 
@@ -170,7 +180,7 @@ def download_bibtex():
                 "Content-Disposition": "attachment; filename=references.bib",
             },
         )
-    except Exception as error:
+    except Exception as error:  # pylint: disable=broad-exception-caught
         flash(str(error), "error")
         return redirect("/")
 

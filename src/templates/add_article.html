@@ -1,0 +1,50 @@
+{% extends "add_reference_base.html" %}
+
+{% block header %}
+Add a new article
+{% endblock %}
+
+{% block reftype_value %}article{% endblock %}
+
+{% block extra_fields %}
+
+<div class="row mb-3">
+  <label for="journal" class="col-sm-3 col-form-label">Journal</label>
+  <div class="col-sm-9">
+    <input 
+      type="text" 
+      id="journal" 
+      name="journal" 
+      class="form-control" 
+      required
+      placeholder="Name of journal"
+    >
+  </div>
+</div>
+
+<div class="row mb-3">
+  <label for="volume" class="col-sm-3 col-form-label">Volume</label>
+  <div class="col-sm-9">
+    <input 
+      type="text" 
+      id="volume" 
+      name="volume" 
+      class="form-control" 
+      placeholder="Example: Vol. 1"
+    >
+  </div>
+</div>
+
+<div class="row mb-3">
+  <label for="pages" class="col-sm-3 col-form-label">Pages</label>
+  <div class="col-sm-9">
+    <input 
+      type="text" 
+      id="pages" 
+      name="pages" 
+      class="form-control" 
+      placeholder="Example: 6-7"
+    >
+  </div>
+</div>
+{% endblock %}

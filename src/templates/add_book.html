@@ -1,0 +1,49 @@
+{% extends "add_reference_base.html" %}
+
+{% block header %}
+Add a new book reference
+{% endblock %}
+
+{% block reftype_value %}book{% endblock %}
+
+{% block extra_fields %}
+
+<div class="row mb-3">
+  <label for="publisher" class="col-sm-3 col-form-label">Publisher</label>
+  <div class="col-sm-9">
+    <input 
+      type="text" 
+      id="publisher" 
+      name="publisher" 
+      class="form-control" 
+      placeholder="Publisher"
+    >
+  </div>
+</div>
+
+<div class="row mb-3">
+  <label for="edition" class="col-sm-3 col-form-label">Edition</label>
+  <div class="col-sm-9">
+    <input 
+      type="text" 
+      id="edition" 
+      name="edition" 
+      class="form-control" 
+      placeholder="Example: 2nd edition"
+    >
+  </div>
+</div>
+
+<div class="row mb-3">
+  <label for="isbn" class="col-sm-3 col-form-label">ISBN</label>
+  <div class="col-sm-9">
+    <input 
+      type="text" 
+      id="isbn" 
+      name="isbn" 
+      class="form-control" 
+      placeholder="Example:  0-87033-433-6"
+    >
+  </div>
+</div>
+{% endblock %}
