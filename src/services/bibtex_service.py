@@ -21,7 +21,7 @@ class BibtexService:
                 f"  {RefField.YEAR.value} = {{{ref.year}}}"
             )
 
-            for key, value in ref.extra:
+            for key, value in ref.extra.items():
                 entry += f",\n  {key} = {{{value}}}"
 
             entry += f"\n}}\n"
