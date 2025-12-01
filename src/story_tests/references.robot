@@ -32,10 +32,20 @@ One reference is shown after adding it via input
     Select From List By Value  reftype  book
     Click Button  Create
     Title Should Be  Reference app
-    Page Should Contain  Reference created successfully!
+    Page Should Contain  created successfully!
     Page Should Contain  John Trimmer
     Page Should Contain  How to Avoid Huge Ships
     Page Should Contain  1982
+
+Reference is not visible after deletion
+    Add Test Reference
+    Go To  ${HOME_URL}
+    Click Button  delete-Test2025
+    Alert Should Be Present
+    Title Should Be  Reference app
+    Page Should Contain  deleted successfully!
+    Page Should Not Contain  Threepwood
+    Page Should Not Contain  clover
 
 Get to create reference via navbar
     Go To  ${HOME_URL}

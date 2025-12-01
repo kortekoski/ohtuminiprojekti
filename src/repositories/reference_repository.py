@@ -39,6 +39,54 @@ class ReferenceRepository:
             for row in rows
         ]
 
+    def get_reference_by_id(self, id: int) -> Reference:
+        """Fetches a single reference by its ID."""
+        sql = text(
+            f"""
+                SELECT id, 
+                {RefField.CITATION_KEY.value},
+                {RefField.YEAR.value},
+                {RefField.AUTHOR.value},
+                {RefField.TITLE.value},
+                {RefField.REFTYPE.value},
+                {RefField.EXTRA.value}
+                FROM reference_values
+                WHERE id = :id
+                """
+        )
+
+        result = db.session.execute(sql, {"id": id})
+        row = result.fetchone()
+
+        if row is None:
+            return None
+
+        return Reference(row[0], row[1], row[2], row[3], row[4], row[5], row[6])
+
+    def get_reference_by_citation_key(self, citation_key: str) -> Reference:
+        """Fetches a single reference by its citation key."""
+        sql = text(
+            f"""
+                SELECT id, 
+                {RefField.CITATION_KEY.value},
+                {RefField.YEAR.value},
+                {RefField.AUTHOR.value},
+                {RefField.TITLE.value},
+                {RefField.REFTYPE.value},
+                {RefField.EXTRA.value}
+                FROM reference_values
+                WHERE {RefField.CITATION_KEY.value} = :{RefField.CITATION_KEY.value}
+                """
+        )
+
+        result = db.session.execute(sql, {RefField.CITATION_KEY.value: citation_key})
+        row = result.fetchone()
+
+        if row is None:
+            return None
+
+        return Reference(row[0], row[1], row[2], row[3], row[4], row[5], row[6])
+
     def create_reference(
         self,
         citation_key: str,
@@ -74,6 +122,8 @@ class ReferenceRepository:
         )
         db.session.commit()
 
+        return self.get_reference_by_citation_key(citation_key).id
+
     def get_citation_keys(self) -> list[str]:
         """Fetches all citation keys from the database."""
         sql = text(
@@ -107,4 +157,61 @@ class ReferenceRepository:
             """
         )
         db.session.execute(sql, {RefField.CITATION_KEY.value: citation_key})
+        db.session.commit()
+
+    def update_reference(
+        self,
+        id: int,
+        citation_key: str,
+        year: int = None,
+        author: str = None,
+        title: str = None,
+        reftype: str = None,
+        extra: dict[str, str] = None,
+    ):
+        """Updates only fields that are not None."""
+
+        updates = {}
+        if citation_key is not None:
+            updates["citation_key"] = citation_key
+        if year is not None:
+            updates["year"] = year
+        if author is not None:
+            updates["author"] = author
+        if title is not None:
+            updates["title"] = title
+        if reftype is not None:
+            updates["reftype"] = reftype
+        if extra is not None:
+            updates["extra"] = json.dumps(extra)
+
+        if not updates:
+            return  # nothing to update
+
+        field_mapping = {
+            "citation_key": RefField.CITATION_KEY.value,
+            "year": RefField.YEAR.value,
+            "author": RefField.AUTHOR.value,
+            "title": RefField.TITLE.value,
+            "reftype": RefField.REFTYPE.value,
+            "extra": RefField.EXTRA.value,
+        }
+        set_clause = ", ".join(
+            [
+                f"{field_mapping[field]} = :{field}"
+                for field in updates.keys()
+                if field in field_mapping
+            ]
+        )
+
+        sql = text(
+            f"""
+            UPDATE reference_values
+            SET {set_clause}
+            WHERE id = :id
+        """
+        )
+
+        updates["id"] = id
+        db.session.execute(sql, updates)
         db.session.commit()
