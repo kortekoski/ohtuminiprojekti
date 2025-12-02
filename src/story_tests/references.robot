@@ -69,3 +69,54 @@ BibTeX is downloadable for a reference
     Should Contain  ${bibtex_content}  author = {Guybrush Threepwood},
     Should Contain  ${bibtex_content}  title = {Different types of clover in Melee island},
     Should Contain  ${bibtex_content}  year = {2025}
+
+BibTex download starts
+    Add Test Reference
+    Go To  ${HOME_URL}
+    Click Link  Download BibTeX
+    Alert Should Be Present
+
+As a user I can choose only certain reference types
+    Go To  ${HOME_URL}/new_reference
+    Page Should Contain  Book
+    Page Should Contain  Article
+    Page Should Not Contain  Inproceedings
+    Page Should Not Contain  Miscellaneous
+
+As a user I can add a book reference    
+    Go To  ${HOME_URL}/new_reference
+    Click Link  Book
+    Title Should Be  Create a new reference
+    Page Should Contain  Author
+    Page Should Contain  Title
+    Page Should Contain  Year
+    Page Should Contain  Citation Key
+    Page Should Contain  Publisher
+    Page Should Contain  ISBN
+
+As a user I can add an article reference
+    Go To  ${HOME_URL}/new_reference
+    Click Link  Article
+    Title Should Be  Create a new reference
+    Page Should Contain  Author
+    Page Should Contain  Title
+    Page Should Contain  Year
+    Page Should Contain  Citation Key
+    Page Should Contain  Journal
+    Page Should Contain  Volume
+    Page Should Contain  Number
+    Page Should Contain  Pages
+    Page Should Contain  DOI
+
+As a user I want to add a title that is very short
+    Go To  ${HOME_URL}/new_reference
+    Click Link  Book
+    Input Text  author  Test Author A
+    Input Text  title  Ti
+    Input Text  year  2000
+    Input Text  citation_key  AB2000
+    Click Button  Create Reference
+    Title Should Be  Reference app
+    Page Should Contain  created successfully!
+    Page Should Contain  Test Author A    
+    Page Should Contain  Ti
