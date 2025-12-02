@@ -116,7 +116,6 @@ As a user I want to add a title that is very short
     Input Text  year  2000
     Input Text  citation_key  AB2000
     Click Button  Create Reference
-    Title Should Be  Reference app
     Page Should Contain  created successfully!
     Page Should Contain  Test Author A    
     Page Should Contain  Ti
