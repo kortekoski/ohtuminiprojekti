@@ -55,7 +55,7 @@ def reference_creation():
     reftype = request.form.get(RefField.REFTYPE.value)
 
     extra = {}
-    for key, value, *_ in request.form.to_dict():
+    for key, value in request.form.to_dict().items():
         if key in [
             RefField.CITATION_KEY.value,
             RefField.YEAR.value,
@@ -118,7 +118,7 @@ def update_reference(ref_id):
     reftype = request.form.get(RefField.REFTYPE.value)
 
     extra = {}
-    for key, value, *_ in request.form.to_dict():
+    for key, value in request.form.to_dict().items():
         if key in [
             RefField.CITATION_KEY.value,
             RefField.YEAR.value,
