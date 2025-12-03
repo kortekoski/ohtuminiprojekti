@@ -19,6 +19,24 @@
   box-shadow: 0 0 0 0.25rem rgba(36, 71, 55, 0.5);
 }
 
+.btn-outline-primary {
+  color: #0066CC;
+  border-color: #0066CC;
+}
+
+.btn-outline-primary:hover {
+  background-color: #0066CC;
+  border-color: #0066CC;
+  color: #fff;
+}
+
+.btn-outline-primary:focus,
+.btn-outline-primary.focus {
+  background-color: #0052A3;
+  border-color: #0052A3;
+  box-shadow: 0 0 0 0.25rem rgba(0, 102, 204, 0.5);
+}
+
 a {
   color: #a28c2a;
 }

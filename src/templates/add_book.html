@@ -8,7 +8,6 @@ Add a new book reference
 
 {% block extra_fields %}
 
-
 <div class="row mb-3">
   <label for="editor" class="col-sm-3 col-form-label">Editor</label>
   <div class="col-sm-9">
@@ -18,6 +17,7 @@ Add a new book reference
       name="editor" 
       class="form-control" 
       placeholder="Example: John Doe"
+      value="{{ reference.extra.editor if reference else '' }}"
     >
   </div>
 </div>
@@ -31,6 +31,7 @@ Add a new book reference
       name="volume" 
       class="form-control" 
       placeholder="Example: 2nd volume"
+      value="{{ reference.extra.volume if reference else '' }}"
     >
   </div>
 </div>
@@ -44,6 +45,7 @@ Add a new book reference
       name="number" 
       class="form-control" 
       placeholder="Example: 3"
+      value="{{ reference.extra.number if reference else '' }}"
     >
   </div>
 </div>
@@ -57,6 +59,7 @@ Add a new book reference
       name="series" 
       class="form-control" 
       placeholder="Example: Science Series"
+      value="{{ reference.extra.series if reference else '' }}"
     >
   </div>
 </div>
@@ -70,6 +73,7 @@ Add a new book reference
       name="address" 
       class="form-control" 
       placeholder="Example: New York"
+      value="{{ reference.extra.address if reference else '' }}"
     >
   </div>
 </div>
@@ -86,6 +90,7 @@ Add a new book reference
       name="edition" 
       class="form-control" 
       placeholder="Example: 2nd edition"
+      value="{{ reference.extra.edition if reference else '' }}"
     >
   </div>
 </div>
@@ -99,6 +104,7 @@ Add a new book reference
       name="month" 
       class="form-control" 
       placeholder="Example: 01"
+      value="{{ reference.extra.month if reference else '' }}"
     >
   </div>
 </div>
@@ -112,6 +118,7 @@ Add a new book reference
       name="note" 
       class="form-control" 
       placeholder="Example: my note"
+      value="{{ reference.extra.note if reference else '' }}"
     >
   </div>
 </div>
@@ -127,6 +134,7 @@ Add a new book reference
       name="isbn" 
       class="form-control" 
       placeholder="Example:  0-87033-433-6"
+      value="{{ reference.extra.isbn if reference else '' }}"
     >
   </div>
 </div>
@@ -140,6 +148,7 @@ Add a new book reference
       name="publisher" 
       class="form-control" 
       placeholder="Publisher"
+      value="{{ reference.extra.publisher if reference else '' }}"
     >
   </div>
 </div>
@@ -153,6 +162,7 @@ Add a new book reference
       name="url" 
       class="form-control" 
       placeholder="Example: https://example.com/book1"
+      value="{{ reference.extra.url if reference else '' }}"
     >
   </div>
 </div>
@@ -166,6 +176,7 @@ Add a new book reference
       name="doi" 
       class="form-control" 
       placeholder="Example: 10.1000/182"
+      value="{{ reference.extra.doi if reference else '' }}"
     >
   </div>
 </div>

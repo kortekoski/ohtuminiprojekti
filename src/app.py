@@ -104,61 +104,75 @@ def delete_reference(citation_key):
     return redirect("/")
 
 
-@app.route("/update_reference/<int:ref_id>", methods=["POST"])
+@app.route("/update_reference/<int:ref_id>", methods=["GET", "POST"])
 def update_reference(ref_id):
     """Handles the updating of an existing reference."""
 
     reference_service = get_reference_service()
     old_ref = reference_service.get_reference_by_id(ref_id)
 
-    citation_key = request.form.get(RefField.CITATION_KEY.value)
-    year = request.form.get(RefField.YEAR.value)
-    author = request.form.get(RefField.AUTHOR.value)
-    title = request.form.get(RefField.TITLE.value)
-    reftype = request.form.get(RefField.REFTYPE.value)
+    if request.method == "GET":
+        return render_template(f"add_{old_ref.reftype}.html", reference=old_ref)
+    if request.method == "POST":
+        # get shared attributes from form
+        citation_key = request.form.get(RefField.CITATION_KEY.value)
+        year = request.form.get(RefField.YEAR.value)
+        author = request.form.get(RefField.AUTHOR.value)
+        title = request.form.get(RefField.TITLE.value)
+        reftype = request.form.get(RefField.REFTYPE.value)
 
-    extra = {}
-    for key, value in request.form.to_dict().items():
-        if key in [
-            RefField.CITATION_KEY.value,
-            RefField.YEAR.value,
-            RefField.AUTHOR.value,
-            RefField.TITLE.value,
-            RefField.REFTYPE.value,
-        ]:
-            continue
-        extra[key] = value
+        # add extra attributes to dict extra
+        extra = {}
+        for key, value in request.form.to_dict().items():
+            if key in [
+                RefField.CITATION_KEY.value,
+                RefField.YEAR.value,
+                RefField.AUTHOR.value,
+                RefField.TITLE.value,
+                RefField.REFTYPE.value,
+            ]:
+                continue
+            extra[key] = value
 
-    reference_service = get_reference_service()
-    existing_citation_keys = reference_service.get_citation_keys()
+        # get existing citation keys from the repo
+        reference_service = get_reference_service()
+        existing_citation_keys = reference_service.get_citation_keys()
 
-    try:
-        updated_reference = Reference(
-            ref_id,
-            citation_key,
-            int(year) if year else None,
-            author,
-            title,
-            reftype,
-            extra,
-        )
+        # create the updated entity and update by id
+        try:
+            updated_reference = Reference(
+                ref_id,
+                citation_key,
+                int(year) if year else None,
+                author,
+                title,
+                reftype,
+                extra,
+            )
 
-        ValidationService.validate_reference(updated_reference, existing_citation_keys)
-        reference_service.update_reference_by_id(
-            ref_id,
-            citation_key,
-            int(year) if year else None,
-            author,
-            title,
-            reftype,
-            extra,
-        )
+            ValidationService.validate_reference(
+                updated_reference,
+                existing_citation_keys,
+                same_citation_key=(old_ref.citation_key == citation_key),
+            )
+            reference_service.update_reference_by_id(
+                ref_id,
+                citation_key,
+                int(year) if year else None,
+                author,
+                title,
+                reftype,
+                extra,
+                same_citation_key=(old_ref.citation_key == citation_key),
+            )
 
-        flash(f"Reference {old_ref.citation_key} updated successfully!", "success")
-        return redirect("/")
-    except Exception as error:  # pylint: disable=broad-exception-caught
-        flash(str(error), "error")
-        return redirect("/")
+            flash(f"Reference {old_ref.citation_key} updated successfully!", "success")
+            return redirect("/")
+        except Exception as error:  # pylint: disable=broad-exception-caught
+            flash(str(error), "error")
+            return redirect("/")
+
+    return None
 
 
 @app.route("/download_bibtex")
