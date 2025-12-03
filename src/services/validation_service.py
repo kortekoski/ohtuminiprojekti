@@ -39,8 +39,12 @@ class ValidationService:
     @staticmethod
     def _validate_author(author):
         """Validates that the name is in an acceptable format
-        (e.g. John O'Smith; Smith, John)."""
-        pattern = r"([A-Z][a-zA-Z'-]*(\s+[A-Z][a-zA-Z'-]*)*)|([A-Z][a-zA-Z'-]*(\s+[A-Z][a-zA-Z'-]*)*,\s+[A-Z][a-zA-Z'-]*(\s+[A-Z][a-zA-Z'-]*)*)"
+        (e.g. John O'Smith; Smith, John; Järvinen, Päivi; John X. Smith)."""
+        # Pattern that accepts Unicode letters, apostrophes, hyphens, and middle initials
+        pattern = (
+            r"([A-ZÀ-ÖØ-Þ][a-zA-ZÀ-ÖØ-öø-ÿ'-]*(\s+[A-ZÀ-ÖØ-Þ]\.?|\s+[a-zA-ZÀ-ÖØ-öø-ÿ'-]+)*)|"
+            r"([A-ZÀ-ÖØ-Þ][a-zA-ZÀ-ÖØ-öø-ÿ'-]*(\s+[a-zA-ZÀ-ÖØ-öø-ÿ'-]+)*,\s+[A-ZÀ-ÖØ-Þ]\.?(\s+[a-zA-ZÀ-ÖØ-öø-ÿ'-]+)*)"
+        )
         authors = [a.strip() for a in author.split(" and ")]
         return all(bool(re.fullmatch(pattern, author)) for author in authors)
 
