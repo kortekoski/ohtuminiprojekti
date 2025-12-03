@@ -48,6 +48,19 @@ Reference is not visible after deletion
     Page Should Not Contain  Threepwood
     Page Should Not Contain  clover
 
+Reference information is changed after update
+    Add Test Reference
+    Go To  ${HOME_URL}
+    Click Link  update-Test2025
+    Page Should Contain  Update Reference
+    Clear Element Text  author
+    Input Text  author  Hideo Kojima
+    Click Button  Update Reference
+    Title Should Be  Reference app
+    Page Should Contain  updated successfully!
+    Page Should Contain  Hideo Kojima
+    Page Should Not Contain  Threepwood
+
 Get to create reference via navbar
     Go To  ${HOME_URL}
     Click Link  Create Reference

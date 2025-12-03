@@ -18,6 +18,7 @@ Add a new article
       class="form-control" 
       required
       placeholder="Name of journal"
+      value="{% if reference %}{{reference.extra['journal']}}{% endif %}"
     >
   </div>
 </div>
@@ -31,6 +32,7 @@ Add a new article
       name="volume" 
       class="form-control" 
       placeholder="Example: Vol. 1"
+      value="{{ reference.extra.volume if reference else '' }}"
     >
   </div>
 </div>
@@ -45,6 +47,7 @@ Add a new article
       name="number" 
       class="form-control" 
       placeholder="Example: 3"
+      value="{{ reference.extra.number if reference else '' }}"
     >
   </div>
 </div>
@@ -58,6 +61,7 @@ Add a new article
       name="pages" 
       class="form-control" 
       placeholder="Example: 6-7"
+      value="{{ reference.extra.pages if reference else '' }}"
     >
   </div>
 </div>
@@ -71,6 +75,7 @@ Add a new article
       name="month" 
       class="form-control" 
       placeholder="Example: 07"
+      value="{{ reference.extra.month if reference else '' }}"
     >
   </div>
 </div>
@@ -84,6 +89,7 @@ Add a new article
       name="note" 
       class="form-control" 
       placeholder="Example: my note"
+      value="{{ reference.extra.note if reference else '' }}"
     >
   </div>
 </div>
@@ -97,6 +103,7 @@ Add a new article
       name="doi" 
       class="form-control" 
       placeholder="Example: 10.1000/182"
+      value="{{ reference.extra.doi if reference else '' }}"
     >
   </div>
 </div>
@@ -110,6 +117,7 @@ Add a new article
       name="url" 
       class="form-control" 
       placeholder="Example: https://example.com/collins1991"
+      value="{{ reference.extra.url if reference else '' }}"
     >
   </div>
 </div>

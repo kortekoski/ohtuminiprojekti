@@ -88,8 +88,13 @@ class ValidationService:
         return reftype in valid_types
 
     @staticmethod
-    def validate_reference(ref: Reference, existing_keys=[]) -> bool:
-        """Validates the reference information provided by the user according to the specified rules."""
+    def validate_reference(
+        ref: Reference, existing_keys=[], same_citation_key=False
+    ) -> bool:
+        """
+        Validates the reference information provided by the user
+        according to the specified rules.
+        """
 
         # Check first that there are no empty entries
         ValidationService._validate_empty_entries(ref)
@@ -122,10 +127,12 @@ class ValidationService:
         ):
             raise UserInputError("Citation key must start with a letter")
 
-        if not ValidationService._validate_citation_key_unique(
-            ref.citation_key, existing_keys
-        ):
-            raise UserInputError("Citation key must be unique")
+        # Skips the uniqueness check if the citation key is unchanged in an update
+        if not same_citation_key:
+            if not ValidationService._validate_citation_key_unique(
+                ref.citation_key, existing_keys
+            ):
+                raise UserInputError("Citation key must be unique")
 
         # Type validation, must be one of the valid bibtex reftypes
         if not ValidationService._validate_bibtex_reftype(ref.reftype):
