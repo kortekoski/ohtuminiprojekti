@@ -112,7 +112,7 @@ class DoiService:
         work_year = int(work_date[0])
         work_month = int(work_date[1])
 
-        work_title = message["title"]
+        work_title = message["title"][0]
 
         # This never happens but shuts up the LSP.
         work_title = work_title if isinstance(work_title, str) else ""
@@ -157,7 +157,13 @@ class DoiService:
         }
 
         return Reference(
-            0, "placeholder", work_year, work_author, work_title, RefType.ARTICLE, extra
+            0,
+            "placeholder",
+            work_year,
+            work_author,
+            work_title,
+            RefType.ARTICLE.value,
+            extra,
         )
 
 
