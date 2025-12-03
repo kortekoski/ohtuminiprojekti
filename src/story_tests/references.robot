@@ -70,7 +70,7 @@ BibTeX is downloadable for a reference
     Should Contain  ${bibtex_content}  title = {Different types of clover in Melee island},
     Should Contain  ${bibtex_content}  year = {2025}
 
-BibTex download starts
+BibTeX download starts
     Add Test Reference
     Go To  ${HOME_URL}
     Click Link  Download BibTeX
@@ -83,7 +83,7 @@ As a user I can choose only certain reference types
     Page Should Not Contain  Inproceedings
     Page Should Not Contain  Miscellaneous
 
-As a user I can add a book reference    
+As a user I can add a book reference
     Go To  ${HOME_URL}/new_reference
     Click Link  Book
     Title Should Be  Create a new reference
@@ -117,5 +117,5 @@ As a user I want to add a title that is very short
     Input Text  citation_key  AB2000
     Click Button  Create Reference
     Page Should Contain  created successfully!
-    Page Should Contain  Test Author A    
+    Page Should Contain  Test Author A
     Page Should Contain  Ti
