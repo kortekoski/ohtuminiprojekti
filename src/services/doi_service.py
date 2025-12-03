@@ -110,7 +110,8 @@ class DoiService:
         # 'published': {'date-parts':[[2020, 8, 17]]}
         work_date = message["published"]["date-parts"][0]
         work_year = int(work_date[0])
-        work_month = int(work_date[1])
+        work_month = work_date[1]
+        extra = {"month": work_month}
 
         work_title = message["title"][0]
 
@@ -125,36 +126,32 @@ class DoiService:
 
         # ... and extra spaces.
         work_title = re.sub(" +", " ", work_title)
+        if work_issn := message["ISSN"][0]:
+            extra["issn"] = work_issn
 
-        work_issn = message["ISSN"][0]
+        if work_publisher := message.get("publisher"):
+            extra["publisher"] = work_publisher
 
-        work_publisher = message["publisher"]
+        if work_journal := message.get("container-title")[0]:
+            extra["journal"] = work_journal
 
-        work_journal = message["container-title"][0]
+        if work_volume := message.get("volume"):
+            extra["volume"] = work_volume
 
-        work_volume = message["volume"]
+        if work_issue := message.get("issue"):
+            extra["issue"] = work_issue
 
-        work_issue = message["issue"]
+        if work_doi := message.get("DOI"):
+            extra["doi"] = work_doi
 
-        work_doi = message["DOI"]
-
-        work_language = message["language"]
-        if work_language == "en":
-            work_language = "English"
+        if work_language := message.get("language"):
+            if work_language == "en":
+                work_language = "English"
+            extra["language"] = work_language
 
         work_author = " and ".join(
             map(lambda a: f"{a['given']} {a['family']}", message["author"])
         )
-
-        extra = {
-            "month": work_month,
-            "issn": work_issn,
-            "publisher": work_publisher,
-            "journal": work_journal,
-            "volume": work_volume,
-            "issue": work_issue,
-            "doi": work_doi,
-        }
 
         return Reference(
             0,
