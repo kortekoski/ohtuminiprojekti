@@ -9,7 +9,8 @@ from config import app, test_env
 from services.bibtex_service import BibtexService
 from services.reference_service import ReferenceService
 from services.validation_service import ValidationService
-from util import RefField
+from services.doi_service import DoiService
+from util import RefField, UserInputError
 
 
 # ---------------------------
@@ -20,6 +21,12 @@ def get_reference_service() -> ReferenceService:
     if "reference_service" not in g:
         g.reference_service = ReferenceService()
     return g.reference_service
+
+
+def get_doi_service() -> DoiService:
+    if "doi_service" not in g:
+        g.doi_service = DoiService()
+    return g.doi_service
 
 
 # ---------------------------
@@ -197,6 +204,44 @@ def download_bibtex():
     except Exception as error:  # pylint: disable=broad-exception-caught
         flash(str(error), "error")
         return redirect("/")
+
+
+@app.route("/add_from_doi", methods=["POST"])
+def add_from_doi():
+    doi = request.form.get("doi")
+    citation_key = request.form.get("citation_key")
+    if doi is None:
+        flash("error", "Input needs to have a DOI.")
+        return redirect("/new_reference/from_doi")
+    if citation_key is None:
+        flash("error", "Input needs to have a citation key.")
+        return redirect("/new_reference/from_doi")
+    citation_key = request.form.get("citation_key")
+    try:
+        doi_service = get_doi_service()
+        ref = doi_service.get_doi(doi)
+        if ref is None:
+            # This only happens when we somehow fail to
+            # contact api.crossref.org.
+            flash("Failed to retrieve DOI. Try again later.", "error")
+            return redirect("/")
+        print(ref)
+        ValidationService.validate_reference(ref)
+        reference_service = get_reference_service()
+
+        reference_service.create_reference(
+            citation_key,
+            ref.year,
+            ref.author,
+            ref.title,
+            ref.reftype,
+            ref.extra,
+        )
+        flash(f"Reference {citation_key} created succesfully!", "success")
+        return redirect("/")
+    except UserInputError as err:
+        flash(str(err), "error")
+        return redirect("/new_reference/from_doi")
 
 
 # ---------------------------

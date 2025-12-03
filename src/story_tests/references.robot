@@ -83,6 +83,17 @@ BibTeX is downloadable for a reference
     Should Contain  ${bibtex_content}  title = {Different types of clover in Melee island},
     Should Contain  ${bibtex_content}  year = {2025}
 
+Reference can be added by DOI
+    Go To  ${HOME_URL}/new_reference
+    Click Link  From DOI
+    Title Should Be  Add a new reference from a DOI
+    Input Text  doi  10.1136/jclinpath-2020-206745
+    Input Text  citation_key  doicitation
+    Click Button  Get Reference
+    Title Should Be  Reference app
+    Page Should Contain  created succesfully!
+    Page Should Contain  Construction of a reference material
+
 BibTeX download starts
     Add Test Reference
     Go To  ${HOME_URL}
