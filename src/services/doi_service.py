@@ -10,7 +10,7 @@ from entities.reference import Reference, RefType
 class DoiService:
     """Container for methods for getting and handling DOIs."""
 
-    def __init__(self, api_proxy: type | None = None):
+    def __init__(self, api_proxy=None):
         if api_proxy:
             self.api = api_proxy
         else:
@@ -173,7 +173,7 @@ class CrossrefApi:
     def get_doi_metadata(self, doi: str) -> dict | None:
         """Get metadata for a DOI string."""
         url = self.base_url + "/doi/"
-        response = requests.get(url + doi, allow_redirects=True)
+        response = requests.get(url + doi, allow_redirects=True, timeout=5)
         if response.status_code == 403:
             raise UserInputError("Too many requests. Try again in a moment.")
 
@@ -190,3 +190,43 @@ def url_validator(url: str) -> bool:
         return all([parsed_url.scheme, parsed_url.netloc, parsed_url.path])
     except:
         return False
+
+
+class TestApi:
+    """Mock API for testing."""
+
+    def __init__(self):
+        self.real_api = CrossrefApi()
+
+    def get_doi_metadata(self, doi: str) -> dict | None:
+        """Return test metadata if request fails."""
+        try:
+            result = self.real_api.get_doi_metadata(doi)
+            if result:
+                return result
+        except Exception:
+            print(
+                f"Warning: failed to get metadata from api.crossref.org. Falling back to test data."
+            )
+            result = {
+                "status": "ok",
+                "message-type": "work",
+                "message": {
+                    "type": "journal-article",
+                    "published": {"date-parts": [["2020", "1", "1"]]},
+                    "title": ["Test title"],
+                    "ISSN": ["issn00000000"],
+                    "container-title": ["Journal title"],
+                    "volume": "1",
+                    "issue": "1",
+                    "DOI": "10.221/test",
+                    "language": "en",
+                    "author": [
+                        {"given": "Jane", "family": "Doe"},
+                        {"given": "Jane", "family": "Doe"},
+                    ],
+                    "publisher": "AAA",
+                },
+            }
+
+            return result

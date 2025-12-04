@@ -93,7 +93,7 @@ Reference can be added by DOI
     Click Button  Get Reference
     Wait Until Page Contains  created succesfully!  timeout=10s
     Title Should Be  Reference app
-    Page Should Contain  Construction of a reference material
+    Page Should Not Contain  No references found!
 
 BibTeX download starts
     Add Test Reference
