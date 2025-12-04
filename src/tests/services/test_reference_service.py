@@ -116,7 +116,7 @@ class TestReferenceService(unittest.TestCase):
             data["id"],
             data[RefField.CITATION_KEY.value],
             data[RefField.YEAR.value],
-            data[RefField.AUTHOR.value],
+            [data[RefField.AUTHOR.value]],
             data[RefField.TITLE.value],
             data[RefField.REFTYPE.value],
             data[RefField.EXTRA.value],

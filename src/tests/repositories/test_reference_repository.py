@@ -43,7 +43,7 @@ class TestReferenceRepository(unittest.TestCase):
         self.repo.create_reference(
             ref.citation_key,
             ref.year,
-            ref.author,
+            [ref.author],
             ref.title,
             ref.reftype,
         )
@@ -69,7 +69,7 @@ class TestReferenceRepository(unittest.TestCase):
         self.repo.create_reference(
             ref.citation_key,
             ref.year,
-            ref.author,
+            [ref.author],
             ref.title,
             ref.reftype,
         )
@@ -89,22 +89,22 @@ class TestReferenceRepository(unittest.TestCase):
         ref = TestData.valid_reference()
 
         id = self.repo.create_reference(
-            ref.citation_key, ref.year, ref.author, ref.title, ref.reftype, {}
+            ref.citation_key, ref.year, [ref.author], ref.title, ref.reftype, {}
         )
 
         # Act
-        new_author = "New Author"
+        new_authors = ["New Author"]
         new_title = "New Title"
         new_reftype = "book"
         self.repo.update_reference(
-            id, ref.citation_key, ref.year, new_author, new_title, new_reftype, {}
+            id, ref.citation_key, ref.year, new_authors, new_title, new_reftype, {}
         )
 
         updated = self.repo.get_references()
         self.assertEqual(len(updated), 1)
         updated_ref = updated[0]
 
-        self.assertEqual(updated_ref.author, new_author)
+        self.assertEqual(updated_ref.author, new_authors[0])
         self.assertEqual(updated_ref.title, new_title)
         self.assertEqual(updated_ref.reftype, new_reftype)
 

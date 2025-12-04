@@ -91,12 +91,15 @@ class ReferenceRepository:
         self,
         citation_key: str,
         year: int,
-        author: str,
+        authors: list[str],
         title: str,
         reftype: str,
         extra: dict[str, str] = {},
     ):
         """Creates a new reference in the database."""
+        # Join authors list with ' and ' delimiter for database storage
+        author = " and ".join(a.strip() for a in authors if a.strip())
+
         sql = text(
             f"""
             INSERT INTO reference_values ( 
@@ -164,7 +167,7 @@ class ReferenceRepository:
         id: int,
         citation_key: str,
         year: int = None,
-        author: str = None,
+        authors: list[str] = None,
         title: str = None,
         reftype: str = None,
         extra: dict[str, str] = None,
@@ -176,8 +179,9 @@ class ReferenceRepository:
             updates["citation_key"] = citation_key
         if year is not None:
             updates["year"] = year
-        if author is not None:
-            updates["author"] = author
+        if authors is not None:
+            # Join authors list with ' and ' delimiter for database storage
+            updates["author"] = " and ".join(a.strip() for a in authors if a.strip())
         if title is not None:
             updates["title"] = title
         if reftype is not None:
