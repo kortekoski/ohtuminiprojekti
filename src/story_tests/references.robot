@@ -145,3 +145,32 @@ As a user I want to add a title that is very short
     Page Should Contain  created successfully!
     Page Should Contain  Test Author A
     Page Should Contain  Ti
+
+Two references can share the same author
+    # Add first reference with author "Martin Fowler"
+    Go To  ${HOME_URL}/new_reference
+    Click Link  Book
+    Input Text  author  Martin Fowler
+    Input Text  title  Refactoring
+    Input Text  year  1999
+    Input Text  citation_key  Fowler1999
+    Click Button  Create Reference
+    Page Should Contain  created successfully!
+    
+    # Add second reference with the same author "Martin Fowler"
+    Go To  ${HOME_URL}/new_reference
+    Click Link  Book
+    Input Text  author  Martin Fowler
+    Input Text  title  Patterns of Enterprise Application Architecture
+    Input Text  year  2002
+    Input Text  citation_key  Fowler2002
+    Click Button  Create Reference
+    Page Should Contain  created successfully!
+    
+    # Verify both references appear on the home page with the shared author
+    Go To  ${HOME_URL}
+    Page Should Contain  Martin Fowler
+    Page Should Contain  Refactoring
+    Page Should Contain  1999
+    Page Should Contain  Patterns of Enterprise Application Architecture
+    Page Should Contain  2002

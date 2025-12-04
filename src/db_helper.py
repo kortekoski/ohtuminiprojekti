@@ -6,10 +6,15 @@ from config import db, app
 
 
 def reset_db():
-    """ "Clears all contents from the database table reference_values for testing purposes"""
-    print("Clearing contents from table reference_values")
-    sql = text("DELETE FROM reference_values")
-    db.session.execute(sql)
+    """ "Clears all contents from the database tables for testing purposes"""
+    print("Clearing contents from tables")
+    # Delete in correct order due to foreign key constraints
+    sql1 = text("DELETE FROM reference_authors")
+    sql2 = text("DELETE FROM reference_values")
+    sql3 = text("DELETE FROM authors")
+    db.session.execute(sql1)
+    db.session.execute(sql2)
+    db.session.execute(sql3)
     db.session.commit()
 
 
@@ -19,7 +24,20 @@ def tables():
         "SELECT table_name "
         "FROM information_schema.tables "
         "WHERE table_schema = 'public' "
+        "AND table_type = 'BASE TABLE' "
         "AND table_name NOT LIKE '%_id_seq'"
+    )
+
+    result = db.session.execute(sql)
+    return [row[0] for row in result.fetchall()]
+
+
+def views():
+    """Returns all view names from the database"""
+    sql = text(
+        "SELECT table_name "
+        "FROM information_schema.views "
+        "WHERE table_schema = 'public'"
     )
 
     result = db.session.execute(sql)
@@ -31,11 +49,22 @@ def setup_db():
     Creating the database
     If database tables already exist, those are dropped before the creation
     """
+    # Drop views first
+    views_in_db = views()
+    if len(views_in_db) > 0:
+        print(f"Views exist, dropping: {', '.join(views_in_db)}")
+        for view in views_in_db:
+            sql = text(f"DROP VIEW IF EXISTS {view} CASCADE")
+            db.session.execute(sql)
+        db.session.commit()
+
+    # Then drop tables
     tables_in_db = tables()
     if len(tables_in_db) > 0:
         print(f"Tables exist, dropping: {', '.join(tables_in_db)}")
+        # Drop tables with CASCADE to handle foreign key dependencies
         for table in tables_in_db:
-            sql = text(f"DROP TABLE {table}")
+            sql = text(f"DROP TABLE {table} CASCADE")
             db.session.execute(sql)
         db.session.commit()
 
