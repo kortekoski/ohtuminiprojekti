@@ -1,0 +1,99 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Create a new reference
+{% endblock %}
+
+{% block body %}
+<div class="create-bg">
+  <div class="d-flex flex-column justify-content-center align-items-center  min-vh-100 vw-50 py-5">
+    <div class="border border-1 rounded-4 p-5 bg-light" >
+      <h2 class="mb-5">
+        {% if reference %}
+          Update reference
+        {% else %}
+          Create a new reference
+        {% endif %}
+      </h2>
+      <form action="{% if reference %}/update_reference/{{ reference.id }}{% else %}/create_reference{% endif %}" method="post">
+        <!-- Hidden field for the type -->
+        <input type="hidden" name="reftype" value="{% block reftype_value %}{% endblock %}">
+
+        <!-- common fields for all references -->
+        <div class="row mb-1">
+          <label for="author" class="col-sm-3 col-form-label">Author</label><br>
+          <div class="col-sm-9">
+            <input 
+              type="text" 
+              id="author" 
+              name="author" 
+              class="form-control" 
+              required placeholder="Example: John Smith or Smith, John"
+              value="{% if reference %}{{ reference.author }}{% endif %}"
+            >
+            <br>
+          </div>
+        </div>
+        <div class="row mb-1">
+          <label for="title" class="col-sm-3 col-form-label">Title</label><br>
+          <div class="col-sm-9">
+            <input 
+              type="text" 
+              id="title"
+              name="title"
+              required minlength="2"
+              placeholder="Title (minimum 2 characters)"
+              class="form-control"
+              value="{% if reference %}{{ reference.title }}{% endif %}"
+            ><br>
+          </div>
+        </div>
+        <div class="row mb-1">
+          <label for="citation_key" class="col-sm-3 col-form-label">Citation Key</label><br>
+          <div class="col-sm-9">
+            <input 
+              type="text" 
+              id="citation_key" 
+              name="citation_key" 
+              required placeholder="Example: Smith2024"
+              class="form-control"
+              value="{% if reference %}{{ reference.citation_key }}{% endif %}"
+            ><br>
+          </div>
+        </div>
+        <div class="row mb-1">
+          <label for="year" class="col-sm-3 col-form-label">Year</label><br>
+          <div class="col-sm-9">
+            <input 
+              type="number"
+              id="year"
+              name="year"
+              required min="1000"
+              max="9999"
+              class="form-control"
+              value="{% if reference %}{{ reference.year }}{% endif %}"
+            ><br>
+          </div>
+        </div>
+
+        <!-- Here gets injected the differing fields -->
+        <hr class="my-4">
+        {% block extra_fields %}{% endblock %}
+
+        <div class="row mt-4">
+          <div class="col-sm-9 offset-sm-3">
+            <button type="submit" class="btn btn-primary btn-lg">
+              {% if reference %}
+                Update Reference
+              {% else %}
+                Create Reference
+              {% endif %}
+            </button>
+            <a href="/new_reference" class="btn btn-link">Back to type select</a>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

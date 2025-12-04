@@ -39,8 +39,12 @@ class ValidationService:
     @staticmethod
     def _validate_author(author):
         """Validates that the name is in an acceptable format
-        (e.g. John O'Smith; Smith, John)."""
-        pattern = r"([A-Z][a-zA-Z'-]*(\s+[A-Z][a-zA-Z'-]*)*)|([A-Z][a-zA-Z'-]*(\s+[A-Z][a-zA-Z'-]*)*,\s+[A-Z][a-zA-Z'-]*(\s+[A-Z][a-zA-Z'-]*)*)"
+        (e.g. John O'Smith; Smith, John; Järvinen, Päivi; John X. Smith)."""
+        # Pattern that accepts Unicode letters, apostrophes, hyphens, and middle initials
+        pattern = (
+            r"([A-ZÀ-ÖØ-Þ][a-zA-ZÀ-ÖØ-öø-ÿ'-]*(\s+[A-ZÀ-ÖØ-Þ]\.?|\s+[a-zA-ZÀ-ÖØ-öø-ÿ'-]+)*)|"
+            r"([A-ZÀ-ÖØ-Þ][a-zA-ZÀ-ÖØ-öø-ÿ'-]*(\s+[a-zA-ZÀ-ÖØ-öø-ÿ'-]+)*,\s+[A-ZÀ-ÖØ-Þ]\.?(\s+[a-zA-ZÀ-ÖØ-öø-ÿ'-]+)*)"
+        )
         authors = [a.strip() for a in author.split(" and ")]
         return all(bool(re.fullmatch(pattern, author)) for author in authors)
 
@@ -88,8 +92,13 @@ class ValidationService:
         return reftype in valid_types
 
     @staticmethod
-    def validate_reference(ref: Reference, existing_keys=[]) -> bool:
-        """Validates the reference information provided by the user according to the specified rules."""
+    def validate_reference(
+        ref: Reference, existing_keys=[], same_citation_key=False
+    ) -> bool:
+        """
+        Validates the reference information provided by the user
+        according to the specified rules.
+        """
 
         # Check first that there are no empty entries
         ValidationService._validate_empty_entries(ref)
@@ -122,10 +131,12 @@ class ValidationService:
         ):
             raise UserInputError("Citation key must start with a letter")
 
-        if not ValidationService._validate_citation_key_unique(
-            ref.citation_key, existing_keys
-        ):
-            raise UserInputError("Citation key must be unique")
+        # Skips the uniqueness check if the citation key is unchanged in an update
+        if not same_citation_key:
+            if not ValidationService._validate_citation_key_unique(
+                ref.citation_key, existing_keys
+            ):
+                raise UserInputError("Citation key must be unique")
 
         # Type validation, must be one of the valid bibtex reftypes
         if not ValidationService._validate_bibtex_reftype(ref.reftype):

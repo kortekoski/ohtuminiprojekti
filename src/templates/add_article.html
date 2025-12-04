@@ -1,0 +1,125 @@
+{% extends "add_reference_base.html" %}
+
+{% block header %}
+Add a new article
+{% endblock %}
+
+{% block reftype_value %}article{% endblock %}
+
+{% block extra_fields %}
+
+<div class="row mb-3">
+  <label for="journal" class="col-sm-3 col-form-label">Journal</label>
+  <div class="col-sm-9">
+    <input 
+      type="text" 
+      id="journal" 
+      name="journal" 
+      class="form-control" 
+      required
+      placeholder="Name of journal"
+      value="{% if reference %}{{reference.extra['journal']}}{% endif %}"
+    >
+  </div>
+</div>
+
+<div class="row mb-3">
+  <label for="volume" class="col-sm-3 col-form-label">Volume</label>
+  <div class="col-sm-9">
+    <input 
+      type="text" 
+      id="volume" 
+      name="volume" 
+      class="form-control" 
+      placeholder="Example: Vol. 1"
+      value="{{ reference.extra.volume if reference else '' }}"
+    >
+  </div>
+</div>
+
+
+<div class="row mb-3">
+  <label for="number" class="col-sm-3 col-form-label">Number</label>
+  <div class="col-sm-9">
+    <input 
+      type="text" 
+      id="number" 
+      name="number" 
+      class="form-control" 
+      placeholder="Example: 3"
+      value="{{ reference.extra.number if reference else '' }}"
+    >
+  </div>
+</div>
+
+<div class="row mb-3">
+  <label for="pages" class="col-sm-3 col-form-label">Pages</label>
+  <div class="col-sm-9">
+    <input 
+      type="text" 
+      id="pages" 
+      name="pages" 
+      class="form-control" 
+      placeholder="Example: 6-7"
+      value="{{ reference.extra.pages if reference else '' }}"
+    >
+  </div>
+</div>
+
+<div class="row mb-3">
+  <label for="month" class="col-sm-3 col-form-label">Month</label>
+  <div class="col-sm-9">
+    <input 
+      type="text" 
+      id="month" 
+      name="month" 
+      class="form-control" 
+      placeholder="Example: 07"
+      value="{{ reference.extra.month if reference else '' }}"
+    >
+  </div>
+</div>
+
+<div class="row mb-3">
+  <label for="note" class="col-sm-3 col-form-label">Note</label>
+  <div class="col-sm-9">
+    <input 
+      type="text" 
+      id="note" 
+      name="note" 
+      class="form-control" 
+      placeholder="Example: my note"
+      value="{{ reference.extra.note if reference else '' }}"
+    >
+  </div>
+</div>
+
+<div class="row mb-3">
+  <label for="doi" class="col-sm-3 col-form-label">DOI</label>
+  <div class="col-sm-9">
+    <input 
+      type="text" 
+      id="doi" 
+      name="doi" 
+      class="form-control" 
+      placeholder="Example: 10.1000/182"
+      value="{{ reference.extra.doi if reference else '' }}"
+    >
+  </div>
+</div>
+
+<div class="row mb-3">
+  <label for="url" class="col-sm-3 col-form-label">URL</label>
+  <div class="col-sm-9">
+    <input 
+      type="text" 
+      id="url" 
+      name="url" 
+      class="form-control" 
+      placeholder="Example: https://example.com/collins1991"
+      value="{{ reference.extra.url if reference else '' }}"
+    >
+  </div>
+</div>
+
+{% endblock %}

@@ -54,12 +54,14 @@ class ReferenceService:
         title: str = None,
         reftype: str = None,
         extra: dict[str, str] = None,
+        same_citation_key: bool = False,
     ):
         """Updates an existing reference in the repository.
         If citation_key is changed, ensures the new key does not already exist.
         Otherwise we might end up with duplicate citation keys.
+        This check is skipped if the updated ref keeps the same citation key.
         """
-        if self.citation_key_exists(citation_key):
+        if self.citation_key_exists(citation_key) and not same_citation_key:
             raise ValueError(f"Citation key '{citation_key}' already exists.")
         self._repo.update_reference(
             id, citation_key, year, author, title, reftype, extra
