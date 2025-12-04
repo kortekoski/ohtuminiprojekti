@@ -107,7 +107,7 @@ As a user I can choose only certain reference types
     Page Should Not Contain  Inproceedings
     Page Should Not Contain  Miscellaneous
 
-As a user I can add a book reference
+As as user when adding a book reference, only the book-specific fields are shown
     Go To  ${HOME_URL}/new_reference
     Click Link  Book
     Title Should Be  Create a new reference
@@ -117,8 +117,9 @@ As a user I can add a book reference
     Page Should Contain  Citation Key
     Page Should Contain  Publisher
     Page Should Contain  ISBN
+    Page Should Not Contain  Journal
 
-As a user I can add an article reference
+As as user when adding an article reference, only the article-specific fields are shown
     Go To  ${HOME_URL}/new_reference
     Click Link  Article
     Title Should Be  Create a new reference
@@ -127,10 +128,11 @@ As a user I can add an article reference
     Page Should Contain  Year
     Page Should Contain  Citation Key
     Page Should Contain  Journal
-    Page Should Contain  Volume
     Page Should Contain  Number
     Page Should Contain  Pages
     Page Should Contain  DOI
+    Page Should Not Contain  Publisher
+    Page Should Not Contain  ISBN
 
 As a user I want to add a title that is very short
     Go To  ${HOME_URL}/new_reference
