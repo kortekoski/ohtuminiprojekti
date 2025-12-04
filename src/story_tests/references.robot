@@ -56,6 +56,7 @@ Reference information is changed after update
     Clear Element Text  author
     Input Text  author  Hideo Kojima
     Click Button  Update Reference
+    Wait Until Page Contains  updated successfully!  timeout=5s
     Title Should Be  Reference app
     Page Should Contain  updated successfully!
     Page Should Contain  Hideo Kojima
