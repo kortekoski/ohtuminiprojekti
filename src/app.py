@@ -9,7 +9,8 @@ from config import app, test_env
 from services.bibtex_service import BibtexService
 from services.reference_service import ReferenceService
 from services.validation_service import ValidationService
-from util import RefField
+from services.doi_service import DoiService
+from util import RefField, UserInputError
 
 
 # ---------------------------
@@ -20,6 +21,12 @@ def get_reference_service() -> ReferenceService:
     if "reference_service" not in g:
         g.reference_service = ReferenceService()
     return g.reference_service
+
+
+def get_doi_service() -> DoiService:
+    if "doi_service" not in g:
+        g.doi_service = DoiService()
+    return g.doi_service
 
 
 # ---------------------------
@@ -55,7 +62,7 @@ def reference_creation():
     reftype = request.form.get(RefField.REFTYPE.value)
 
     extra = {}
-    for key, value, *_ in request.form.to_dict():
+    for key, value in request.form.to_dict().items():
         if key in [
             RefField.CITATION_KEY.value,
             RefField.YEAR.value,
@@ -104,61 +111,75 @@ def delete_reference(citation_key):
     return redirect("/")
 
 
-@app.route("/update_reference/<int:ref_id>", methods=["POST"])
+@app.route("/update_reference/<int:ref_id>", methods=["GET", "POST"])
 def update_reference(ref_id):
     """Handles the updating of an existing reference."""
 
     reference_service = get_reference_service()
     old_ref = reference_service.get_reference_by_id(ref_id)
 
-    citation_key = request.form.get(RefField.CITATION_KEY.value)
-    year = request.form.get(RefField.YEAR.value)
-    author = request.form.get(RefField.AUTHOR.value)
-    title = request.form.get(RefField.TITLE.value)
-    reftype = request.form.get(RefField.REFTYPE.value)
+    if request.method == "GET":
+        return render_template(f"add_{old_ref.reftype}.html", reference=old_ref)
+    if request.method == "POST":
+        # get shared attributes from form
+        citation_key = request.form.get(RefField.CITATION_KEY.value)
+        year = request.form.get(RefField.YEAR.value)
+        author = request.form.get(RefField.AUTHOR.value)
+        title = request.form.get(RefField.TITLE.value)
+        reftype = request.form.get(RefField.REFTYPE.value)
 
-    extra = {}
-    for key, value, *_ in request.form.to_dict():
-        if key in [
-            RefField.CITATION_KEY.value,
-            RefField.YEAR.value,
-            RefField.AUTHOR.value,
-            RefField.TITLE.value,
-            RefField.REFTYPE.value,
-        ]:
-            continue
-        extra[key] = value
+        # add extra attributes to dict extra
+        extra = {}
+        for key, value in request.form.to_dict().items():
+            if key in [
+                RefField.CITATION_KEY.value,
+                RefField.YEAR.value,
+                RefField.AUTHOR.value,
+                RefField.TITLE.value,
+                RefField.REFTYPE.value,
+            ]:
+                continue
+            extra[key] = value
 
-    reference_service = get_reference_service()
-    existing_citation_keys = reference_service.get_citation_keys()
+        # get existing citation keys from the repo
+        reference_service = get_reference_service()
+        existing_citation_keys = reference_service.get_citation_keys()
 
-    try:
-        updated_reference = Reference(
-            ref_id,
-            citation_key,
-            int(year) if year else None,
-            author,
-            title,
-            reftype,
-            extra,
-        )
+        # create the updated entity and update by id
+        try:
+            updated_reference = Reference(
+                ref_id,
+                citation_key,
+                int(year) if year else None,
+                author,
+                title,
+                reftype,
+                extra,
+            )
 
-        ValidationService.validate_reference(updated_reference, existing_citation_keys)
-        reference_service.update_reference_by_id(
-            ref_id,
-            citation_key,
-            int(year) if year else None,
-            author,
-            title,
-            reftype,
-            extra,
-        )
+            ValidationService.validate_reference(
+                updated_reference,
+                existing_citation_keys,
+                same_citation_key=(old_ref.citation_key == citation_key),
+            )
+            reference_service.update_reference_by_id(
+                ref_id,
+                citation_key,
+                int(year) if year else None,
+                author,
+                title,
+                reftype,
+                extra,
+                same_citation_key=(old_ref.citation_key == citation_key),
+            )
 
-        flash(f"Reference {old_ref.citation_key} updated successfully!", "success")
-        return redirect("/")
-    except Exception as error:  # pylint: disable=broad-exception-caught
-        flash(str(error), "error")
-        return redirect("/")
+            flash(f"Reference {old_ref.citation_key} updated successfully!", "success")
+            return redirect("/")
+        except Exception as error:  # pylint: disable=broad-exception-caught
+            flash(str(error), "error")
+            return redirect("/")
+
+    return None
 
 
 @app.route("/download_bibtex")
@@ -183,6 +204,44 @@ def download_bibtex():
     except Exception as error:  # pylint: disable=broad-exception-caught
         flash(str(error), "error")
         return redirect("/")
+
+
+@app.route("/add_from_doi", methods=["POST"])
+def add_from_doi():
+    doi = request.form.get("doi")
+    citation_key = request.form.get("citation_key")
+    if doi is None:
+        flash("error", "Input needs to have a DOI.")
+        return redirect("/new_reference/from_doi")
+    if citation_key is None:
+        flash("error", "Input needs to have a citation key.")
+        return redirect("/new_reference/from_doi")
+    citation_key = request.form.get("citation_key")
+    try:
+        doi_service = get_doi_service()
+        ref = doi_service.get_doi(doi)
+        if ref is None:
+            # This only happens when we somehow fail to
+            # contact api.crossref.org.
+            flash("Failed to retrieve DOI. Try again later.", "error")
+            return redirect("/")
+        print(ref)
+        ValidationService.validate_reference(ref)
+        reference_service = get_reference_service()
+
+        reference_service.create_reference(
+            citation_key,
+            ref.year,
+            ref.author,
+            ref.title,
+            ref.reftype,
+            ref.extra,
+        )
+        flash(f"Reference {citation_key} created succesfully!", "success")
+        return redirect("/")
+    except UserInputError as err:
+        flash(str(err), "error")
+        return redirect("/new_reference/from_doi")
 
 
 # ---------------------------

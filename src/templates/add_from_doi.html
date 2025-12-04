@@ -1,0 +1,60 @@
+{% extends "layout.html" %}
+{% block title %}
+  Add a new reference from a DOI
+{% endblock %}
+
+{% block header %}
+  Add a new reference from a DOI
+{% endblock %}
+
+{% block body %}
+<div class="create-bg">
+  <div class="d-flex flex-column justify-content-center align-items-center">
+    <div class="border border-1 rounded-4 p-5 bg-light" >
+      <h2 class="mb-5">Add a new reference from a DOI</h2>
+      <form action="/add_from_doi" method="post">
+        <div class="row mb-1">
+          <label for="doi" class="col-sm-3 col-form-label">
+            DOI
+          </label>
+          <div class "col-sm-9">
+            <input
+              type="text"
+              id="doi"
+              name="doi"
+              class="form-control"
+              required
+              placeholder="Example: 10.221/test"
+              >
+          </div>
+        </div>
+        <div class="row mb-1">
+          <label for="citation_key" class="col-sm-3 col-form-label">
+            Citation Key
+          </label>
+          <div class "col-sm-9">
+            <input
+              type="text"
+              id="citation_key"
+              name="citation_key"
+              class="form-control"
+              required
+              placeholder="Example: janedoe2020"
+              >
+          </div>
+        </div>
+        <div class="row mt-4">
+          <div class="col-sm-9 offset-sm-3">
+            <button type="submit" class="btn btn-primary btn-lg">
+              Get Reference
+            </button>
+            <a href="/new_reference" class="btn btn-link">
+              Back to type select
+            </a>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
