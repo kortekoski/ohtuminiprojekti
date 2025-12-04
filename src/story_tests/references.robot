@@ -108,7 +108,7 @@ As a user I can choose only certain reference types
     Page Should Not Contain  Inproceedings
     Page Should Not Contain  Miscellaneous
 
-As a user when adding a book reference only the book-specific fields are shown
+Adding a book reference only the book specific fields are shown
     Go To  ${HOME_URL}/new_reference
     Click Link  Book
     Title Should Be  Create a new reference
@@ -120,7 +120,7 @@ As a user when adding a book reference only the book-specific fields are shown
     Page Should Contain  ISBN
     Page Should Not Contain  Journal
 
-As a user when adding an article reference only the article-specific fields are shown
+Adding an article reference only the article specific fields are shown
     Go To  ${HOME_URL}/new_reference
     Click Link  Article
     Title Should Be  Create a new reference
