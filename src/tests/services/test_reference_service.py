@@ -72,7 +72,7 @@ class TestReferenceService(unittest.TestCase):
                 id=1,
                 citation_key="Test2024",  # duplicate key
                 year=2001,
-                author="Bad Dude",
+                authors=["Bad Dude"],
                 title="all out of gum",
                 reftype="book",
                 extra={},
@@ -105,7 +105,7 @@ class TestReferenceService(unittest.TestCase):
             id=data["id"],
             citation_key=data[RefField.CITATION_KEY.value],
             year=data[RefField.YEAR.value],
-            author=data[RefField.AUTHOR.value],
+            authors=[data[RefField.AUTHOR.value]],
             title=data[RefField.TITLE.value],
             reftype=data[RefField.REFTYPE.value],
             extra=data[RefField.EXTRA.value],
@@ -151,7 +151,7 @@ class TestReferenceService(unittest.TestCase):
                 id=old.id,
                 citation_key=other.citation_key,  # <-- belongs to ID 2
                 year=old.year,
-                author=old.author,
+                authors=[old.author],
                 title=old.title,
                 reftype=old.reftype,
                 extra=old.extra,

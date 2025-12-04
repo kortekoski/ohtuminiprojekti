@@ -27,7 +27,7 @@ class ReferenceService:
         self,
         citation_key: str,
         year: int,
-        author: str,
+        authors: list[str],
         title: str,
         reftype: str,
         extra: dict[str, str] = {},
@@ -36,6 +36,9 @@ class ReferenceService:
 
         if self._repo.citation_key_exists(citation_key):
             raise ValueError(f"Citation key '{citation_key}' already exists.")
+
+        # Join authors list with ' and ' delimiter
+        author = " and ".join(a.strip() for a in authors if a.strip())
 
         return self._repo.create_reference(
             citation_key, year, author, title, reftype, extra
@@ -50,7 +53,7 @@ class ReferenceService:
         id: int,
         citation_key: str,
         year: int = None,
-        author: str = None,
+        authors: list[str] = None,
         title: str = None,
         reftype: str = None,
         extra: dict[str, str] = None,
@@ -63,6 +66,12 @@ class ReferenceService:
         """
         if self.citation_key_exists(citation_key) and not same_citation_key:
             raise ValueError(f"Citation key '{citation_key}' already exists.")
+
+        # Join authors list with ' and ' delimiter if provided
+        author = None
+        if authors is not None:
+            author = " and ".join(a.strip() for a in authors if a.strip())
+
         self._repo.update_reference(
             id, citation_key, year, author, title, reftype, extra
         )

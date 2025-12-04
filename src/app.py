@@ -57,9 +57,8 @@ def reference_creation():
     """Handles the creation of a new reference."""
     citation_key = request.form.get(RefField.CITATION_KEY.value)
     year = int(request.form.get(RefField.YEAR.value))
-    # Receive authors as a list from form and join with ' and '
-    authors_list = request.form.getlist("author")
-    author = " and ".join(a.strip() for a in authors_list if a.strip())
+    # Receive authors as a list from form
+    authors = request.form.getlist("author")
     title = request.form.get(RefField.TITLE.value)
     reftype = request.form.get(RefField.REFTYPE.value)
 
@@ -79,13 +78,15 @@ def reference_creation():
     existing_citation_keys = reference_service.get_citation_keys()
 
     try:
+        # Join authors for validation (Reference entity still expects string)
+        author_string = " and ".join(a.strip() for a in authors if a.strip())
         new_reference = Reference(
-            None, citation_key, year, author, title, reftype, extra
+            None, citation_key, year, author_string, title, reftype, extra
         )
 
         ValidationService.validate_reference(new_reference, existing_citation_keys)
         reference_service.create_reference(
-            citation_key, year, author, title, reftype, extra
+            citation_key, year, authors, title, reftype, extra
         )
 
         flash(f"Reference {citation_key} created successfully!", "success")
@@ -126,9 +127,8 @@ def update_reference(ref_id):
         # get shared attributes from form
         citation_key = request.form.get(RefField.CITATION_KEY.value)
         year = request.form.get(RefField.YEAR.value)
-        # Receive authors as a list from form and join with ' and '
-        authors_list = request.form.getlist("author")
-        author = " and ".join(a.strip() for a in authors_list if a.strip())
+        # Receive authors as a list from form
+        authors = request.form.getlist("author")
         title = request.form.get(RefField.TITLE.value)
         reftype = request.form.get(RefField.REFTYPE.value)
 
@@ -151,11 +151,13 @@ def update_reference(ref_id):
 
         # create the updated entity and update by id
         try:
+            # Join authors for validation (Reference entity still expects string)
+            author_string = " and ".join(a.strip() for a in authors if a.strip())
             updated_reference = Reference(
                 ref_id,
                 citation_key,
                 int(year) if year else None,
-                author,
+                author_string,
                 title,
                 reftype,
                 extra,
@@ -170,7 +172,7 @@ def update_reference(ref_id):
                 ref_id,
                 citation_key,
                 int(year) if year else None,
-                author,
+                authors,
                 title,
                 reftype,
                 extra,
@@ -233,10 +235,13 @@ def add_from_doi():
         ValidationService.validate_reference(ref)
         reference_service = get_reference_service()
 
+        # DOI service returns author as a string, split it into a list
+        authors = [a.strip() for a in ref.author.split(" and ")]
+
         reference_service.create_reference(
             citation_key,
             ref.year,
-            ref.author,
+            authors,
             ref.title,
             ref.reftype,
             ref.extra,
@@ -265,11 +270,12 @@ if test_env:
         """Adds a reference for testing purposes."""
         citation_key = request.form.get(RefField.CITATION_KEY.value)
         year = int(request.form.get(RefField.YEAR.value))
-        author = request.form.get(RefField.AUTHOR.value)
+        # Receive authors as a list from form
+        authors = request.form.getlist("author")
         title = request.form.get(RefField.TITLE.value)
         reftype = request.form.get(RefField.REFTYPE.value)
 
         service = get_reference_service()
-        service.create_reference(citation_key, year, author, title, reftype)
+        service.create_reference(citation_key, year, authors, title, reftype)
 
         return jsonify({"message": "reference registered"})
