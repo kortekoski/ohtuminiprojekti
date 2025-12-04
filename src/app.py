@@ -43,9 +43,7 @@ def index():
 @app.route("/new_reference")
 def new_type_selection():
     """Renders the new reference creation form."""
-    return render_template(
-        "new_reference.html", schemas=TemplateService.relevant_attributes(RefType.BOOK)
-    )
+    return render_template("new_reference.html")
 
 
 @app.route("/new_reference/<reftype>")
