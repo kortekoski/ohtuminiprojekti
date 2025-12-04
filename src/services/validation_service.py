@@ -111,13 +111,6 @@ class ValidationService:
         if not ValidationService._validate_year_range(current_year, ref):
             raise UserInputError(f"Year must be between 1000 and {current_year}")
 
-        # Author must be in format First Last or Last, First
-        if not ValidationService._validate_author(ref.author):
-            raise UserInputError(
-                """Author must be in format John Smith or Smith, 
-                John (or multiple authors separated by ' and ')"""
-            )
-
         # Title should be at least 2 characters long
         if not ValidationService._validate_title(ref.title):
             raise UserInputError("Title must be at least 2 characters long")
