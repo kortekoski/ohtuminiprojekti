@@ -91,8 +91,8 @@ Reference can be added by DOI
     Input Text  doi  10.1136/jclinpath-2020-206745
     Input Text  citation_key  doicitation
     Click Button  Get Reference
+    Wait Until Page Contains  created succesfully!  timeout=10s
     Title Should Be  Reference app
-    Page Should Contain  created succesfully!
     Page Should Contain  Construction of a reference material
 
 BibTeX download starts
@@ -108,7 +108,7 @@ As a user I can choose only certain reference types
     Page Should Not Contain  Inproceedings
     Page Should Not Contain  Miscellaneous
 
-As a user when adding a book reference only the book-specific fields are shown
+When adding a book reference only the book specific fields are shown
     Go To  ${HOME_URL}/new_reference
     Click Link  Book
     Title Should Be  Create a new reference
@@ -120,7 +120,7 @@ As a user when adding a book reference only the book-specific fields are shown
     Page Should Contain  ISBN
     Page Should Not Contain  Journal
 
-As a user when adding an article reference only the article-specific fields are shown
+When adding an article reference only the article specific fields are shown
     Go To  ${HOME_URL}/new_reference
     Click Link  Article
     Title Should Be  Create a new reference
