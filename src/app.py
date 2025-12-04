@@ -57,7 +57,9 @@ def reference_creation():
     """Handles the creation of a new reference."""
     citation_key = request.form.get(RefField.CITATION_KEY.value)
     year = int(request.form.get(RefField.YEAR.value))
-    author = request.form.get(RefField.AUTHOR.value)
+    # Receive authors as a list from form and join with ' and '
+    authors_list = request.form.getlist("author")
+    author = " and ".join(a.strip() for a in authors_list if a.strip())
     title = request.form.get(RefField.TITLE.value)
     reftype = request.form.get(RefField.REFTYPE.value)
 
@@ -124,7 +126,9 @@ def update_reference(ref_id):
         # get shared attributes from form
         citation_key = request.form.get(RefField.CITATION_KEY.value)
         year = request.form.get(RefField.YEAR.value)
-        author = request.form.get(RefField.AUTHOR.value)
+        # Receive authors as a list from form and join with ' and '
+        authors_list = request.form.getlist("author")
+        author = " and ".join(a.strip() for a in authors_list if a.strip())
         title = request.form.get(RefField.TITLE.value)
         reftype = request.form.get(RefField.REFTYPE.value)
 
