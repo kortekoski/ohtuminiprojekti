@@ -84,7 +84,9 @@ def reference_creation():
             None, citation_key, year, author_string, title, reftype, extra
         )
 
-        ValidationService.validate_reference(new_reference, existing_citation_keys)
+        ValidationService.validate_reference(
+            new_reference, existing_citation_keys, authors=authors
+        )
         reference_service.create_reference(
             citation_key, year, authors, title, reftype, extra
         )
@@ -167,6 +169,7 @@ def update_reference(ref_id):
                 updated_reference,
                 existing_citation_keys,
                 same_citation_key=(old_ref.citation_key == citation_key),
+                authors=authors,
             )
             reference_service.update_reference_by_id(
                 ref_id,
@@ -232,11 +235,10 @@ def add_from_doi():
             flash("Failed to retrieve DOI. Try again later.", "error")
             return redirect("/")
         print(ref)
-        ValidationService.validate_reference(ref)
-        reference_service = get_reference_service()
-
-        # DOI service returns author as a string, split it into a list
+        # DOI service returns author as a string, split it into a list for validation
         authors = [a.strip() for a in ref.author.split(" and ")]
+        ValidationService.validate_reference(ref, authors=authors)
+        reference_service = get_reference_service()
 
         reference_service.create_reference(
             citation_key,

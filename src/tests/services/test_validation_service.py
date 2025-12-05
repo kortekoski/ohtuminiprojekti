@@ -52,3 +52,37 @@ class TestValidationServiceUnit(unittest.TestCase):
     # ---------- bibtex type ----------
     def test_bibtex_reftype_invalid(self):
         self.assertFalse(ValidationService._validate_bibtex_reftype("notatype"))
+
+    # ---------- authors uniqueness ----------
+    def test_authors_unique_valid(self):
+        authors = ["John Smith", "Jane Doe", "Bob Johnson"]
+        self.assertTrue(ValidationService._validate_authors_unique(authors))
+
+    def test_authors_unique_with_duplicates(self):
+        authors = ["John Smith", "Jane Doe", "John Smith"]
+        self.assertFalse(ValidationService._validate_authors_unique(authors))
+
+    def test_authors_unique_case_insensitive(self):
+        authors = ["John Smith", "jane doe", "JOHN SMITH"]
+        self.assertFalse(ValidationService._validate_authors_unique(authors))
+
+    def test_authors_unique_with_whitespace(self):
+        authors = ["John Smith", "  John Smith  "]
+        self.assertFalse(ValidationService._validate_authors_unique(authors))
+
+    def test_authors_unique_empty_list(self):
+        authors = []
+        self.assertTrue(ValidationService._validate_authors_unique(authors))
+
+    def test_authors_unique_single_author(self):
+        authors = ["John Smith"]
+        self.assertTrue(ValidationService._validate_authors_unique(authors))
+
+    def test_validate_reference_with_duplicate_authors(self):
+        ref = MockReference(
+            "Key2024", 2024, "John Smith and John Smith", "Valid Title", RefType.ARTICLE
+        )
+        authors = ["John Smith", "John Smith"]
+        with self.assertRaises(UserInputError) as context:
+            ValidationService.validate_reference(ref, existing_keys=[], authors=authors)
+        self.assertIn("duplicate", str(context.exception).lower())

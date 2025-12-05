@@ -69,6 +69,15 @@ class ValidationService:
         return citation_key not in existing_keys
 
     @staticmethod
+    def _validate_authors_unique(authors: list[str]):
+        """Validates that there are no duplicate author names in the list."""
+        # Normalize author names (strip whitespace and compare case-insensitively)
+        normalized_authors = [
+            author.strip().lower() for author in authors if author.strip()
+        ]
+        return len(normalized_authors) == len(set(normalized_authors))
+
+    @staticmethod
     def _validate_bibtex_reftype(reftype):
         """Validates that the reftype is one of the valid BibTeX reference types."""
 
@@ -93,11 +102,20 @@ class ValidationService:
 
     @staticmethod
     def validate_reference(
-        ref: Reference, existing_keys=[], same_citation_key=False
+        ref: Reference,
+        existing_keys=[],
+        same_citation_key=False,
+        authors: list[str] = None,
     ) -> bool:
         """
         Validates the reference information provided by the user
         according to the specified rules.
+
+        Args:
+            ref: The reference to validate
+            existing_keys: List of existing citation keys
+            same_citation_key: Whether to skip citation key uniqueness check
+            authors: Optional list of author names to validate for duplicates
         """
 
         # Check first that there are no empty entries
@@ -134,5 +152,12 @@ class ValidationService:
         # Type validation, must be one of the valid bibtex reftypes
         if not ValidationService._validate_bibtex_reftype(ref.reftype):
             raise UserInputError("Incorrect bibtex reference reftype")
+
+        # Validate authors list for duplicates if provided
+        if authors is not None:
+            if not ValidationService._validate_authors_unique(authors):
+                raise UserInputError(
+                    "Author names must be unique - duplicate authors found"
+                )
 
         return True
