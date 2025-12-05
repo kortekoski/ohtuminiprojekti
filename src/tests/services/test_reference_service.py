@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import Mock
 from services.reference_service import ReferenceService
-from entities.reference import Reference
+from entities.reference import Reference, InputReference
 from tests.test_data import TestData
 from util import RefField
 
@@ -49,7 +49,7 @@ class TestReferenceService(unittest.TestCase):
 
         # Act + Assert
         with self.assertRaises(Exception):
-            service.create_reference(TestData.valid_reference_object())
+            service.create_reference(TestData.valid_input_reference())
 
         # The repository's create_reference MUST NOT be called
         mock_repo.create_reference.assert_not_called()

@@ -4,6 +4,7 @@ from sqlalchemy import text
 from config import app, db
 from db_helper import setup_db
 from repositories.reference_repository import ReferenceRepository
+from entities.reference import InputReference
 from tests.test_data import TestData
 
 
@@ -40,13 +41,14 @@ class TestReferenceRepository(unittest.TestCase):
         ref = TestData.valid_reference()
 
         # Insert into test database using existing create_reference()
-        self.repo.create_reference(
-            ref.citation_key,
-            ref.year,
-            [ref.author],
-            ref.title,
-            ref.reftype,
+        input_ref = InputReference(
+            citation_key=ref.citation_key,
+            year=ref.year,
+            authors=[ref.author],
+            title=ref.title,
+            reftype=ref.reftype,
         )
+        self.repo.create_reference(input_ref)
 
         # Fetch from repository
         result = self.repo.get_references()
@@ -66,13 +68,14 @@ class TestReferenceRepository(unittest.TestCase):
 
         ref = TestData.valid_reference()
 
-        self.repo.create_reference(
-            ref.citation_key,
-            ref.year,
-            [ref.author],
-            ref.title,
-            ref.reftype,
+        input_ref = InputReference(
+            citation_key=ref.citation_key,
+            year=ref.year,
+            authors=[ref.author],
+            title=ref.title,
+            reftype=ref.reftype,
         )
+        self.repo.create_reference(input_ref)
 
         inserted = self.repo.get_references()
         self.assertEqual(len(inserted), 1)
@@ -88,9 +91,15 @@ class TestReferenceRepository(unittest.TestCase):
 
         ref = TestData.valid_reference()
 
-        id = self.repo.create_reference(
-            ref.citation_key, ref.year, [ref.author], ref.title, ref.reftype, {}
+        input_ref = InputReference(
+            citation_key=ref.citation_key,
+            year=ref.year,
+            authors=[ref.author],
+            title=ref.title,
+            reftype=ref.reftype,
+            extra={},
         )
+        id = self.repo.create_reference(input_ref)
 
         # Act
         new_authors = ["New Author"]

@@ -3,7 +3,7 @@
 from config import db
 from sqlalchemy import text
 
-from entities.reference import Reference
+from entities.reference import Reference, InputReference
 from util import RefField
 
 import json
@@ -90,19 +90,11 @@ class ReferenceRepository:
 
         return Reference(row[0], row[1], row[2], row[3], row[4], row[5], row[6])
 
-    def create_reference(
-        self,
-        citation_key: str,
-        year: int,
-        authors: list[str],
-        title: str,
-        reftype: str,
-        extra: dict[str, str] = {},
-    ):
+    def create_reference(self, input_ref: InputReference):
         """Creates a new reference in the database."""
         # Step 1: Insert or get author IDs
         author_ids = []
-        for author in authors:
+        for author in input_ref.authors:
             author_name = author.strip()
             if not author_name:
                 continue
@@ -143,11 +135,11 @@ class ReferenceRepository:
         result = db.session.execute(
             sql,
             {
-                RefField.CITATION_KEY.value: citation_key,
-                RefField.YEAR.value: year,
-                RefField.TITLE.value: title,
-                RefField.REFTYPE.value: reftype,
-                RefField.EXTRA.value: json.dumps(extra),
+                RefField.CITATION_KEY.value: input_ref.citation_key,
+                RefField.YEAR.value: input_ref.year,
+                RefField.TITLE.value: input_ref.title,
+                RefField.REFTYPE.value: input_ref.reftype,
+                RefField.EXTRA.value: json.dumps(input_ref.extra),
             },
         )
         reference_id = result.fetchone()[0]

@@ -4,7 +4,7 @@ main application defining routes and reference logic
 
 from flask import Response, redirect, render_template, request, jsonify, flash, g
 from db_helper import reset_db
-from entities.reference import Reference
+from entities.reference import Reference, InputReference
 from config import app, test_env
 from services.bibtex_service import BibtexService
 from services.reference_service import ReferenceService
@@ -87,9 +87,16 @@ def reference_creation():
         ValidationService.validate_reference(
             new_reference, existing_citation_keys, authors=authors
         )
-        reference_service.create_reference(
-            citation_key, year, authors, title, reftype, extra
+
+        input_ref = InputReference(
+            citation_key=citation_key,
+            year=year,
+            authors=authors,
+            title=title,
+            reftype=reftype,
+            extra=extra,
         )
+        reference_service.create_reference(input_ref)
 
         flash(f"Reference {citation_key} created successfully!", "success")
         return redirect("/")
@@ -240,14 +247,15 @@ def add_from_doi():
         ValidationService.validate_reference(ref, authors=authors)
         reference_service = get_reference_service()
 
-        reference_service.create_reference(
-            citation_key,
-            ref.year,
-            authors,
-            ref.title,
-            ref.reftype,
-            ref.extra,
+        input_ref = InputReference(
+            citation_key=citation_key,
+            year=ref.year,
+            authors=authors,
+            title=ref.title,
+            reftype=ref.reftype,
+            extra=ref.extra,
         )
+        reference_service.create_reference(input_ref)
         flash(f"Reference {citation_key} created succesfully!", "success")
         return redirect("/")
     except UserInputError as err:
@@ -278,6 +286,13 @@ if test_env:
         reftype = request.form.get(RefField.REFTYPE.value)
 
         service = get_reference_service()
-        service.create_reference(citation_key, year, authors, title, reftype)
+        input_ref = InputReference(
+            citation_key=citation_key,
+            year=year,
+            authors=authors,
+            title=title,
+            reftype=reftype,
+        )
+        service.create_reference(input_ref)
 
         return jsonify({"message": "reference registered"})

@@ -1,7 +1,7 @@
 """Service layer for reference management."""
 
 from util import RefField
-from entities.reference import Reference
+from entities.reference import Reference, InputReference
 from repositories.reference_repository import (
     ReferenceRepository,
 )
@@ -23,23 +23,13 @@ class ReferenceService:
         """Fetches a single reference by its ID from the repository."""
         return self._repo.get_reference_by_id(id)
 
-    def create_reference(
-        self,
-        citation_key: str,
-        year: int,
-        authors: list[str],
-        title: str,
-        reftype: str,
-        extra: dict[str, str] = {},
-    ):
+    def create_reference(self, input_ref: InputReference):
         """Creates a new reference in the repository."""
 
-        if self._repo.citation_key_exists(citation_key):
-            raise ValueError(f"Citation key '{citation_key}' already exists.")
+        if self._repo.citation_key_exists(input_ref.citation_key):
+            raise ValueError(f"Citation key '{input_ref.citation_key}' already exists.")
 
-        return self._repo.create_reference(
-            citation_key, year, authors, title, reftype, extra
-        )
+        return self._repo.create_reference(input_ref)
 
     def delete_reference(self, citation_key: str):
         """Deletes a reference from the repository."""
