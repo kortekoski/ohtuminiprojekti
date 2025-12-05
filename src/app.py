@@ -78,14 +78,17 @@ def reference_creation():
     existing_citation_keys = reference_service.get_citation_keys()
 
     try:
-        # Join authors for validation (Reference entity still expects string)
-        author_string = " and ".join(a.strip() for a in authors if a.strip())
-        new_reference = Reference(
-            None, citation_key, year, author_string, title, reftype, extra
+        input_ref = InputReference(
+            citation_key=citation_key,
+            year=year,
+            authors=authors,
+            title=title,
+            reftype=reftype,
+            extra=extra,
         )
 
-        ValidationService.validate_reference(
-            new_reference, existing_citation_keys, authors=authors
+        ValidationService.validate_input_reference(
+            input_ref, existing_citation_keys, authors=authors
         )
 
         input_ref = InputReference(
@@ -137,7 +140,7 @@ def update_reference(ref_id):
         citation_key = request.form.get(RefField.CITATION_KEY.value)
         year = request.form.get(RefField.YEAR.value)
         # Receive authors as a list from form
-        authors = request.form.getlist("author")
+        authors = request.form.getlist(RefField.AUTHOR.value)
         title = request.form.get(RefField.TITLE.value)
         reftype = request.form.get(RefField.REFTYPE.value)
 
@@ -160,27 +163,8 @@ def update_reference(ref_id):
 
         # create the updated entity and update by id
         try:
-            # Join authors for validation (Reference entity still expects string)
-            author_string = " and ".join(a.strip() for a in authors if a.strip())
-            updated_reference = Reference(
-                ref_id,
-                citation_key,
-                int(year) if year else None,
-                author_string,
-                title,
-                reftype,
-                extra,
-            )
-
-            ValidationService.validate_reference(
-                updated_reference,
-                existing_citation_keys,
-                same_citation_key=(old_ref.citation_key == citation_key),
-                authors=authors,
-            )
-
             input_ref = InputReference(
-                citation_key=citation_key,
+                citation_key=request.form.get(RefField.CITATION_KEY.value),
                 year=int(year) if year else None,
                 authors=authors,
                 title=title,
@@ -188,6 +172,14 @@ def update_reference(ref_id):
                 extra=extra,
                 id=ref_id,
             )
+
+            ValidationService.validate_input_reference(
+                input_ref,
+                existing_citation_keys,
+                same_citation_key=(old_ref.citation_key == citation_key),
+                authors=authors,
+            )
+
             reference_service.update_reference_by_id(
                 input_ref, same_citation_key=(old_ref.citation_key == citation_key)
             )
@@ -247,7 +239,7 @@ def add_from_doi():
         print(ref)
         # DOI service returns author as a string, split it into a list for validation
         authors = [a.strip() for a in ref.author.split(" and ")]
-        ValidationService.validate_reference(ref, authors=authors)
+        ValidationService.validate_input_reference(ref, authors=authors)
         reference_service = get_reference_service()
 
         input_ref = InputReference(

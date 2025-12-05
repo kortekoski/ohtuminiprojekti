@@ -18,14 +18,16 @@ class TestValidationServiceUnit(unittest.TestCase):
     # -------- basic required fields ----------
     def test_empty_entries_invalid(self):
         ref = MockReference("", 2020, "John Smith", "Valid Title", RefType.ARTICLE)
+        authors = ["John Smith"]
         with self.assertRaises(UserInputError):
-            ValidationService._validate_empty_entries(ref)
+            ValidationService._validate_empty_entries(ref, authors)
 
     # ---------- correct types ----------
     def test_validate_value_types_invalid_year(self):
         ref = MockReference("Key", "2020", "John Smith", "Valid Title", "article")
+        authors = ["John Smith"]
         with self.assertRaises(ValueError):
-            ValidationService._validate_value_types(ref)
+            ValidationService._validate_value_types(ref, authors)
 
     # ---------- year range ----------
     def test_year_range_invalid(self):
@@ -84,5 +86,7 @@ class TestValidationServiceUnit(unittest.TestCase):
         )
         authors = ["John Smith", "John Smith"]
         with self.assertRaises(UserInputError) as context:
-            ValidationService.validate_reference(ref, existing_keys=[], authors=authors)
+            ValidationService.validate_input_reference(
+                ref, existing_keys=[], authors=authors
+            )
         self.assertIn("duplicate", str(context.exception).lower())
