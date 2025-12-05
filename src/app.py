@@ -178,15 +178,18 @@ def update_reference(ref_id):
                 same_citation_key=(old_ref.citation_key == citation_key),
                 authors=authors,
             )
+
+            input_ref = InputReference(
+                citation_key=citation_key,
+                year=int(year) if year else None,
+                authors=authors,
+                title=title,
+                reftype=reftype,
+                extra=extra,
+                id=ref_id,
+            )
             reference_service.update_reference_by_id(
-                ref_id,
-                citation_key,
-                int(year) if year else None,
-                authors,
-                title,
-                reftype,
-                extra,
-                same_citation_key=(old_ref.citation_key == citation_key),
+                input_ref, same_citation_key=(old_ref.citation_key == citation_key)
             )
 
             flash(f"Reference {old_ref.citation_key} updated successfully!", "success")

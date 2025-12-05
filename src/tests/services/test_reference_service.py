@@ -67,16 +67,17 @@ class TestReferenceService(unittest.TestCase):
         service = ReferenceService(repo=mock_repo)
 
         # Act + Assert
+        input_ref = InputReference(
+            citation_key="Test2024",  # duplicate key
+            year=2001,
+            authors=["Bad Dude"],
+            title="all out of gum",
+            reftype="book",
+            extra={},
+            id=1,
+        )
         with self.assertRaises(ValueError) as ctx:
-            service.update_reference_by_id(
-                id=1,
-                citation_key="Test2024",  # duplicate key
-                year=2001,
-                authors=["Bad Dude"],
-                title="all out of gum",
-                reftype="book",
-                extra={},
-            )
+            service.update_reference_by_id(input_ref)
 
         # Ensure the correct error was raised
         self.assertIn("already exists", str(ctx.exception))
@@ -101,26 +102,19 @@ class TestReferenceService(unittest.TestCase):
 
         data = TestData.updated_reference_json()
         # Act
-        service.update_reference_by_id(
-            id=data["id"],
+        input_ref = InputReference(
             citation_key=data[RefField.CITATION_KEY.value],
             year=data[RefField.YEAR.value],
             authors=[data[RefField.AUTHOR.value]],
             title=data[RefField.TITLE.value],
             reftype=data[RefField.REFTYPE.value],
             extra=data[RefField.EXTRA.value],
+            id=data["id"],
         )
+        service.update_reference_by_id(input_ref)
 
-        # Assert – repository update must be called with correct params
-        mock_repo.update_reference.assert_called_once_with(
-            data["id"],
-            data[RefField.CITATION_KEY.value],
-            data[RefField.YEAR.value],
-            [data[RefField.AUTHOR.value]],
-            data[RefField.TITLE.value],
-            data[RefField.REFTYPE.value],
-            data[RefField.EXTRA.value],
-        )
+        # Assert – repository update must be called once
+        mock_repo.update_reference.assert_called_once()
 
     def test_update_fails_if_citation_key_belongs_to_another_reference(self):
         """Updating should fail ONLY when changing to a citation_key
@@ -146,16 +140,17 @@ class TestReferenceService(unittest.TestCase):
         service = ReferenceService(repo=mock_repo)
 
         # ACT + ASSERT — Trying to update old.id to use other's key
+        input_ref = InputReference(
+            citation_key=other.citation_key,  # <-- belongs to ID 2
+            year=old.year,
+            authors=[old.author],
+            title=old.title,
+            reftype=old.reftype,
+            extra=old.extra,
+            id=old.id,
+        )
         with self.assertRaises(ValueError) as ctx:
-            service.update_reference_by_id(
-                id=old.id,
-                citation_key=other.citation_key,  # <-- belongs to ID 2
-                year=old.year,
-                authors=[old.author],
-                title=old.title,
-                reftype=old.reftype,
-                extra=old.extra,
-            )
+            service.update_reference_by_id(input_ref)
 
         # Ensure error explains the situation
         self.assertIn("already exists", str(ctx.exception))

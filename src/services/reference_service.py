@@ -36,27 +36,17 @@ class ReferenceService:
         self._repo.delete_reference(citation_key)
 
     def update_reference_by_id(
-        self,
-        id: int,
-        citation_key: str,
-        year: int = None,
-        authors: list[str] = None,
-        title: str = None,
-        reftype: str = None,
-        extra: dict[str, str] = None,
-        same_citation_key: bool = False,
+        self, input_ref: InputReference, same_citation_key: bool = False
     ):
         """Updates an existing reference in the repository.
         If citation_key is changed, ensures the new key does not already exist.
         Otherwise we might end up with duplicate citation keys.
         This check is skipped if the updated ref keeps the same citation key.
         """
-        if self.citation_key_exists(citation_key) and not same_citation_key:
-            raise ValueError(f"Citation key '{citation_key}' already exists.")
+        if self.citation_key_exists(input_ref.citation_key) and not same_citation_key:
+            raise ValueError(f"Citation key '{input_ref.citation_key}' already exists.")
 
-        self._repo.update_reference(
-            id, citation_key, year, authors, title, reftype, extra
-        )
+        self._repo.update_reference(input_ref)
 
     def get_citation_keys(self) -> list[str]:
         """Fetches all citation keys from the repository."""

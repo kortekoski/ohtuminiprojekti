@@ -101,21 +101,25 @@ class TestReferenceRepository(unittest.TestCase):
         )
         id = self.repo.create_reference(input_ref)
 
-        # Act
-        new_authors = ["New Author"]
-        new_title = "New Title"
-        new_reftype = "book"
-        self.repo.update_reference(
-            id, ref.citation_key, ref.year, new_authors, new_title, new_reftype, {}
+        # Act - Update with InputReference
+        update_ref = InputReference(
+            citation_key=ref.citation_key,
+            year=ref.year,
+            authors=["New Author"],
+            title="New Title",
+            reftype="book",
+            extra={},
+            id=id,
         )
+        self.repo.update_reference(update_ref)
 
         updated = self.repo.get_references()
         self.assertEqual(len(updated), 1)
         updated_ref = updated[0]
 
-        self.assertEqual(updated_ref.author, new_authors[0])
-        self.assertEqual(updated_ref.title, new_title)
-        self.assertEqual(updated_ref.reftype, new_reftype)
+        self.assertEqual(updated_ref.author, "New Author")
+        self.assertEqual(updated_ref.title, "New Title")
+        self.assertEqual(updated_ref.reftype, "book")
 
 
 if __name__ == "__main__":

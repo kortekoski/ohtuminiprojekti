@@ -199,29 +199,20 @@ class ReferenceRepository:
         db.session.execute(sql, {RefField.CITATION_KEY.value: citation_key})
         db.session.commit()
 
-    def update_reference(
-        self,
-        id: int,
-        citation_key: str,
-        year: int = None,
-        authors: list[str] = None,
-        title: str = None,
-        reftype: str = None,
-        extra: dict[str, str] = None,
-    ):
-        """Updates only fields that are not None."""
+    def update_reference(self, input_ref: InputReference):
+        """Updates a reference using InputReference entity."""
 
         updates = {}
-        if citation_key is not None:
-            updates["citation_key"] = citation_key
-        if year is not None:
-            updates["year"] = year
-        if title is not None:
-            updates["title"] = title
-        if reftype is not None:
-            updates["reftype"] = reftype
-        if extra is not None:
-            updates["extra"] = json.dumps(extra)
+        if input_ref.citation_key is not None:
+            updates["citation_key"] = input_ref.citation_key
+        if input_ref.year is not None:
+            updates["year"] = input_ref.year
+        if input_ref.title is not None:
+            updates["title"] = input_ref.title
+        if input_ref.reftype is not None:
+            updates["reftype"] = input_ref.reftype
+        if input_ref.extra is not None:
+            updates["extra"] = json.dumps(input_ref.extra)
 
         # Update reference_values table if there are any updates
         if updates:
@@ -248,11 +239,11 @@ class ReferenceRepository:
             """
             )
 
-            updates["id"] = id
+            updates["id"] = input_ref.id
             db.session.execute(sql, updates)
 
         # Handle author updates
-        if authors is not None:
+        if input_ref.authors is not None:
             # Step 1: Delete old author mappings
             delete_mappings_sql = text(
                 """
@@ -260,11 +251,11 @@ class ReferenceRepository:
                 WHERE reference_id = :reference_id
                 """
             )
-            db.session.execute(delete_mappings_sql, {"reference_id": id})
+            db.session.execute(delete_mappings_sql, {"reference_id": input_ref.id})
 
             # Step 2: Insert or get author IDs
             author_ids = []
-            for author in authors:
+            for author in input_ref.authors:
                 author_name = author.strip()
                 if not author_name:
                     continue
@@ -300,7 +291,7 @@ class ReferenceRepository:
                 db.session.execute(
                     insert_mapping_sql,
                     {
-                        "reference_id": id,
+                        "reference_id": input_ref.id,
                         "author_id": author_id,
                         "author_order": order,
                     },
