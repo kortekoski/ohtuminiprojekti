@@ -93,31 +93,7 @@ class ReferenceRepository:
     def create_reference(self, input_ref: InputReference):
         """Creates a new reference in the database."""
         # Step 1: Insert or get author IDs
-        author_ids = []
-        for author in input_ref.authors:
-            author_name = author.strip()
-            if not author_name:
-                continue
-
-            # Try to insert author, or get existing ID
-            insert_author_sql = text(
-                """
-                INSERT INTO authors (name)
-                VALUES (:name)
-                ON CONFLICT (name) DO NOTHING
-                """
-            )
-            db.session.execute(insert_author_sql, {"name": author_name})
-
-            # Get the author ID
-            get_author_id_sql = text(
-                """
-                SELECT id FROM authors WHERE name = :name
-                """
-            )
-            result = db.session.execute(get_author_id_sql, {"name": author_name})
-            author_id = result.fetchone()[0]
-            author_ids.append(author_id)
+        author_ids = self.get_author_ids(input_ref)
 
         # Step 2: Insert reference into reference_values
         sql = text(
@@ -145,13 +121,14 @@ class ReferenceRepository:
         reference_id = result.fetchone()[0]
 
         # Step 3: Insert mappings into reference_authors
+        self.insert_into_authors(author_ids, reference_id)
+
+        db.session.commit()
+        return reference_id
+
+    def insert_into_authors(self, author_ids: list[int], reference_id: int) -> int:
         for order, author_id in enumerate(author_ids):
-            insert_mapping_sql = text(
-                """
-                INSERT INTO reference_authors (reference_id, author_id, author_order)
-                VALUES (:reference_id, :author_id, :author_order)
-                """
-            )
+            insert_mapping_sql = self.get_insert_mapping_sql()
             db.session.execute(
                 insert_mapping_sql,
                 {
@@ -161,8 +138,13 @@ class ReferenceRepository:
                 },
             )
 
-        db.session.commit()
-        return reference_id
+    def get_insert_mapping_sql(self):
+        return text(
+            """
+                INSERT INTO reference_authors (reference_id, author_id, author_order)
+                VALUES (:reference_id, :author_id, :author_order)
+                """
+        )
 
     def get_citation_keys(self) -> list[str]:
         """Fetches all citation keys from the database."""
@@ -254,47 +236,42 @@ class ReferenceRepository:
             db.session.execute(delete_mappings_sql, {"reference_id": input_ref.id})
 
             # Step 2: Insert or get author IDs
-            author_ids = []
-            for author in input_ref.authors:
-                author_name = author.strip()
-                if not author_name:
-                    continue
-
-                # Try to insert author, or get existing ID
-                insert_author_sql = text(
-                    """
-                    INSERT INTO authors (name)
-                    VALUES (:name)
-                    ON CONFLICT (name) DO NOTHING
-                    """
-                )
-                db.session.execute(insert_author_sql, {"name": author_name})
-
-                # Get the author ID
-                get_author_id_sql = text(
-                    """
-                    SELECT id FROM authors WHERE name = :name
-                    """
-                )
-                result = db.session.execute(get_author_id_sql, {"name": author_name})
-                author_id = result.fetchone()[0]
-                author_ids.append(author_id)
+            author_ids = self.get_author_ids(input_ref)
 
             # Step 3: Insert new mappings into reference_authors
-            for order, author_id in enumerate(author_ids):
-                insert_mapping_sql = text(
-                    """
-                    INSERT INTO reference_authors (reference_id, author_id, author_order)
-                    VALUES (:reference_id, :author_id, :author_order)
-                    """
-                )
-                db.session.execute(
-                    insert_mapping_sql,
-                    {
-                        "reference_id": input_ref.id,
-                        "author_id": author_id,
-                        "author_order": order,
-                    },
-                )
+            self.insert_into_authors(author_ids, input_ref.id)
 
         db.session.commit()
+
+    def get_author_ids(self, input_ref: InputReference) -> list[int]:
+        author_ids = []
+        for author in input_ref.authors:
+            author_name = author.strip()
+            if not author_name:
+                continue
+
+            # Try to insert author, or get existing ID
+            author_id = self.insert_into_author(author_name)
+            author_ids.append(author_id)
+
+        return author_ids
+
+    def insert_into_author(self, author_name: str) -> int:
+        insert_author_sql = text(
+            """
+            INSERT INTO authors (name)
+            VALUES (:name)
+            ON CONFLICT (name) DO NOTHING
+            """
+        )
+        db.session.execute(insert_author_sql, {"name": author_name})
+
+        # Get the author ID
+        get_author_id_sql = text(
+            """
+            SELECT id FROM authors WHERE name = :name
+            """
+        )
+        result = db.session.execute(get_author_id_sql, {"name": author_name})
+        author_id = result.fetchone()[0]
+        return author_id

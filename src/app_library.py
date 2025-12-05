@@ -18,7 +18,7 @@ class app_library:
     ):
         # Send each author as a separate 'author' field
         data = {
-            RefField.CITATION_KEY.value: "Test2025",
+            RefField.CITATION_KEY.value: citation_key,
             RefField.YEAR.value: year,
             RefField.TITLE.value: title,
             RefField.REFTYPE.value: reftype,
