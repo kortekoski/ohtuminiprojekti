@@ -4,7 +4,7 @@ main application defining routes and reference logic
 
 from flask import Response, redirect, render_template, request, jsonify, flash, g
 from db_helper import reset_db
-from entities.reference import Reference
+from entities.reference import Reference, InputReference
 from config import app, test_env
 from services.bibtex_service import BibtexService
 from services.reference_service import ReferenceService
@@ -57,7 +57,8 @@ def reference_creation():
     """Handles the creation of a new reference."""
     citation_key = request.form.get(RefField.CITATION_KEY.value)
     year = int(request.form.get(RefField.YEAR.value))
-    author = request.form.get(RefField.AUTHOR.value)
+    # Receive authors as a list from form
+    authors = request.form.getlist("author")
     title = request.form.get(RefField.TITLE.value)
     reftype = request.form.get(RefField.REFTYPE.value)
 
@@ -77,14 +78,28 @@ def reference_creation():
     existing_citation_keys = reference_service.get_citation_keys()
 
     try:
-        new_reference = Reference(
-            None, citation_key, year, author, title, reftype, extra
+        input_ref = InputReference(
+            citation_key=citation_key,
+            year=year,
+            authors=authors,
+            title=title,
+            reftype=reftype,
+            extra=extra,
         )
 
-        ValidationService.validate_reference(new_reference, existing_citation_keys)
-        reference_service.create_reference(
-            citation_key, year, author, title, reftype, extra
+        ValidationService.validate_input_reference(
+            input_ref, existing_citation_keys, authors=authors
         )
+
+        input_ref = InputReference(
+            citation_key=citation_key,
+            year=year,
+            authors=authors,
+            title=title,
+            reftype=reftype,
+            extra=extra,
+        )
+        reference_service.create_reference(input_ref)
 
         flash(f"Reference {citation_key} created successfully!", "success")
         return redirect("/")
@@ -124,7 +139,8 @@ def update_reference(ref_id):
         # get shared attributes from form
         citation_key = request.form.get(RefField.CITATION_KEY.value)
         year = request.form.get(RefField.YEAR.value)
-        author = request.form.get(RefField.AUTHOR.value)
+        # Receive authors as a list from form
+        authors = request.form.getlist(RefField.AUTHOR.value)
         title = request.form.get(RefField.TITLE.value)
         reftype = request.form.get(RefField.REFTYPE.value)
 
@@ -147,30 +163,25 @@ def update_reference(ref_id):
 
         # create the updated entity and update by id
         try:
-            updated_reference = Reference(
-                ref_id,
-                citation_key,
-                int(year) if year else None,
-                author,
-                title,
-                reftype,
-                extra,
+            input_ref = InputReference(
+                citation_key=request.form.get(RefField.CITATION_KEY.value),
+                year=int(year) if year else None,
+                authors=authors,
+                title=title,
+                reftype=reftype,
+                extra=extra,
+                id=ref_id,
             )
 
-            ValidationService.validate_reference(
-                updated_reference,
+            ValidationService.validate_input_reference(
+                input_ref,
                 existing_citation_keys,
                 same_citation_key=(old_ref.citation_key == citation_key),
+                authors=authors,
             )
+
             reference_service.update_reference_by_id(
-                ref_id,
-                citation_key,
-                int(year) if year else None,
-                author,
-                title,
-                reftype,
-                extra,
-                same_citation_key=(old_ref.citation_key == citation_key),
+                input_ref, same_citation_key=(old_ref.citation_key == citation_key)
             )
 
             flash(f"Reference {old_ref.citation_key} updated successfully!", "success")
@@ -226,17 +237,20 @@ def add_from_doi():
             flash("Failed to retrieve DOI. Try again later.", "error")
             return redirect("/")
         print(ref)
-        ValidationService.validate_reference(ref)
+        # DOI service returns author as a string, split it into a list for validation
+        authors = [a.strip() for a in ref.author.split(" and ")]
+        ValidationService.validate_input_reference(ref, authors=authors)
         reference_service = get_reference_service()
 
-        reference_service.create_reference(
-            citation_key,
-            ref.year,
-            ref.author,
-            ref.title,
-            ref.reftype,
-            ref.extra,
+        input_ref = InputReference(
+            citation_key=citation_key,
+            year=ref.year,
+            authors=authors,
+            title=ref.title,
+            reftype=ref.reftype,
+            extra=ref.extra,
         )
+        reference_service.create_reference(input_ref)
         flash(f"Reference {citation_key} created succesfully!", "success")
         return redirect("/")
     except UserInputError as err:
@@ -261,11 +275,19 @@ if test_env:
         """Adds a reference for testing purposes."""
         citation_key = request.form.get(RefField.CITATION_KEY.value)
         year = int(request.form.get(RefField.YEAR.value))
-        author = request.form.get(RefField.AUTHOR.value)
+        # Receive authors as a list from form
+        authors = request.form.getlist("author")
         title = request.form.get(RefField.TITLE.value)
         reftype = request.form.get(RefField.REFTYPE.value)
 
         service = get_reference_service()
-        service.create_reference(citation_key, year, author, title, reftype)
+        input_ref = InputReference(
+            citation_key=citation_key,
+            year=year,
+            authors=authors,
+            title=title,
+            reftype=reftype,
+        )
+        service.create_reference(input_ref)
 
         return jsonify({"message": "reference registered"})

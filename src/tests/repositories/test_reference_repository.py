@@ -4,6 +4,7 @@ from sqlalchemy import text
 from config import app, db
 from db_helper import setup_db
 from repositories.reference_repository import ReferenceRepository
+from entities.reference import InputReference
 from tests.test_data import TestData
 
 
@@ -40,13 +41,14 @@ class TestReferenceRepository(unittest.TestCase):
         ref = TestData.valid_reference()
 
         # Insert into test database using existing create_reference()
-        self.repo.create_reference(
-            ref.citation_key,
-            ref.year,
-            ref.author,
-            ref.title,
-            ref.reftype,
+        input_ref = InputReference(
+            citation_key=ref.citation_key,
+            year=ref.year,
+            authors=[ref.author],
+            title=ref.title,
+            reftype=ref.reftype,
         )
+        self.repo.create_reference(input_ref)
 
         # Fetch from repository
         result = self.repo.get_references()
@@ -66,13 +68,14 @@ class TestReferenceRepository(unittest.TestCase):
 
         ref = TestData.valid_reference()
 
-        self.repo.create_reference(
-            ref.citation_key,
-            ref.year,
-            ref.author,
-            ref.title,
-            ref.reftype,
+        input_ref = InputReference(
+            citation_key=ref.citation_key,
+            year=ref.year,
+            authors=[ref.author],
+            title=ref.title,
+            reftype=ref.reftype,
         )
+        self.repo.create_reference(input_ref)
 
         inserted = self.repo.get_references()
         self.assertEqual(len(inserted), 1)
@@ -88,25 +91,35 @@ class TestReferenceRepository(unittest.TestCase):
 
         ref = TestData.valid_reference()
 
-        id = self.repo.create_reference(
-            ref.citation_key, ref.year, ref.author, ref.title, ref.reftype, {}
+        input_ref = InputReference(
+            citation_key=ref.citation_key,
+            year=ref.year,
+            authors=[ref.author],
+            title=ref.title,
+            reftype=ref.reftype,
+            extra={},
         )
+        id = self.repo.create_reference(input_ref)
 
-        # Act
-        new_author = "New Author"
-        new_title = "New Title"
-        new_reftype = "book"
-        self.repo.update_reference(
-            id, ref.citation_key, ref.year, new_author, new_title, new_reftype, {}
+        # Act - Update with InputReference
+        update_ref = InputReference(
+            citation_key=ref.citation_key,
+            year=ref.year,
+            authors=["New Author"],
+            title="New Title",
+            reftype="book",
+            extra={},
+            id=id,
         )
+        self.repo.update_reference(update_ref)
 
         updated = self.repo.get_references()
         self.assertEqual(len(updated), 1)
         updated_ref = updated[0]
 
-        self.assertEqual(updated_ref.author, new_author)
-        self.assertEqual(updated_ref.title, new_title)
-        self.assertEqual(updated_ref.reftype, new_reftype)
+        self.assertEqual(updated_ref.author, "New Author")
+        self.assertEqual(updated_ref.title, "New Title")
+        self.assertEqual(updated_ref.reftype, "book")
 
 
 if __name__ == "__main__":

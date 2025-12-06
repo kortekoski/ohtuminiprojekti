@@ -15,23 +15,59 @@ Create a new reference
           Create a new reference
         {% endif %}
       </h2>
-      <form action="{% if reference %}/update_reference/{{ reference.id }}{% else %}/create_reference{% endif %}" method="post">
+      <form action="{% if reference %}/update_reference/{{ reference.id }}{% else %}/create_reference{% endif %}" method="post" id="referenceForm">
         <!-- Hidden field for the type -->
         <input type="hidden" name="reftype" value="{% block reftype_value %}{% endblock %}">
 
         <!-- common fields for all references -->
-        <div class="row mb-1">
-          <label for="author" class="col-sm-3 col-form-label">Author</label><br>
+        <div class="row mb-3">
+          <label class="col-sm-3 col-form-label">Authors</label>
           <div class="col-sm-9">
-            <input 
-              type="text" 
-              id="author" 
-              name="author" 
-              class="form-control" 
-              required placeholder="Example: John Smith or Smith, John"
-              value="{% if reference %}{{ reference.author }}{% endif %}"
-            >
-            <br>
+            <div id="authorsContainer">
+              {% if reference %}
+                {% for author in reference.author.split(' and ') %}
+              <div class="author-entry mb-2 d-flex gap-2">
+                <input 
+                  type="text" 
+                  name="author"
+                  class="form-control author-input" 
+                  required 
+                  placeholder="Example: John Smith or Smith, John"
+                  value="{{ author.strip() }}"
+                >
+                <button type="button" class="btn btn-outline-danger btn-sm remove-author" onclick="removeAuthor(this)">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+                    <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+                  </svg>
+                </button>
+              </div>
+                {% endfor %}
+              {% else %}
+              <div class="author-entry mb-2 d-flex gap-2">
+                <input 
+                  type="text" 
+                  name="author"
+                  class="form-control author-input" 
+                  required 
+                  placeholder="Example: John Smith or Smith, John"
+                >
+                <button type="button" class="btn btn-outline-danger btn-sm remove-author" onclick="removeAuthor(this)">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+                    <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+                  </svg>
+                </button>
+              </div>
+              {% endif %}
+            </div>
+            <button type="button" class="btn btn-outline-primary btn-sm mt-2" onclick="addAuthor()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+              </svg>
+              Add Another Author
+            </button>
           </div>
         </div>
         <div class="row mb-1">
@@ -96,4 +132,40 @@ Create a new reference
     </div>
   </div>
 </div>
+
+<script>
+  function addAuthor() {
+    const container = document.getElementById('authorsContainer');
+    const newEntry = document.createElement('div');
+    newEntry.className = 'author-entry mb-2 d-flex gap-2';
+    newEntry.innerHTML = `
+      <input 
+        type="text" 
+        name="author"
+        class="form-control author-input" 
+        required 
+        placeholder="Example: John Smith or Smith, John"
+      >
+      <button type="button" class="btn btn-outline-danger btn-sm remove-author" onclick="removeAuthor(this)">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+          <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+          <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+        </svg>
+      </button>
+    `;
+    container.appendChild(newEntry);
+  }
+
+  function removeAuthor(button) {
+    const container = document.getElementById('authorsContainer');
+    const entries = container.querySelectorAll('.author-entry');
+    
+    // Prevent removing the last author entry
+    if (entries.length > 1) {
+      button.parentElement.remove();
+    } else {
+      alert('At least one author is required');
+    }
+  }
+</script>
 {% endblock %}

@@ -145,3 +145,55 @@ As a user I want to add a title that is very short
     Page Should Contain  created successfully!
     Page Should Contain  Test Author A
     Page Should Contain  Ti
+
+Two references can share the same author
+    # Add first reference with author "Martin Fowler"
+    Go To  ${HOME_URL}/new_reference
+    Click Link  Book
+    Input Text  author  Martin Fowler
+    Input Text  title  Refactoring
+    Input Text  year  1999
+    Input Text  citation_key  Fowler1999
+    Click Button  Create Reference
+    Page Should Contain  created successfully!
+    
+    # Add second reference with the same author "Martin Fowler"
+    Go To  ${HOME_URL}/new_reference
+    Click Link  Book
+    Input Text  author  Martin Fowler
+    Input Text  title  Patterns of Enterprise Application Architecture
+    Input Text  year  2002
+    Input Text  citation_key  Fowler2002
+    Click Button  Create Reference
+    Page Should Contain  created successfully!
+    
+    # Verify both references appear on the home page with the shared author
+    Go To  ${HOME_URL}
+    Page Should Contain  Martin Fowler
+    Page Should Contain  Refactoring
+    Page Should Contain  1999
+    Page Should Contain  Patterns of Enterprise Application Architecture
+    Page Should Contain  2002
+
+Duplicate authors in a single reference are rejected
+    Go To  ${HOME_URL}/new_reference
+    Click Link  Book
+    Wait Until Page Contains Element  name:author  timeout=5s
+    # Fill first author
+    Input Text  name:author  Robert Martin
+    # Click the button to add another author field
+    Wait Until Page Contains Element  css:button[onclick="addAuthor()"]  timeout=5s
+    Click Element  css:button[onclick="addAuthor()"]
+    # Wait for the second author input to appear
+    Wait Until Element Is Visible  xpath=(//input[@name='author'])[2]  timeout=5s
+    # Fill second author with same name
+    Input Text  xpath=(//input[@name='author'])[2]  Robert Martin
+    # Fill other required fields
+    Input Text  title  Clean Code
+    Input Text  year  2008
+    Input Text  citation_key  Martin2008
+    # Submit the form
+    Click Button  Create Reference
+    # Should see error about duplicates
+    Page Should Contain  duplicate
+    Page Should Not Contain  created successfully!

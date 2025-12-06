@@ -26,3 +26,16 @@ class Reference:
             string += f" {key}={item}"
 
         return string
+
+
+@dataclass
+class InputReference:
+    """Input reference entity for creating/updating references with list of authors."""
+
+    citation_key: str
+    year: int
+    authors: list[str]
+    title: str
+    reftype: str = RefType.BOOK.value
+    extra: dict[str, str] = field(default_factory=dict)
+    id: Optional[int] = None

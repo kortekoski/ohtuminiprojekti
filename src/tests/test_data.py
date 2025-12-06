@@ -1,4 +1,4 @@
-from entities.reference import Reference
+from entities.reference import Reference, InputReference
 from util import RefField, RefType
 
 
@@ -8,6 +8,18 @@ class TestData:
     @staticmethod
     def valid_reference_object():
         return Reference(1, "Test2024", 2001, "Bad Dude", "all out of gum", "book", {})
+
+    @staticmethod
+    def valid_input_reference():
+        return InputReference(
+            citation_key="Test2024",
+            year=2001,
+            authors=["Bad Dude"],
+            title="all out of gum",
+            reftype="book",
+            extra={},
+            id=1,
+        )
 
     @staticmethod
     def valid_multiple_reference_objects():
