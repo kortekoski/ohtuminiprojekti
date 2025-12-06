@@ -157,3 +157,73 @@ class TestReferenceService(unittest.TestCase):
 
         # Repository update must NEVER be called
         mock_repo.update_reference.assert_not_called()
+
+    def test_parse_author_string_with_one_author(self):
+        """Should return original string for single author."""
+        service = ReferenceService()
+        result = service.parse_author_string("John Doe")
+        self.assertEqual(result, "John Doe")
+
+    def test_parse_author_string_with_two_authors(self):
+        """Should return original string for two authors."""
+        service = ReferenceService()
+        result = service.parse_author_string("John Doe and Jane Smith")
+        self.assertEqual(result, "John Doe and Jane Smith")
+
+    def test_parse_author_string_with_three_authors(self):
+        """Should return original string for three authors."""
+        service = ReferenceService()
+        result = service.parse_author_string("John Doe and Jane Smith and Bob Brown")
+        self.assertEqual(result, "John Doe and Jane Smith and Bob Brown")
+
+    def test_parse_author_string_with_more_than_three_authors(self):
+        """Should return first author and 'et al.' for more than three authors."""
+        service = ReferenceService()
+        result = service.parse_author_string(
+            "John Doe and Jane Smith and Bob Brown and Alice Cooper"
+        )
+        self.assertEqual(result, "John Doe et al.")
+
+    def test_parse_author_string_with_five_authors(self):
+        """Should return first author and 'et al.' for five authors."""
+        service = ReferenceService()
+        result = service.parse_author_string("A and B and C and D and E")
+        self.assertEqual(result, "A et al.")
+
+    def test_parse_author_string_strips_whitespace(self):
+        """Should strip whitespace around author names."""
+        service = ReferenceService()
+        result = service.parse_author_string(
+            "  John Doe  and  Jane Smith  and  Bob Brown  and  Alice Cooper  "
+        )
+        self.assertEqual(result, "John Doe et al.")
+
+    def test_parse_authors_modifies_reference_list(self):
+        """Should modify author field in all references in the list."""
+        service = ReferenceService()
+        refs = [
+            Reference(1, "key1", 2020, "A and B and C and D", "Title1", "book", {}),
+            Reference(2, "key2", 2021, "X and Y", "Title2", "article", {}),
+        ]
+
+        result = service.parse_authors(refs)
+
+        self.assertEqual(result[0].author, "A et al.")
+        self.assertEqual(result[1].author, "X and Y")
+
+    def test_parse_authors_returns_same_list(self):
+        """Should return the same list object that was passed in."""
+        service = ReferenceService()
+        refs = [
+            Reference(1, "key1", 2020, "John Doe", "Title1", "book", {}),
+        ]
+
+        result = service.parse_authors(refs)
+
+        self.assertIs(result, refs)
+
+    def test_parse_authors_with_empty_list(self):
+        """Should handle empty list without errors."""
+        service = ReferenceService()
+        result = service.parse_authors([])
+        self.assertEqual(result, [])
