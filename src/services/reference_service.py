@@ -17,7 +17,23 @@ class ReferenceService:
         self, order_by: RefField = RefField.CITATION_KEY
     ) -> list[Reference]:
         """Fetches all references from the repository."""
-        return self._repo.get_references(order_by)
+        ref_list = self._repo.get_references(order_by)
+        parsed_ref_list = self.parse_authors(ref_list)
+        return parsed_ref_list
+
+    def parse_authors(self, ref_list: list[Reference]) -> list[str]:
+        """Parses a string of authors separated by ' and ' into a list."""
+        for ref in ref_list:
+            ref.author = self.parse_author_string(ref.author)
+        return ref_list
+
+    def parse_author_string(self, author_string: str) -> list[str]:
+        """Parses a string of authors separated by ' and ' into a list."""
+        authors = [a.strip() for a in author_string.split(" and ")]
+
+        if len(authors) > 3:
+            return " ".join(authors[:1] + ["et al."])
+        return author_string
 
     def get_reference_by_id(self, id: int) -> Reference:
         """Fetches a single reference by its ID from the repository."""
