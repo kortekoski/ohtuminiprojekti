@@ -25,6 +25,10 @@ CREATE TABLE IF NOT EXISTS reference_authors(
   FOREIGN KEY (author_id) REFERENCES authors(id) ON DELETE CASCADE
 );
 
+-- Indexes for efficient joins in the view
+CREATE INDEX IF NOT EXISTS idx_reference_authors_reference_id ON reference_authors(reference_id);
+CREATE INDEX IF NOT EXISTS idx_reference_authors_author_id ON reference_authors(author_id);
+
 -- View that joins references with their authors
 CREATE OR REPLACE VIEW references_view AS
 SELECT 
@@ -39,3 +43,6 @@ FROM reference_values rv
 LEFT JOIN reference_authors ra ON rv.id = ra.reference_id
 LEFT JOIN authors a ON ra.author_id = a.id
 GROUP BY rv.id, rv.citation_key, rv.year, rv.title, rv.reftype, rv.extra;
+
+
+

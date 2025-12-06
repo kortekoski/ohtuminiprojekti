@@ -39,15 +39,3 @@ class InputReference:
     reftype: str = RefType.BOOK.value
     extra: dict[str, str] = field(default_factory=dict)
     id: Optional[int] = None
-
-    def get(self, attribute: str, default: Optional[str] = None) -> Optional[str]:
-        return self.extra.get(attribute, default)
-
-    def __str__(self) -> str:
-        authors_str = " and ".join(self.authors)
-        string = f"{self.citation_key}: {self.year}, {authors_str}, {self.title}"
-
-        for key, item in self.extra.items():
-            string += f" {key}={item}"
-
-        return string
