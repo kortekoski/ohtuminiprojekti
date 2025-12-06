@@ -201,7 +201,7 @@ def update_reference(ref_id):
 def download_bibtex():
     """generates and gives the BibTex file"""
     reference_service = get_reference_service()
-    refs = reference_service.get_all_references()
+    refs = reference_service.get_all_references(bibtex=True)
 
     if not refs:
         flash("No references available to download", "error")
