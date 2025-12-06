@@ -84,6 +84,19 @@ BibTeX is downloadable for a reference
     Should Contain  ${bibtex_content}  title = {Different types of clover in Melee island},
     Should Contain  ${bibtex_content}  year = {2025}
 
+Copy BibTeX button copies references to clipboard
+    Add Test Reference
+    Go To  ${HOME_URL}
+    Page Should Contain  Copy BibTeX to Clipboard
+    Click Button  clipboardcopy
+    Handle Alert  accept
+    Sleep  500ms
+    ${clipboard_content}=  Execute Javascript  return window.lastCopiedBibtex || '';
+    Should Contain  ${clipboard_content}  @book{Test2025,
+    Should Contain  ${clipboard_content}  author = {Guybrush Threepwood},
+    Should Contain  ${clipboard_content}  title = {Different types of clover in Melee island},
+    Should Contain  ${clipboard_content}  year = {2025}
+
 Reference can be added by DOI
     Go To  ${HOME_URL}/new_reference
     Click Link  From DOI
