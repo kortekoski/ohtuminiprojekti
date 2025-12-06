@@ -33,8 +33,6 @@ class ReferenceRepository:
         result = db.session.execute(sql)
         rows = result.fetchall()
 
-        # jsonb is automagically converted to a python
-        # object so we don't have to call json.loads.
         return [
             Reference(row[0], row[1], row[2], row[3], row[4], row[5], row[6])
             for row in rows
@@ -92,10 +90,9 @@ class ReferenceRepository:
 
     def create_reference(self, input_ref: InputReference):
         """Creates a new reference in the database."""
-        # Step 1: Insert or get author IDs
+
         author_ids = self.get_author_ids(input_ref)
 
-        # Step 2: Insert reference into reference_values
         sql = text(
             f"""
             INSERT INTO reference_values ( 
@@ -120,7 +117,6 @@ class ReferenceRepository:
         )
         reference_id = result.fetchone()[0]
 
-        # Step 3: Insert mappings into reference_authors
         self.insert_into_authors(author_ids, reference_id)
 
         db.session.commit()
@@ -181,6 +177,15 @@ class ReferenceRepository:
         db.session.execute(sql, {RefField.CITATION_KEY.value: citation_key})
         db.session.commit()
 
+    def delete_authors(self, id):
+        delete_mappings_sql = text(
+            """
+                DELETE FROM reference_authors
+                WHERE reference_id = :reference_id
+                """
+        )
+        db.session.execute(delete_mappings_sql, {"reference_id": id})
+
     def update_reference(self, input_ref: InputReference):
         """Updates a reference using InputReference entity."""
 
@@ -196,52 +201,48 @@ class ReferenceRepository:
         if input_ref.extra is not None:
             updates["extra"] = json.dumps(input_ref.extra)
 
-        # Update reference_values table if there are any updates
         if updates:
-            field_mapping = {
-                "citation_key": RefField.CITATION_KEY.value,
-                "year": RefField.YEAR.value,
-                "title": RefField.TITLE.value,
-                "reftype": RefField.REFTYPE.value,
-                "extra": RefField.EXTRA.value,
-            }
-            set_clause = ", ".join(
-                [
-                    f"{field_mapping[field]} = :{field}"
-                    for field in updates.keys()
-                    if field in field_mapping
-                ]
-            )
 
-            sql = text(
-                f"""
-                UPDATE reference_values
-                SET {set_clause}
-                WHERE id = :id
-            """
-            )
-
-            updates["id"] = input_ref.id
-            db.session.execute(sql, updates)
-
-        # Handle author updates
-        if input_ref.authors is not None:
-            # Step 1: Delete old author mappings
-            delete_mappings_sql = text(
-                """
-                DELETE FROM reference_authors
-                WHERE reference_id = :reference_id
-                """
-            )
-            db.session.execute(delete_mappings_sql, {"reference_id": input_ref.id})
-
-            # Step 2: Insert or get author IDs
-            author_ids = self.get_author_ids(input_ref)
-
-            # Step 3: Insert new mappings into reference_authors
-            self.insert_into_authors(author_ids, input_ref.id)
+            self.update_reference_by_citation_key(input_ref, updates)
+            self.handle_authors_update(input_ref)
 
         db.session.commit()
+
+    def update_reference_by_citation_key(
+        self, input_ref: InputReference, updates: dict[str, str]
+    ):
+        field_mapping = {
+            "citation_key": RefField.CITATION_KEY.value,
+            "year": RefField.YEAR.value,
+            "title": RefField.TITLE.value,
+            "reftype": RefField.REFTYPE.value,
+            "extra": RefField.EXTRA.value,
+        }
+        set_clause = ", ".join(
+            [
+                f"{field_mapping[field]} = :{field}"
+                for field in updates.keys()
+                if field in field_mapping
+            ]
+        )
+
+        sql = text(
+            f"""
+            UPDATE reference_values
+            SET {set_clause}
+            WHERE id = :id
+        """
+        )
+
+        updates["id"] = input_ref.id
+        db.session.execute(sql, updates)
+
+    def handle_authors_update(self, input_ref: InputReference):
+        if input_ref.authors is not None:
+            self.delete_authors(input_ref.id)
+            author_ids = self.get_author_ids(input_ref)
+            # Step 3: Insert new mappings into reference_authors
+            self.insert_into_authors(author_ids, input_ref.id)
 
     def get_author_ids(self, input_ref: InputReference) -> list[int]:
         author_ids = []
