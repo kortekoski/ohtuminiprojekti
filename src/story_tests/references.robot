@@ -27,14 +27,15 @@ One reference is shown after adding it via input
     Go To  ${HOME_URL}/new_reference
     Click Link  Book
     Title Should Be  Create a new reference
-    Input Text  author  John Trimmer
+    Input Text  last_name  Trimmer
+    Input Text  first_name  John
     Input Text  title  How to Avoid Huge Ships
     Input Text  year  1982
     Input Text  citation_key  Trimmer1982
     Click Button  Create Reference
     Title Should Be  Reference app
     Page Should Contain  created successfully!
-    Page Should Contain  John Trimmer
+    Page Should Contain  Trimmer, John
     Page Should Contain  How to Avoid Huge Ships
     Page Should Contain  1982
 
@@ -53,13 +54,15 @@ Reference information is changed after update
     Go To  ${HOME_URL}
     Click Link  update-Test2025
     Page Should Contain  Update Reference
-    Clear Element Text  author
-    Input Text  author  Hideo Kojima
+    Clear Element Text  xpath=//input[@name='last_name']
+    Clear Element Text  xpath=//input[@name='first_name']
+    Input Text  last_name  Kojima
+    Input Text  first_name  Hideo
     Click Button  Update Reference
     Wait Until Page Contains  updated successfully!  timeout=5s
     Title Should Be  Reference app
     Page Should Contain  updated successfully!
-    Page Should Contain  Hideo Kojima
+    Page Should Contain  Kojima, Hideo
     Page Should Not Contain  Threepwood
 
 Get to create reference via navbar
@@ -150,20 +153,22 @@ When adding an article reference only the article specific fields are shown
 As a user I want to add a title that is very short
     Go To  ${HOME_URL}/new_reference
     Click Link  Book
-    Input Text  author  Test Author A
+    Input Text  last_name  Author
+    Input Text  first_name  Test
     Input Text  title  Ti
     Input Text  year  2000
     Input Text  citation_key  AB2000
     Click Button  Create Reference
     Page Should Contain  created successfully!
-    Page Should Contain  Test Author A
+    Page Should Contain  Author, Test
     Page Should Contain  Ti
 
 Two references can share the same author
     # Add first reference with author "Martin Fowler"
     Go To  ${HOME_URL}/new_reference
     Click Link  Book
-    Input Text  author  Martin Fowler
+    Input Text  last_name  Fowler
+    Input Text  first_name  Martin
     Input Text  title  Refactoring
     Input Text  year  1999
     Input Text  citation_key  Fowler1999
@@ -173,7 +178,8 @@ Two references can share the same author
     # Add second reference with the same author "Martin Fowler"
     Go To  ${HOME_URL}/new_reference
     Click Link  Book
-    Input Text  author  Martin Fowler
+    Input Text  last_name  Fowler
+    Input Text  first_name  Martin
     Input Text  title  Patterns of Enterprise Application Architecture
     Input Text  year  2002
     Input Text  citation_key  Fowler2002
@@ -182,7 +188,7 @@ Two references can share the same author
     
     # Verify both references appear on the home page with the shared author
     Go To  ${HOME_URL}
-    Page Should Contain  Martin Fowler
+    Page Should Contain  Fowler, Martin
     Page Should Contain  Refactoring
     Page Should Contain  1999
     Page Should Contain  Patterns of Enterprise Application Architecture
@@ -191,16 +197,18 @@ Two references can share the same author
 Duplicate authors in a single reference are rejected
     Go To  ${HOME_URL}/new_reference
     Click Link  Book
-    Wait Until Page Contains Element  name:author  timeout=5s
+    Wait Until Page Contains Element  name:last_name  timeout=5s
     # Fill first author
-    Input Text  name:author  Robert Martin
+    Input Text  xpath=(//input[@name='last_name'])[1]  Martin
+    Input Text  xpath=(//input[@name='first_name'])[1]  Robert
     # Click the button to add another author field
     Wait Until Page Contains Element  css:button[onclick="addAuthor()"]  timeout=5s
     Click Element  css:button[onclick="addAuthor()"]
     # Wait for the second author input to appear
-    Wait Until Element Is Visible  xpath=(//input[@name='author'])[2]  timeout=5s
+    Wait Until Element Is Visible  xpath=(//input[@name='last_name'])[2]  timeout=5s
     # Fill second author with same name
-    Input Text  xpath=(//input[@name='author'])[2]  Robert Martin
+    Input Text  xpath=(//input[@name='last_name'])[2]  Martin
+    Input Text  xpath=(//input[@name='first_name'])[2]  Robert
     # Fill other required fields
     Input Text  title  Clean Code
     Input Text  year  2008
