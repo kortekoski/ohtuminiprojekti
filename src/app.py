@@ -53,6 +53,17 @@ def create_extra_dict(request: Request) -> dict[str, str]:
     return extra
 
 
+def capitalize_name(name: str) -> str:
+    """Capitalize first letter of each word and lowercase the rest."""
+    if not name:
+        return name
+    # Split by spaces and capitalize each word
+    words = name.split()
+    return " ".join(
+        word[0].upper() + word[1:] if len(word) > 1 else word.upper() for word in words
+    )
+
+
 def create_input_reference(
     request: Request, reference_id: int | None = None
 ) -> InputReference:
@@ -64,10 +75,20 @@ def create_input_reference(
 
     extra = create_extra_dict(request)
 
+    capitalized_authors = []
+    for author in authors:
+        if "," in author:
+            parts = author.split(",", 1)
+            lastname = capitalize_name(parts[0].strip())
+            firstname = capitalize_name(parts[1].strip()) if len(parts) > 1 else ""
+            capitalized_authors.append(f"{lastname}, {firstname}")
+        else:
+            capitalized_authors.append(capitalize_name(author.strip()))
+
     return InputReference(
         citation_key=citation_key,
         year=year,
-        authors=authors,
+        authors=capitalized_authors,
         title=title,
         reftype=reftype,
         extra=extra,
