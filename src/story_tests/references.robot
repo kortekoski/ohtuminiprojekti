@@ -218,3 +218,80 @@ Duplicate authors in a single reference are rejected
     # Should see error about duplicates
     Page Should Contain  duplicate
     Page Should Not Contain  created successfully!
+
+Author names are displayed with proper abbreviation format
+    # Test with 1 author - should display as "Lastname, F."
+    Go To  ${HOME_URL}/new_reference
+    Click Link  Book
+    Input Text  last_name  Smith
+    Input Text  first_name  John
+    Input Text  title  One Author Book
+    Input Text  year  2020
+    Input Text  citation_key  Smith2020
+    Click Button  Create Reference
+    Go To  ${HOME_URL}
+    Page Should Contain  Smith, J.
+    
+    # Test with 2 authors - should display as "X and Y"
+    Go To  ${HOME_URL}/new_reference
+    Click Link  Book
+    Input Text  xpath=(//input[@name='last_name'])[1]  Johnson
+    Input Text  xpath=(//input[@name='first_name'])[1]  Alice
+    Wait Until Page Contains Element  css:button[onclick="addAuthor()"]  timeout=5s
+    Click Element  css:button[onclick="addAuthor()"]
+    Wait Until Element Is Visible  xpath=(//input[@name='last_name'])[2]  timeout=5s
+    Input Text  xpath=(//input[@name='last_name'])[2]  Brown
+    Input Text  xpath=(//input[@name='first_name'])[2]  Bob
+    Input Text  title  Two Authors Book
+    Input Text  year  2021
+    Input Text  citation_key  Johnson2021
+    Click Button  Create Reference
+    Go To  ${HOME_URL}
+    Page Should Contain  Johnson, A. and Brown, B.
+    
+    # Test with 3 authors - should display as "X and Y and Z"
+    Go To  ${HOME_URL}/new_reference
+    Click Link  Book
+    Input Text  xpath=(//input[@name='last_name'])[1]  Davis
+    Input Text  xpath=(//input[@name='first_name'])[1]  Carol
+    Wait Until Page Contains Element  css:button[onclick="addAuthor()"]  timeout=5s
+    Click Element  css:button[onclick="addAuthor()"]
+    Wait Until Element Is Visible  xpath=(//input[@name='last_name'])[2]  timeout=5s
+    Input Text  xpath=(//input[@name='last_name'])[2]  Evans
+    Input Text  xpath=(//input[@name='first_name'])[2]  David
+    Click Element  css:button[onclick="addAuthor()"]
+    Wait Until Element Is Visible  xpath=(//input[@name='last_name'])[3]  timeout=5s
+    Input Text  xpath=(//input[@name='last_name'])[3]  Foster
+    Input Text  xpath=(//input[@name='first_name'])[3]  Emily
+    Input Text  title  Three Authors Book
+    Input Text  year  2022
+    Input Text  citation_key  Davis2022
+    Click Button  Create Reference
+    Go To  ${HOME_URL}
+    Page Should Contain  Davis, C. and Evans, D. and Foster, E.
+    
+    # Test with 4+ authors - should display as "X et al."
+    Go To  ${HOME_URL}/new_reference
+    Click Link  Book
+    Input Text  xpath=(//input[@name='last_name'])[1]  Garcia
+    Input Text  xpath=(//input[@name='first_name'])[1]  Frank
+    Wait Until Page Contains Element  css:button[onclick="addAuthor()"]  timeout=5s
+    Click Element  css:button[onclick="addAuthor()"]
+    Wait Until Element Is Visible  xpath=(//input[@name='last_name'])[2]  timeout=5s
+    Input Text  xpath=(//input[@name='last_name'])[2]  Harris
+    Input Text  xpath=(//input[@name='first_name'])[2]  Grace
+    Click Element  css:button[onclick="addAuthor()"]
+    Wait Until Element Is Visible  xpath=(//input[@name='last_name'])[3]  timeout=5s
+    Input Text  xpath=(//input[@name='last_name'])[3]  Irving
+    Input Text  xpath=(//input[@name='first_name'])[3]  Henry
+    Click Element  css:button[onclick="addAuthor()"]
+    Wait Until Element Is Visible  xpath=(//input[@name='last_name'])[4]  timeout=5s
+    Input Text  xpath=(//input[@name='last_name'])[4]  Jackson
+    Input Text  xpath=(//input[@name='first_name'])[4]  Iris
+    Input Text  title  Four Authors Book
+    Input Text  year  2023
+    Input Text  citation_key  Garcia2023
+    Click Button  Create Reference
+    Go To  ${HOME_URL}
+    Page Should Contain  Garcia, F. et al.
+
