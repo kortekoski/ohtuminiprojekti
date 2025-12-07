@@ -29,13 +29,30 @@ class ReferenceService:
             ref.author = self.parse_author_string(ref.author)
         return ref_list
 
-    def parse_author_string(self, author_string: str) -> list[str]:
-        """Parses a string of authors separated by ' and ' into a list."""
-        authors = [a.strip() for a in author_string.split(" and ")]
+    def parse_author_string(self, author_string: str) -> str:
+        """Parses a string of authors separated by ' and ' into abbreviated format."""
+
+        authors = [self.parse_name(a.strip()) for a in author_string.split(" and ")]
 
         if len(authors) > 3:
-            return " ".join(authors[:1] + ["et al."])
-        return author_string
+            return f"{authors[0]} et al."
+        return " and ".join(authors)
+
+    def parse_name(self, name: str) -> str:
+        """Parses a single author's name into 'Last, F.' format."""
+        if "," in name:
+            parts = name.split(",", 1)
+            lastname = parts[0].strip()
+            firstname = parts[1].strip() if len(parts) > 1 else ""
+            if firstname:
+                # Split firstname by spaces to handle middle names
+                first_names = firstname.split()
+                # Take first letter of each name part and add periods
+                initials = ". ".join([n[0] for n in first_names if n]) + "."
+                return f"{lastname}, {initials}"
+            return lastname
+        else:
+            return name.strip()
 
     def get_reference_by_id(self, id: int) -> Reference:
         """Fetches a single reference by its ID from the repository."""

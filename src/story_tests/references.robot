@@ -35,7 +35,7 @@ One reference is shown after adding it via input
     Click Button  Create Reference
     Title Should Be  Reference app
     Page Should Contain  created successfully!
-    Page Should Contain  Trimmer, John
+    Page Should Contain  Trimmer, J.
     Page Should Contain  How to Avoid Huge Ships
     Page Should Contain  1982
 
@@ -62,7 +62,7 @@ Reference information is changed after update
     Wait Until Page Contains  updated successfully!  timeout=5s
     Title Should Be  Reference app
     Page Should Contain  updated successfully!
-    Page Should Contain  Kojima, Hideo
+    Page Should Contain  Kojima, H.
     Page Should Not Contain  Threepwood
 
 Get to create reference via navbar
@@ -160,7 +160,7 @@ As a user I want to add a title that is very short
     Input Text  citation_key  AB2000
     Click Button  Create Reference
     Page Should Contain  created successfully!
-    Page Should Contain  Author, Test
+    Page Should Contain  Author, T.
     Page Should Contain  Ti
 
 Two references can share the same author
@@ -188,7 +188,7 @@ Two references can share the same author
     
     # Verify both references appear on the home page with the shared author
     Go To  ${HOME_URL}
-    Page Should Contain  Fowler, Martin
+    Page Should Contain  Fowler, M.
     Page Should Contain  Refactoring
     Page Should Contain  1999
     Page Should Contain  Patterns of Enterprise Application Architecture
