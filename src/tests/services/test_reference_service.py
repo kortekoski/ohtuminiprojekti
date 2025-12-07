@@ -202,6 +202,55 @@ class TestReferenceService(unittest.TestCase):
         # Repository update must NEVER be called
         mock_repo.update_reference.assert_not_called()
 
+    def test_id_exists_returns_true_when_id_found(self):
+        """Should return True when ID exists in repository."""
+        # Arrange
+        mock_repo = Mock()
+        refs = TestData.valid_multiple_reference_objects()
+        # refs[0] has id=1, refs[1] has id=2
+        mock_repo.get_references.return_value = refs
+
+        service = ReferenceService(repo=mock_repo)
+
+        # Act
+        result = service.id_exists(1)
+
+        # Assert
+        self.assertTrue(result)
+        mock_repo.get_references.assert_called_once()
+
+    def test_id_exists_returns_false_when_id_not_found(self):
+        """Should return False when ID does not exist in repository."""
+        # Arrange
+        mock_repo = Mock()
+        refs = TestData.valid_multiple_reference_objects()
+        # refs[0] has id=1, refs[1] has id=2
+        mock_repo.get_references.return_value = refs
+
+        service = ReferenceService(repo=mock_repo)
+
+        # Act
+        result = service.id_exists(999)
+
+        # Assert
+        self.assertFalse(result)
+        mock_repo.get_references.assert_called_once()
+
+    def test_id_exists_with_empty_repository(self):
+        """Should return False when repository is empty."""
+        # Arrange
+        mock_repo = Mock()
+        mock_repo.get_references.return_value = []
+
+        service = ReferenceService(repo=mock_repo)
+
+        # Act
+        result = service.id_exists(1)
+
+        # Assert
+        self.assertFalse(result)
+        mock_repo.get_references.assert_called_once()
+
     def test_parse_author_string_with_one_author(self):
         """Should return original string for single author."""
         service = ReferenceService()
