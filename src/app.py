@@ -2,7 +2,16 @@
 main application defining routes and reference logic
 """
 
-from flask import Response, redirect, render_template, request, jsonify, flash, g
+from flask import (
+    Request,
+    Response,
+    redirect,
+    render_template,
+    request,
+    jsonify,
+    flash,
+    g,
+)
 from db_helper import reset_db
 from entities.reference import Reference, InputReference
 from config import app, test_env
@@ -56,13 +65,12 @@ def new(reftype):
     return render_template(f"add_{reftype}.html")
 
 
-@app.route("/create_reference", methods=["POST"])
-def reference_creation():
-    """Handles the creation of a new reference."""
+def create_input_reference(
+    request: Request, reference_id: int | None = None
+) -> InputReference:
     citation_key = request.form.get(RefField.CITATION_KEY.value)
     year = int(request.form.get(RefField.YEAR.value))
-    # Receive authors as a list from form
-    authors = request.form.getlist("author")
+    authors = request.form.getlist(RefField.AUTHOR.value)
     title = request.form.get(RefField.TITLE.value)
     reftype = request.form.get(RefField.REFTYPE.value)
 
@@ -78,31 +86,32 @@ def reference_creation():
             continue
         extra[key] = value
 
+    return InputReference(
+        citation_key=citation_key,
+        year=year,
+        authors=authors,
+        title=title,
+        reftype=reftype,
+        extra=extra,
+        id=reference_id,
+    )
+
+
+@app.route("/create_reference", methods=["POST"])
+def reference_creation():
+    """Handles the creation of a new reference."""
+    input_ref = create_input_reference(request)
+    citation_key = input_ref.citation_key
+    authors = input_ref.authors
+
     reference_service = get_reference_service()
     existing_citation_keys = reference_service.get_citation_keys()
 
     try:
-        input_ref = InputReference(
-            citation_key=citation_key,
-            year=year,
-            authors=authors,
-            title=title,
-            reftype=reftype,
-            extra=extra,
-        )
-
         ValidationService.validate_input_reference(
             input_ref, existing_citation_keys, authors=authors
         )
 
-        input_ref = InputReference(
-            citation_key=citation_key,
-            year=year,
-            authors=authors,
-            title=title,
-            reftype=reftype,
-            extra=extra,
-        )
         reference_service.create_reference(input_ref)
 
         flash(f"Reference {citation_key} created successfully!", "success")
@@ -140,43 +149,14 @@ def update_reference(ref_id):
     if request.method == "GET":
         return render_template(f"add_{old_ref.reftype}.html", reference=old_ref)
     if request.method == "POST":
-        # get shared attributes from form
-        citation_key = request.form.get(RefField.CITATION_KEY.value)
-        year = request.form.get(RefField.YEAR.value)
-        # Receive authors as a list from form
-        authors = request.form.getlist(RefField.AUTHOR.value)
-        title = request.form.get(RefField.TITLE.value)
-        reftype = request.form.get(RefField.REFTYPE.value)
+        input_ref = create_input_reference(request, ref_id)
+        citation_key = input_ref.citation_key
+        authors = input_ref.authors
 
-        # add extra attributes to dict extra
-        extra = {}
-        for key, value in request.form.to_dict().items():
-            if key in [
-                RefField.CITATION_KEY.value,
-                RefField.YEAR.value,
-                RefField.AUTHOR.value,
-                RefField.TITLE.value,
-                RefField.REFTYPE.value,
-            ]:
-                continue
-            extra[key] = value
-
-        # get existing citation keys from the repo
         reference_service = get_reference_service()
         existing_citation_keys = reference_service.get_citation_keys()
 
-        # create the updated entity and update by id
         try:
-            input_ref = InputReference(
-                citation_key=request.form.get(RefField.CITATION_KEY.value),
-                year=int(year) if year else None,
-                authors=authors,
-                title=title,
-                reftype=reftype,
-                extra=extra,
-                id=ref_id,
-            )
-
             ValidationService.validate_input_reference(
                 input_ref,
                 existing_citation_keys,
@@ -240,7 +220,7 @@ def add_from_doi():
             # contact api.crossref.org.
             flash("Failed to retrieve DOI. Try again later.", "error")
             return redirect("/")
-        print(ref)
+
         # DOI service returns author as a string, split it into a list for validation
         authors = [a.strip() for a in ref.author.split(" and ")]
         ValidationService.validate_input_reference(ref, authors=authors)
@@ -277,21 +257,9 @@ if test_env:
     @app.route("/add_test_reference", methods=["POST"])
     def add_test_reference():
         """Adds a reference for testing purposes."""
-        citation_key = request.form.get(RefField.CITATION_KEY.value)
-        year = int(request.form.get(RefField.YEAR.value))
-        # Receive authors as a list from form
-        authors = request.form.getlist("author")
-        title = request.form.get(RefField.TITLE.value)
-        reftype = request.form.get(RefField.REFTYPE.value)
 
+        input_ref = create_input_reference(request)
         service = get_reference_service()
-        input_ref = InputReference(
-            citation_key=citation_key,
-            year=year,
-            authors=authors,
-            title=title,
-            reftype=reftype,
-        )
         service.create_reference(input_ref)
 
         return jsonify({"message": "reference registered"})
