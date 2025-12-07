@@ -37,7 +37,11 @@ def index():
     """Renders the index page with all references."""
     service = get_reference_service()
     references: list[Reference] = service.get_all_references()
-    return render_template("index.html", references=references)
+    return render_template(
+        "index.html",
+        references=references,
+        generate_bibtex=BibtexService.generate_bibtex(references),
+    )
 
 
 @app.route("/new_reference")
