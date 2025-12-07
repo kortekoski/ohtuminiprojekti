@@ -38,6 +38,43 @@ def get_doi_service() -> DoiService:
     return g.doi_service
 
 
+def create_extra_dict(request: Request) -> dict[str, str]:
+    extra = {}
+    for key, value in request.form.to_dict().items():
+        if key in [
+            RefField.CITATION_KEY.value,
+            RefField.YEAR.value,
+            RefField.AUTHOR.value,
+            RefField.TITLE.value,
+            RefField.REFTYPE.value,
+        ]:
+            continue
+        extra[key] = value
+    return extra
+
+
+def create_input_reference(
+    request: Request, reference_id: int | None = None
+) -> InputReference:
+    citation_key = request.form.get(RefField.CITATION_KEY.value)
+    year = int(request.form.get(RefField.YEAR.value))
+    authors = request.form.getlist(RefField.AUTHOR.value)
+    title = request.form.get(RefField.TITLE.value)
+    reftype = request.form.get(RefField.REFTYPE.value)
+
+    extra = create_extra_dict(request)
+
+    return InputReference(
+        citation_key=citation_key,
+        year=year,
+        authors=authors,
+        title=title,
+        reftype=reftype,
+        extra=extra,
+        id=reference_id,
+    )
+
+
 # ---------------------------
 # Routes
 # ---------------------------
@@ -63,38 +100,6 @@ def new_type_selection():
 def new(reftype):
     """renders the addition form for the selected type"""
     return render_template(f"add_{reftype}.html")
-
-
-def create_input_reference(
-    request: Request, reference_id: int | None = None
-) -> InputReference:
-    citation_key = request.form.get(RefField.CITATION_KEY.value)
-    year = int(request.form.get(RefField.YEAR.value))
-    authors = request.form.getlist(RefField.AUTHOR.value)
-    title = request.form.get(RefField.TITLE.value)
-    reftype = request.form.get(RefField.REFTYPE.value)
-
-    extra = {}
-    for key, value in request.form.to_dict().items():
-        if key in [
-            RefField.CITATION_KEY.value,
-            RefField.YEAR.value,
-            RefField.AUTHOR.value,
-            RefField.TITLE.value,
-            RefField.REFTYPE.value,
-        ]:
-            continue
-        extra[key] = value
-
-    return InputReference(
-        citation_key=citation_key,
-        year=year,
-        authors=authors,
-        title=title,
-        reftype=reftype,
-        extra=extra,
-        id=reference_id,
-    )
 
 
 @app.route("/create_reference", methods=["POST"])
