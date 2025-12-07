@@ -74,9 +74,9 @@ BEGIN
       ('Vihavainen, Arto'),
       ('Paksula, Matti'),
       ('Luukkainen, Matti'),
-      ('Allan Collins'),
-      ('John Seely Brown'),
-      ('Ann Holum'),
+      ('Collins, Allan'),
+      ('Seely Brown, John'),
+      ('Holum, Ann'),
       ('Martin, Robert')
     ON CONFLICT (name) DO NOTHING;
 
@@ -101,17 +101,17 @@ BEGIN
     -- Collins 1991
     SELECT 
       (SELECT id FROM reference_values WHERE citation_key = 'collins1991'),
-      (SELECT id FROM authors WHERE name = 'Allan Collins'),
+      (SELECT id FROM authors WHERE name = 'Collins, Allan'),
       0
     UNION ALL
     SELECT 
       (SELECT id FROM reference_values WHERE citation_key = 'collins1991'),
-      (SELECT id FROM authors WHERE name = 'John Seely Brown'),
+      (SELECT id FROM authors WHERE name = 'Seely Brown, John'),
       1
     UNION ALL
     SELECT 
       (SELECT id FROM reference_values WHERE citation_key = 'collins1991'),
-      (SELECT id FROM authors WHERE name = 'Ann Holum'),
+      (SELECT id FROM authors WHERE name = 'Holum, Ann'),
       2
     UNION ALL
     -- Martin 2008

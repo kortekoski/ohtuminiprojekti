@@ -93,12 +93,10 @@ class ValidationService:
 
     @staticmethod
     def _validate_author_names_format(authors: list[str]):
-        """Validates that each author name is in an acceptable format."""
-        # Pattern that accepts Unicode letters, apostrophes, hyphens, and middle initials
-        pattern = (
-            r"([A-ZÀ-ÖØ-Þ][a-zA-ZÀ-ÖØ-öø-ÿ'-]*(\s+[A-ZÀ-ÖØ-Þ]\.?|\s+[a-zA-ZÀ-ÖØ-öø-ÿ'-]+)*)|"
-            r"([A-ZÀ-ÖØ-Þ][a-zA-ZÀ-ÖØ-öø-ÿ'-]*(\s+[a-zA-ZÀ-ÖØ-öø-ÿ'-]+)*,\s+[A-ZÀ-ÖØ-Þ]\.?(\s+[a-zA-ZÀ-ÖØ-öø-ÿ'-]+)*)"
-        )
+        """Validates that each author name is in an acceptable format.
+        Accepts any author name that contains only letters, spaces, commas, periods, hyphens, and apostrophes.
+        Rejects names with numbers or special characters."""
+        pattern = r"^[a-zA-ZÀ-ÖØ-öø-ÿ\s',.-]+$"
         return all(
             bool(re.fullmatch(pattern, author.strip()))
             for author in authors

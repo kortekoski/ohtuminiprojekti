@@ -25,6 +25,50 @@ class TestReferenceService(unittest.TestCase):
         self.assertEqual(len(result), 1)
         self.assertEqual(result[0].citation_key, "Test2024")
 
+    def test_get_all_references_with_bibtex_true_skips_parsing(self):
+        """When bibtex=True, should return references without parsing authors."""
+
+        # Arrange
+        mock_repo = Mock()
+        # Create a reference with unparsed author format
+        ref = Reference(
+            1, "Test2024", 2001, "Smith, John and Doe, Jane", "Title", "book", {}
+        )
+        mock_repo.get_references.return_value = [ref]
+
+        service = ReferenceService(repo=mock_repo)
+
+        # Act
+        result = service.get_all_references(bibtex=True)
+
+        # Assert
+        mock_repo.get_references.assert_called_once()
+        self.assertEqual(len(result), 1)
+        # Author field should remain unparsed (no abbreviation)
+        self.assertEqual(result[0].author, "Smith, John and Doe, Jane")
+
+    def test_get_all_references_with_bibtex_false_parses_authors(self):
+        """When bibtex=False (default), should parse author names."""
+
+        # Arrange
+        mock_repo = Mock()
+        # Create a reference with unparsed author format
+        ref = Reference(
+            1, "Test2024", 2001, "Smith, John and Doe, Jane", "Title", "book", {}
+        )
+        mock_repo.get_references.return_value = [ref]
+
+        service = ReferenceService(repo=mock_repo)
+
+        # Act
+        result = service.get_all_references(bibtex=False)
+
+        # Assert
+        mock_repo.get_references.assert_called_once()
+        self.assertEqual(len(result), 1)
+        # Author field should be parsed to abbreviated format
+        self.assertEqual(result[0].author, "Smith, J. and Doe, J.")
+
     def test_delete_reference(self):
         """Service should call repository.delete_reference() with correct citation key."""
 
@@ -157,3 +201,170 @@ class TestReferenceService(unittest.TestCase):
 
         # Repository update must NEVER be called
         mock_repo.update_reference.assert_not_called()
+
+    def test_id_exists_returns_true_when_id_found(self):
+        """Should return True when ID exists in repository."""
+        # Arrange
+        mock_repo = Mock()
+        refs = TestData.valid_multiple_reference_objects()
+        # refs[0] has id=1, refs[1] has id=2
+        mock_repo.get_references.return_value = refs
+
+        service = ReferenceService(repo=mock_repo)
+
+        # Act
+        result = service.id_exists(1)
+
+        # Assert
+        self.assertTrue(result)
+        mock_repo.get_references.assert_called_once()
+
+    def test_id_exists_returns_false_when_id_not_found(self):
+        """Should return False when ID does not exist in repository."""
+        # Arrange
+        mock_repo = Mock()
+        refs = TestData.valid_multiple_reference_objects()
+        # refs[0] has id=1, refs[1] has id=2
+        mock_repo.get_references.return_value = refs
+
+        service = ReferenceService(repo=mock_repo)
+
+        # Act
+        result = service.id_exists(999)
+
+        # Assert
+        self.assertFalse(result)
+        mock_repo.get_references.assert_called_once()
+
+    def test_id_exists_with_empty_repository(self):
+        """Should return False when repository is empty."""
+        # Arrange
+        mock_repo = Mock()
+        mock_repo.get_references.return_value = []
+
+        service = ReferenceService(repo=mock_repo)
+
+        # Act
+        result = service.id_exists(1)
+
+        # Assert
+        self.assertFalse(result)
+        mock_repo.get_references.assert_called_once()
+
+    def test_parse_author_string_with_one_author(self):
+        """Should return original string for single author."""
+        service = ReferenceService()
+        result = service.parse_author_string("John Doe")
+        self.assertEqual(result, "John Doe")
+
+    def test_parse_author_string_with_two_authors(self):
+        """Should return original string for two authors."""
+        service = ReferenceService()
+        result = service.parse_author_string("John Doe and Jane Smith")
+        self.assertEqual(result, "John Doe and Jane Smith")
+
+    def test_parse_author_string_with_three_authors(self):
+        """Should return original string for three authors."""
+        service = ReferenceService()
+        result = service.parse_author_string("John Doe and Jane Smith and Bob Brown")
+        self.assertEqual(result, "John Doe and Jane Smith and Bob Brown")
+
+    def test_parse_author_string_with_more_than_three_authors(self):
+        """Should return first author and 'et al.' for more than three authors."""
+        service = ReferenceService()
+        result = service.parse_author_string(
+            "John Doe and Jane Smith and Bob Brown and Alice Cooper"
+        )
+        self.assertEqual(result, "John Doe et al.")
+
+    def test_parse_author_string_with_five_authors(self):
+        """Should return first author and 'et al.' for five authors."""
+        service = ReferenceService()
+        result = service.parse_author_string("A and B and C and D and E")
+        self.assertEqual(result, "A et al.")
+
+    def test_parse_author_string_strips_whitespace(self):
+        """Should strip whitespace around author names."""
+        service = ReferenceService()
+        result = service.parse_author_string(
+            "  John Doe  and  Jane Smith  and  Bob Brown  and  Alice Cooper  "
+        )
+        self.assertEqual(result, "John Doe et al.")
+
+    def test_parse_authors_modifies_reference_list(self):
+        """Should modify author field in all references in the list."""
+        service = ReferenceService()
+        refs = [
+            Reference(1, "key1", 2020, "A and B and C and D", "Title1", "book", {}),
+            Reference(2, "key2", 2021, "X and Y", "Title2", "article", {}),
+        ]
+
+        result = service.parse_authors(refs)
+
+        self.assertEqual(result[0].author, "A et al.")
+        self.assertEqual(result[1].author, "X and Y")
+
+    def test_parse_authors_returns_same_list(self):
+        """Should return the same list object that was passed in."""
+        service = ReferenceService()
+        refs = [
+            Reference(1, "key1", 2020, "John Doe", "Title1", "book", {}),
+        ]
+
+        result = service.parse_authors(refs)
+
+        self.assertIs(result, refs)
+
+    def test_parse_authors_with_empty_list(self):
+        """Should handle empty list without errors."""
+        service = ReferenceService()
+        result = service.parse_authors([])
+        self.assertEqual(result, [])
+
+    def test_parse_name_with_lastname_firstname(self):
+        """Should convert 'Lastname, Firstname' to 'Lastname, F.'"""
+        service = ReferenceService()
+        result = service.parse_name("Smith, John")
+        self.assertEqual(result, "Smith, J.")
+
+    def test_parse_name_with_multiple_first_names(self):
+        """Should convert 'Lastname, Firstname Middlename' to 'Lastname, F. M.'"""
+        service = ReferenceService()
+        result = service.parse_name("Smith, John Paul")
+        self.assertEqual(result, "Smith, J. P.")
+
+    def test_parse_name_with_three_names(self):
+        """Should convert 'Lastname, Firstname Middlename1 Middlename2' to initials"""
+        service = ReferenceService()
+        result = service.parse_name("Smith, John Paul Robert")
+        self.assertEqual(result, "Smith, J. P. R.")
+
+    def test_parse_name_with_only_lastname(self):
+        """Should return just the lastname when no firstname is provided"""
+        service = ReferenceService()
+        result = service.parse_name("Smith,")
+        self.assertEqual(result, "Smith")
+
+    def test_parse_name_without_comma(self):
+        """Should return name as-is when no comma is present"""
+        service = ReferenceService()
+        result = service.parse_name("John Smith")
+        self.assertEqual(result, "John Smith")
+
+    def test_parse_name_strips_whitespace(self):
+        """Should strip whitespace from lastname and firstname"""
+        service = ReferenceService()
+        result = service.parse_name("  Smith  ,  John  ")
+        self.assertEqual(result, "Smith, J.")
+
+    def test_parse_name_with_single_letter_firstname(self):
+        """Should handle single letter firstname correctly"""
+        service = ReferenceService()
+        result = service.parse_name("Smith, J")
+        self.assertEqual(result, "Smith, J.")
+
+    def test_parse_name_with_empty_firstname(self):
+        """Should return just lastname when firstname is empty string"""
+        service = ReferenceService()
+        result = service.parse_name("Smith, ")
+        self.assertEqual(result, "Smith")

@@ -26,38 +26,62 @@ Create a new reference
             <div id="authorsContainer">
               {% if reference %}
                 {% for author in reference.author.split(' and ') %}
-              <div class="author-entry mb-2 d-flex gap-2">
-                <input 
-                  type="text" 
-                  name="author"
-                  class="form-control author-input" 
-                  required 
-                  placeholder="Example: John Smith or Smith, John"
-                  value="{{ author.strip() }}"
-                >
-                <button type="button" class="btn btn-outline-danger btn-sm remove-author" onclick="removeAuthor(this)">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-                    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
-                    <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
-                  </svg>
-                </button>
+                {% set parts = author.split(',') %}
+                {% set last_name = parts[0].strip() if parts else '' %}
+                {% set first_name = parts[1].strip() if parts|length > 1 else '' %}
+              <div class="author-entry mb-2">
+                <div class="d-flex gap-2 mb-1">
+                  <input 
+                    type="text" 
+                    name="last_name"
+                    class="form-control last-name-input" 
+                    required 
+                    placeholder="Last name"
+                    value="{{ last_name }}"
+                  >
+                  <input 
+                    type="text" 
+                    name="first_name"
+                    class="form-control first-name-input" 
+                    required 
+                    placeholder="First name"
+                    value="{{ first_name }}"
+                  >
+                  <button type="button" class="btn btn-outline-danger btn-sm remove-author" onclick="removeAuthor(this)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                      <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+                      <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+                    </svg>
+                  </button>
+                </div>
+                <input type="hidden" name="author" class="combined-author" value="{{ author.strip() }}">
               </div>
                 {% endfor %}
               {% else %}
-              <div class="author-entry mb-2 d-flex gap-2">
-                <input 
-                  type="text" 
-                  name="author"
-                  class="form-control author-input" 
-                  required 
-                  placeholder="Example: John Smith or Smith, John"
-                >
-                <button type="button" class="btn btn-outline-danger btn-sm remove-author" onclick="removeAuthor(this)">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-                    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
-                    <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
-                  </svg>
-                </button>
+              <div class="author-entry mb-2">
+                <div class="d-flex gap-2 mb-1">
+                  <input 
+                    type="text" 
+                    name="last_name"
+                    class="form-control last-name-input" 
+                    required 
+                    placeholder="Last name"
+                  >
+                  <input 
+                    type="text" 
+                    name="first_name"
+                    class="form-control first-name-input" 
+                    required 
+                    placeholder="First name"
+                  >
+                  <button type="button" class="btn btn-outline-danger btn-sm remove-author" onclick="removeAuthor(this)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                      <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+                      <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+                    </svg>
+                  </button>
+                </div>
+                <input type="hidden" name="author" class="combined-author">
               </div>
               {% endif %}
             </div>
@@ -137,23 +161,34 @@ Create a new reference
   function addAuthor() {
     const container = document.getElementById('authorsContainer');
     const newEntry = document.createElement('div');
-    newEntry.className = 'author-entry mb-2 d-flex gap-2';
+    newEntry.className = 'author-entry mb-2';
     newEntry.innerHTML = `
-      <input 
-        type="text" 
-        name="author"
-        class="form-control author-input" 
-        required 
-        placeholder="Example: John Smith or Smith, John"
-      >
-      <button type="button" class="btn btn-outline-danger btn-sm remove-author" onclick="removeAuthor(this)">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-          <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
-          <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
-        </svg>
-      </button>
+      <div class="d-flex gap-2 mb-1">
+        <input 
+          type="text" 
+          name="last_name"
+          class="form-control last-name-input" 
+          required 
+          placeholder="Last name"
+        >
+        <input 
+          type="text" 
+          name="first_name"
+          class="form-control first-name-input" 
+          required 
+          placeholder="First name"
+        >
+        <button type="button" class="btn btn-outline-danger btn-sm remove-author" onclick="removeAuthor(this)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+            <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+          </svg>
+        </button>
+      </div>
+      <input type="hidden" name="author" class="combined-author">
     `;
     container.appendChild(newEntry);
+    attachCombineListeners(newEntry);
   }
 
   function removeAuthor(button) {
@@ -162,10 +197,60 @@ Create a new reference
     
     // Prevent removing the last author entry
     if (entries.length > 1) {
-      button.parentElement.remove();
+      button.closest('.author-entry').remove();
     } else {
       alert('At least one author is required');
     }
   }
+
+  function combineAuthorNames(entry) {
+    const lastNameInput = entry.querySelector('.last-name-input');
+    const firstNameInput = entry.querySelector('.first-name-input');
+    const combinedInput = entry.querySelector('.combined-author');
+    
+    if (lastNameInput && firstNameInput && combinedInput) {
+      const lastName = lastNameInput.value.trim();
+      const firstName = firstNameInput.value.trim();
+      
+      if (lastName && firstName) {
+        combinedInput.value = `${lastName}, ${firstName}`;
+      } else if (lastName) {
+        combinedInput.value = lastName;
+      } else if (firstName) {
+        combinedInput.value = firstName;
+      } else {
+        combinedInput.value = '';
+      }
+    }
+  }
+
+  function attachCombineListeners(entry) {
+    const lastNameInput = entry.querySelector('.last-name-input');
+    const firstNameInput = entry.querySelector('.first-name-input');
+    
+    if (lastNameInput) {
+      lastNameInput.addEventListener('input', () => combineAuthorNames(entry));
+      lastNameInput.addEventListener('blur', () => combineAuthorNames(entry));
+    }
+    if (firstNameInput) {
+      firstNameInput.addEventListener('input', () => combineAuthorNames(entry));
+      firstNameInput.addEventListener('blur', () => combineAuthorNames(entry));
+    }
+  }
+
+  // Initialize listeners for existing author entries
+  document.addEventListener('DOMContentLoaded', () => {
+    const entries = document.querySelectorAll('.author-entry');
+    entries.forEach(entry => {
+      attachCombineListeners(entry);
+      combineAuthorNames(entry); // Initialize combined value
+    });
+  });
+
+  // Before form submission, ensure all author names are combined
+  document.getElementById('referenceForm').addEventListener('submit', (e) => {
+    const entries = document.querySelectorAll('.author-entry');
+    entries.forEach(entry => combineAuthorNames(entry));
+  });
 </script>
 {% endblock %}
