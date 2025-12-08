@@ -18,7 +18,18 @@ Reference app
                 <div class="d-flex w-100 justify-content-between mt-3">
                   <h5 class="mb-2">{{ reference.title }}.</h5>
                 </div>
-                <p class="mb-2">{{ reference.author }}. {{ reference.year }}.</p>
+                <p class="mb-2">{{ reference.author }} ({{ reference.year }})</p>
+                {% if reference.extra %}
+                  <div class="mb-2">
+                    {% for key, value in reference.extra.items() %}
+                      {% if value %}
+                        <small class="text-muted d-block">
+                          <strong>{{ key|replace('_', ' ')|title }}:</strong> {{ value }}
+                        </small>
+                      {% endif %}
+                    {% endfor %}
+                  </div>
+                {% endif %}
                 <div class="d-flex w-100 justify-content-between mt-3">
                   <small>@{{ reference.citation_key }}</small>
                   <form action="/delete_reference/{{ reference.citation_key }}" method="POST">

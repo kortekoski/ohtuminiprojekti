@@ -17,14 +17,14 @@ BEGIN
           "volume": "",
           "number": "",
           "series": "",
-          "address": "Helsinki, Finland",
-          "edition": "1",
-          "month": "01",
-          "note": "",
-          "isbn": "978-952-000-000-0",
-          "publisher": "University of Helsinki",
-          "url": "https://example.com/vihavainen2011",
-          "doi": ""
+          "address": "Darmstadt, Germany",
+          "edition": "",
+          "month": "06",
+          "note": "Presented at ITiCSE 2011 Working Group Reports",
+          "isbn": "978-1-4503-0697-3",
+          "publisher": "ACM",
+          "url": "https://dl.acm.org/doi/10.1145/2078856.2078868",
+          "doi": "10.1145/2078856.2078868"
         }'::jsonb
       ),
 
@@ -38,7 +38,7 @@ BEGIN
           "journal": "American Educator",
           "volume": "15",
           "number": "3",
-          "pages": "6–11",
+          "pages": "6-11",
           "month": "09",
           "note": "",
           "doi": "10.1000/182",
