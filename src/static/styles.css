@@ -65,6 +65,29 @@ a:hover {
   color: #6f5c0f;
 }
 
+.form-check-input {
+  width: 1.5em;
+  height: 1.5em;
+  border: 2px solid #244737;
+  cursor: pointer;
+}
+
+.form-check-input:checked {
+  background-color: #244737;
+  border-color: #244737;
+}
+
+.form-check-input:focus {
+  border-color: #1a3428;
+  box-shadow: 0 0 0 0.25rem rgba(36, 71, 55, 0.25);
+}
+
+.reference-select {
+  position: absolute;
+  top: var(--bs-list-group-item-padding-y, 0.75rem);
+  right: var(--bs-list-group-item-padding-x, 1.25rem);
+}
+
 .create-bg {
   margin: 0;
   min-height: 100vh;
