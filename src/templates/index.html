@@ -7,18 +7,25 @@ Reference app
 {% block body %}
 <div class="container mt-4">
   <h2 class="mb-4">Reference app</h2>
-  <h4>Book references</h4>
   <div class="container border border-secondary-subtle rounded-4 p-3 bg-white">
     {% if references|length == 0 %}
-      <p>No references found!</p>
+    <p>No references found!</p>
     {% else %}
-      <ol class="list-group list-group-numbered list-group-flush">
-        {% for reference in references %}
-              <li class="list-group-item">
-                <div class="d-flex w-100 justify-content-between mt-3">
-                  <h5 class="mb-2">{{ reference.title }}.</h5>
-                </div>
-                <p class="mb-2">{{ reference.author }} ({{ reference.year }})</p>
+    <ol class="list-group list-group-numbered list-group-flush">
+      {% for reference in references %}
+      <li class="list-group-item position-relative">
+        <div class="form-check reference-select">
+          <input 
+            class="form-check-input" 
+            type="checkbox" 
+            id="select-{{ reference.id }}"
+            bibtex-data="{{ generate_bibtex([reference]) }}"
+            aria-label="Select reference {{ reference.id }} for BibTex generation.">
+        </div>
+        <div class="mt-3">
+          <h5 class="mb-2">{{ reference.title }}.</h5>
+        </div>
+        <p class="mb-2">{{ reference.author }} ({{ reference.year }})</p>
                 {% if reference.extra %}
                   <div class="mb-2">
                     {% for key, value in reference.extra.items() %}
@@ -30,26 +37,34 @@ Reference app
                     {% endfor %}
                   </div>
                 {% endif %}
-                <div class="d-flex w-100 justify-content-between mt-3">
-                  <small>@{{ reference.citation_key }}</small>
-                  <form action="/delete_reference/{{ reference.citation_key }}" method="POST">
-                    <a class="btn btn-outline-primary" id="update-{{reference.citation_key}}" href="/update_reference/{{reference.id}}">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-                        <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
-                        <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
-                      </svg>
-                    </a>
-                    <button type="submit" id="delete-{{reference.citation_key}}" onclick="return confirm('Delete reference?')" class="btn btn-outline-danger">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-                        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
-                        <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
-                      </svg>
-                    </button>
-                  </form>
-                </div>
-              </li>
-        {% endfor %}
-      </ol>
+        <div class="d-flex w-100 justify-content-between mt-3">
+          <small>@{{ reference.citation_key }}</small>
+          <form action="/delete_reference/{{ reference.citation_key }}" method="POST">
+            <a class="btn btn-outline-primary" id="update-{{reference.citation_key}}"
+              href="/update_reference/{{reference.id}}">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                class="bi bi-pencil-square" viewBox="0 0 16 16">
+                <path
+                  d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                <path fill-rule="evenodd"
+                  d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
+              </svg>
+            </a>
+            <button type="submit" id="delete-{{reference.citation_key}}" onclick="return confirm('Delete reference?')"
+              class="btn btn-outline-danger">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash"
+                viewBox="0 0 16 16">
+                <path
+                  d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+                <path
+                  d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
+              </svg>
+            </button>
+          </form>
+        </div>
+      </li>
+      {% endfor %}
+    </ol>
     {% endif %}
   </div>
 
@@ -58,11 +73,24 @@ Reference app
   </div>
 
   <div class="mt-3">
-    <a class="btn btn-primary" href="/download_bibtex" onclick="setTimeout(() => alert('BibTeX file downloaded!'), 500)">Download BibTeX</a>
-    <button class="btn btn-primary" id="clipboardcopy" onclick="copyToClipboard(`{{ generate_bibtex | safe }}`)">Copy BibTeX to Clipboard</button>
+    <a class="btn btn-primary" href="/download_bibtex"
+      onclick="setTimeout(() => alert('BibTeX file downloaded!'), 500)">Download BibTeX</a>
+    <button class="btn btn-primary" id="clipboardcopy"
+      onclick="copyToClipboard(`{{ generate_bibtex(references) | safe }}`)">Copy BibTeX to Clipboard</button>
+  </div>
+  <div class="mt-3">
+    <button class="btn btn-tertiary" onclick="copy_selected(`{{references}}, {{get_reference_by_id}}`)">Copy selected BibTeX to Clipboard</button>
   </div>
 </div>
 
 <script src="{{ url_for('static', filename='copy_to_clipboard.js') }}"></script>
+<script>
+  const copy_selected = () => {
+    const checkedBoxes = document.querySelectorAll('input[type=checkbox]:checked')
 
+    const bibtexData = Array.from(checkedBoxes).map(checked => checked.getAttribute('bibtex-data'))
+
+    copyToClipboard(bibtexData.join('\n'))
+  }
+</script>
 {% endblock %}
