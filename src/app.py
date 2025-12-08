@@ -41,7 +41,7 @@ def index():
         "index.html",
         references=references,
         generate_bibtex=BibtexService.generate_bibtex,
-        get_reference_by_id=service.get_reference_by_id
+        get_reference_by_id=service.get_reference_by_id,
     )
 
 
