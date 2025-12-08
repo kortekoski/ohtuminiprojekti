@@ -104,10 +104,11 @@ def index():
     """Renders the index page with all references."""
     service = get_reference_service()
     references: list[Reference] = service.get_all_references()
+    bibtex_references: list[Reference] = service.get_all_references(bibtex=True)
     return render_template(
         "index.html",
         references=references,
-        generate_bibtex=BibtexService.generate_bibtex(references),
+        generate_bibtex=BibtexService.generate_bibtex(bibtex_references),
     )
 
 

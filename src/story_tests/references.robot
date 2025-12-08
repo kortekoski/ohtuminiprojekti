@@ -20,7 +20,7 @@ At start there are no references
 One reference is shown after adding it
     Add Test Reference
     Go To  ${HOME_URL}
-    Page Should Contain    Threepwood
+    Page Should Contain    Threeplog
     Page Should Contain    clover
 
 One reference is shown after adding it via input
@@ -46,7 +46,7 @@ Reference is not visible after deletion
     Alert Should Be Present
     Title Should Be  Reference app
     Page Should Contain  deleted successfully!
-    Page Should Not Contain  Threepwood
+    Page Should Not Contain  Threeplog
     Page Should Not Contain  clover
 
 Reference information is changed after update
@@ -63,7 +63,7 @@ Reference information is changed after update
     Title Should Be  Reference app
     Page Should Contain  updated successfully!
     Page Should Contain  Kojima, H.
-    Page Should Not Contain  Threepwood
+    Page Should Not Contain  Threeplog
 
 Get to create reference via navbar
     Go To  ${HOME_URL}
@@ -83,7 +83,7 @@ BibTeX is downloadable for a reference
     Should Be Equal As Integers  ${response.status_code}  200
     ${bibtex_content}=  Set Variable  ${response.text}
     Should Contain  ${bibtex_content}  @book{Test2025,
-    Should Contain  ${bibtex_content}  author = {Guybrush Threepwood},
+    Should Contain  ${bibtex_content}  author = {Threeplog, Guybroom},
     Should Contain  ${bibtex_content}  title = {Different types of clover in Melee island},
     Should Contain  ${bibtex_content}  year = {2025}
 
@@ -96,7 +96,7 @@ Copy BibTeX button copies references to clipboard
     Sleep  500ms
     ${clipboard_content}=  Execute Javascript  return window.lastCopiedBibtex || '';
     Should Contain  ${clipboard_content}  @book{Test2025,
-    Should Contain  ${clipboard_content}  author = {Guybrush Threepwood},
+    Should Contain  ${clipboard_content}  author = {Threeplog, Guybroom},
     Should Contain  ${clipboard_content}  title = {Different types of clover in Melee island},
     Should Contain  ${clipboard_content}  year = {2025}
 
@@ -294,4 +294,15 @@ Author names are displayed with proper abbreviation format
     Click Button  Create Reference
     Go To  ${HOME_URL}
     Page Should Contain  Garcia, F. et al.
+
+
+As a user I can see all fields of a reference in the main view
+    Add Test Reference
+    Go To  ${HOME_URL}
+    Page Should Contain  Test2025
+    Page Should Contain  Threeplog, G.
+    Page Should Contain  Different types of clover in Melee island
+    Page Should Contain  2025
+    Page Should Contain  LocusArts
+    Page Should Contain  A classic adventure game reference
 

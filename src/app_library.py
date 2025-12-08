@@ -11,10 +11,23 @@ class app_library:
         self,
         citation_key="Test2025",
         year=2025,
-        authors=["Guybrush Threepwood"],
+        authors=["Threeplog, Guybroom"],
         title="Different types of clover in Melee island",
         reftype="book",
-        extra: dict[str, str] = {},
+        extra={
+            "editor": "",
+            "volume": "",
+            "number": "",
+            "series": "",
+            "address": "Boston, MA",
+            "edition": "1",
+            "month": "08",
+            "note": "A classic adventure game reference",
+            "isbn": "978-0132350884",
+            "publisher": "LocusArts",
+            "url": "",
+            "doi": "",
+        },
     ):
         # Send each author as a separate 'author' field
         data = {
@@ -22,7 +35,6 @@ class app_library:
             RefField.YEAR.value: year,
             RefField.TITLE.value: title,
             RefField.REFTYPE.value: reftype,
-            RefField.EXTRA.value: extra,
         }
 
         # Add multiple author fields (Flask will receive as list via getlist)
@@ -31,5 +43,9 @@ class app_library:
             data_with_authors.append((key, value))
         for author in authors:
             data_with_authors.append(("author", author))
+        # Add extra fields individually
+        for key, value in extra.items():
+            if value:  # Only add non-empty values
+                data_with_authors.append((key, value))
 
         requests.post(f"{self._base_url}/add_test_reference", data=data_with_authors)
