@@ -13,7 +13,7 @@ Reference app
     {% else %}
     <ol class="list-group list-group-numbered list-group-flush">
       {% for reference in references %}
-      <li class="list-group-item position-relative">
+      <li class="list-group-item position-relative reference-type-{{ reference.reftype }}">
         <div class="form-check reference-select">
           <input 
             class="form-check-input" 
@@ -23,7 +23,10 @@ Reference app
             aria-label="Select reference {{ reference.id }} for BibTex generation.">
         </div>
         <div class="mt-3">
-          <h5 class="mb-2">{{ reference.title }}.</h5>
+          <div class="d-flex align-items-center gap-2 mb-2">
+            <span class="badge badge-reftype badge-{{ reference.reftype }}">{{ reference.reftype }}</span>
+            <h5 class="mb-0">{{ reference.title }}.</h5>
+          </div>
         </div>
         <p class="mb-2">{{ reference.author }} ({{ reference.year }})</p>
                 {% if reference.extra %}
