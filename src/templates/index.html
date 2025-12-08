@@ -19,7 +19,7 @@ Reference app
             class="form-check-input" 
             type="checkbox" 
             id="select-{{ reference.id }}"
-            bibtex-data="{{ generate_bibtex([reference]) }}"
+            bibtex-data="{{ generate_bibtex([bibtex_refs_by_id[reference.id]]) }}"
             aria-label="Select reference {{ reference.id }} for BibTex generation.">
         </div>
         <div class="mt-3">
@@ -76,7 +76,7 @@ Reference app
     <a class="btn btn-primary" href="/download_bibtex"
       onclick="setTimeout(() => alert('BibTeX file downloaded!'), 500)">Download BibTeX</a>
     <button class="btn btn-primary" id="clipboardcopy"
-      onclick="copyToClipboard(`{{ generate_bibtex(references) | safe }}`)">Copy BibTeX to Clipboard</button>
+      onclick="copyToClipboard(`{{ generate_bibtex(bibtex_references) | safe }}`)">Copy BibTeX to Clipboard</button>
   </div>
   <div class="mt-3">
     <button class="btn btn-tertiary" onclick="copy_selected(`{{references}}, {{get_reference_by_id}}`)">Copy selected BibTeX to Clipboard</button>

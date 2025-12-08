@@ -107,7 +107,7 @@ Reference can be added by DOI
     Input Text  doi  10.1136/jclinpath-2020-206745
     Input Text  citation_key  doicitation
     Click Button  Get Reference
-    Wait Until Page Contains  created succesfully!  timeout=10s
+    Wait Until Page Contains  created successfully!  timeout=10s
     Title Should Be  Reference app
     Page Should Contain  Construction of a reference material
 
