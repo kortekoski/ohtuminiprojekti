@@ -87,11 +87,27 @@ BibTeX is downloadable for a reference
     Should Contain  ${bibtex_content}  title = {Different types of clover in Melee island},
     Should Contain  ${bibtex_content}  year = {2025}
 
-Copy BibTeX button copies references to clipboard
+Copy BibTeX button copies all references to clipboard
     Add Test Reference
     Go To  ${HOME_URL}
     Page Should Contain  Copy BibTeX to Clipboard
     Click Button  clipboardcopy
+    Handle Alert  accept
+    Sleep  500ms
+    ${clipboard_content}=  Execute Javascript  return window.lastCopiedBibtex || '';
+    Should Contain  ${clipboard_content}  @book{Test2025,
+    Should Contain  ${clipboard_content}  author = {Threeplog, Guybroom},
+    Should Contain  ${clipboard_content}  title = {Different types of clover in Melee island},
+    Should Contain  ${clipboard_content}  year = {2025}
+
+Copy selected BibTeX button copies selected references to clipboard
+    Add Test Reference
+    Go To  ${HOME_URL}
+    Page Should Contain  Copy selected BibTeX to Clipboard
+    Click Button  clipboardcopy-selected
+    Alert Should Be Present  No entries to copy!
+    Select Checkbox  select-Test2025
+    Click Button  clipboardcopy-selected
     Handle Alert  accept
     Sleep  500ms
     ${clipboard_content}=  Execute Javascript  return window.lastCopiedBibtex || '';
