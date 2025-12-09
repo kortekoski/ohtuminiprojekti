@@ -275,6 +275,7 @@ def init_easter_egg():
     session.setdefault("enable-easter-egg", False)
 
 
+@app.route("/toggle_easter_egg")
 def togge_easter_egg():
     session["enable-easter-egg"] = not session.get("enable-easter-egg", False)
     origin = request.args.get("origin", "/")
