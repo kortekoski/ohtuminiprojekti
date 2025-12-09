@@ -105,11 +105,11 @@ def create_input_reference(
 def index():
     """Renders the index page with all references."""
     service = get_reference_service()
-    
+
     author_filter = request.args.get("author")
     year_filter = request.args.get("year")
     sort_by = request.args.get("sort_by", "citation_key")
-    
+
     order_by = RefField.CITATION_KEY
     if sort_by == "author":
         order_by = RefField.AUTHOR
@@ -119,9 +119,7 @@ def index():
         order_by = RefField.TITLE
 
     references: list[Reference] = service.get_all_references(
-        order_by=order_by,
-        author_filter=author_filter,
-        year_filter=year_filter
+        order_by=order_by, author_filter=author_filter, year_filter=year_filter
     )
     bibtex_references: list[Reference] = service.get_all_references(bibtex=True)
     bibtex_refs_by_id = {ref.id: ref for ref in bibtex_references}
