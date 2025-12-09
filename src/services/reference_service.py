@@ -14,10 +14,26 @@ class ReferenceService:
         self._repo = repo or ReferenceRepository()
 
     def get_all_references(
-        self, bibtex: bool = False, order_by: RefField = RefField.CITATION_KEY
+        self,
+        bibtex: bool = False,
+        order_by: RefField = RefField.CITATION_KEY,
+        author_filter: str = None,
+        year_filter: str = None,
     ) -> list[Reference]:
         """Fetches all references from the repository."""
         ref_list = self._repo.get_references(order_by)
+
+        if author_filter:
+            author_filter = author_filter.lower()
+            ref_list = [
+                ref
+                for ref in ref_list
+                if ref.author and author_filter in ref.author.lower()
+            ]
+
+        if year_filter:
+            ref_list = [ref for ref in ref_list if str(ref.year) == str(year_filter)]
+
         if bibtex:
             return ref_list
         parsed_ref_list = self.parse_authors(ref_list)

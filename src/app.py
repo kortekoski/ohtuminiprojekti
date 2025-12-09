@@ -7,6 +7,7 @@ from flask import (
     Response,
     redirect,
     render_template,
+    render_template_string,
     request,
     jsonify,
     flash,
@@ -104,7 +105,24 @@ def create_input_reference(
 def index():
     """Renders the index page with all references."""
     service = get_reference_service()
-    references: list[Reference] = service.get_all_references()
+    
+    author_filter = request.args.get("author")
+    year_filter = request.args.get("year")
+    sort_by = request.args.get("sort_by", "citation_key")
+    
+    order_by = RefField.CITATION_KEY
+    if sort_by == "author":
+        order_by = RefField.AUTHOR
+    elif sort_by == "year":
+        order_by = RefField.YEAR
+    elif sort_by == "title":
+        order_by = RefField.TITLE
+
+    references: list[Reference] = service.get_all_references(
+        order_by=order_by,
+        author_filter=author_filter,
+        year_filter=year_filter
+    )
     bibtex_references: list[Reference] = service.get_all_references(bibtex=True)
     bibtex_refs_by_id = {ref.id: ref for ref in bibtex_references}
     return render_template(
@@ -233,6 +251,40 @@ def download_bibtex():
         return redirect("/")
 
 
+@app.route("/download_selected_bibtex")
+def download_selected_bibtex():
+    """Generates and gives the BibTex file for selected references."""
+    ref_ids = request.args.getlist("ref_id")
+
+    if not ref_ids:
+        flash("No references selected for download", "error")
+        return redirect("/")
+
+    reference_service = get_reference_service()
+    refs = []
+    for ref_id in ref_ids:
+        ref = reference_service.get_reference_by_id(int(ref_id))
+        if ref:
+            refs.append(ref)
+
+    if not refs:
+        flash("No valid references found for the selected IDs", "error")
+        return redirect("/")
+
+    try:
+        bibtex_content = BibtexService.generate_bibtex(refs)
+        return Response(
+            bibtex_content,
+            mimetype="text/plain",
+            headers={
+                "Content-Disposition": "attachment; filename=selected_references.bib",
+            },
+        )
+    except Exception as error:  # pylint: disable=broad-exception-caught
+        flash(str(error), "error")
+        return redirect("/")
+
+
 @app.route("/add_from_doi", methods=["POST"])
 def add_from_doi():
     doi = request.form.get("doi")
@@ -287,9 +339,24 @@ def toggle_easter_egg():
     session["enable-easter-egg"] = not session.get("enable-easter-egg", False)
     origin = request.args.get("origin", "/")
     if session.get("enable-easter-egg"):
-        return redirect(
-            "https://www.tiktok.com/@rickastleyofficial/video/7512867562258992406?lang=en"
-        )
+        new_tab_url = "https://www.tiktok.com/@rickatleyofficial/video/7512867562258992406?lang=en"
+        redirect_url = origin
+
+        html = f"""
+        <html>
+        <head>
+            <script type="text/javascript">
+                window.onload = function() {{
+                    window.open("{new_tab_url}", "_blank");
+                    window.location.href = "{redirect_url}";
+                }};
+            </script>
+        </head>
+        <body></body>
+        </html>
+        """
+        return render_template_string(html)
+
     return redirect(origin)
 
 
