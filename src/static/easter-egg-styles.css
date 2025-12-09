@@ -88,6 +88,34 @@ a:hover {
   right: var(--bs-list-group-item-padding-x, 1.25rem);
 }
 
+.reference-type-book {
+  background-color: #f8f9fa;
+  border-left: 3px solid #6c757d;
+}
+
+.reference-type-article {
+  background-color: #f0f8ff;
+  border-left: 3px solid #0066CC;
+}
+
+.badge-reftype {
+  font-size: 0.7rem;
+  font-weight: 500;
+  padding: 0.25rem 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge-book {
+  background-color: #6c757d;
+  color: white;
+}
+
+.badge-article {
+  background-color: #0066CC;
+  color: white;
+}
+
 .create-bg {
   margin: 0;
   height: 100vh;
