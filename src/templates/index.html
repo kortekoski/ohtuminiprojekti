@@ -31,8 +31,9 @@ Reference app
       {% for reference in references %}
       <li class="list-group-item position-relative reference-type-{{ reference.reftype }}">
         <div class="form-check reference-select">
-          <input class="form-check-input"
-            type="checkbox"
+          <input 
+            class="form-check-input" 
+            type="checkbox" 
             id="select-{{ reference.citation_key }}"
             ref-id="{{ reference.id }}"
             bibtex-data="{{ generate_bibtex([bibtex_refs_by_id[reference.id]]) }}"
