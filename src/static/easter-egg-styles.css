@@ -118,6 +118,26 @@ a:hover {
 
 .create-bg {
   margin: 0;
-  min-height: 100vh;
-  background-color: #A39A92;
+  height: 100vh;
+  /* overflow: hidden; */
+
+  /* Tile the GIF instead of stretching */
+  background-image: url("bg_stars.png");
+  background-repeat: repeat;
+  background-size: 400px 400px; /* Size of each tile */
+  
+  /* Start position */
+  background-position: 0 0;
+
+  /* Animate the background */
+  animation: moveBackground 30s linear infinite;
+}
+
+@keyframes moveBackground {
+  from {
+      background-position: 0 0;
+  }
+  to {
+      background-position: 400px 400px; /* matches background-size for smooth loop */
+  }
 }

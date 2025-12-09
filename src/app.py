@@ -2,9 +2,20 @@
 main application defining routes and reference logic
 """
 
-from flask import Response, redirect, render_template, request, jsonify, flash, g
+from flask import (
+    Request,
+    Response,
+    redirect,
+    render_template,
+    render_template_string,
+    request,
+    jsonify,
+    flash,
+    g,
+    session,
+)
 from db_helper import reset_db
-from entities.reference import Reference
+from entities.reference import Reference, InputReference
 from config import app, test_env
 from services.bibtex_service import BibtexService
 from services.reference_service import ReferenceService
@@ -29,6 +40,64 @@ def get_doi_service() -> DoiService:
     return g.doi_service
 
 
+def create_extra_dict(request: Request) -> dict[str, str]:
+    extra = {}
+    for key, value in request.form.to_dict().items():
+        if key in [
+            RefField.CITATION_KEY.value,
+            RefField.YEAR.value,
+            RefField.AUTHOR.value,
+            RefField.TITLE.value,
+            RefField.REFTYPE.value,
+        ]:
+            continue
+        extra[key] = value
+    return extra
+
+
+def capitalize_name(name: str) -> str:
+    """Capitalize first letter of each word and lowercase the rest."""
+    if not name:
+        return name
+    # Split by spaces and capitalize each word
+    words = name.split()
+    return " ".join(
+        word[0].upper() + word[1:] if len(word) > 1 else word.upper() for word in words
+    )
+
+
+def create_input_reference(
+    request: Request, reference_id: int | None = None
+) -> InputReference:
+    citation_key = request.form.get(RefField.CITATION_KEY.value)
+    year = int(request.form.get(RefField.YEAR.value))
+    authors = request.form.getlist(RefField.AUTHOR.value)
+    title = request.form.get(RefField.TITLE.value)
+    reftype = request.form.get(RefField.REFTYPE.value)
+
+    extra = create_extra_dict(request)
+
+    capitalized_authors = []
+    for author in authors:
+        if "," in author:
+            parts = author.split(",", 1)
+            lastname = capitalize_name(parts[0].strip())
+            firstname = capitalize_name(parts[1].strip()) if len(parts) > 1 else ""
+            capitalized_authors.append(f"{lastname}, {firstname}")
+        else:
+            capitalized_authors.append(capitalize_name(author.strip()))
+
+    return InputReference(
+        citation_key=citation_key,
+        year=year,
+        authors=capitalized_authors,
+        title=title,
+        reftype=reftype,
+        extra=extra,
+        id=reference_id,
+    )
+
+
 # ---------------------------
 # Routes
 # ---------------------------
@@ -36,8 +105,32 @@ def get_doi_service() -> DoiService:
 def index():
     """Renders the index page with all references."""
     service = get_reference_service()
-    references: list[Reference] = service.get_all_references()
-    return render_template("index.html", references=references)
+
+    author_filter = request.args.get("author")
+    year_filter = request.args.get("year")
+    sort_by = request.args.get("sort_by", "citation_key")
+
+    order_by = RefField.CITATION_KEY
+    if sort_by == "author":
+        order_by = RefField.AUTHOR
+    elif sort_by == "year":
+        order_by = RefField.YEAR
+    elif sort_by == "title":
+        order_by = RefField.TITLE
+
+    references: list[Reference] = service.get_all_references(
+        order_by=order_by, author_filter=author_filter, year_filter=year_filter
+    )
+    bibtex_references: list[Reference] = service.get_all_references(bibtex=True)
+    bibtex_refs_by_id = {ref.id: ref for ref in bibtex_references}
+    return render_template(
+        "index.html",
+        references=references,
+        generate_bibtex=BibtexService.generate_bibtex,
+        bibtex_references=bibtex_references,
+        bibtex_refs_by_id=bibtex_refs_by_id,
+        get_reference_by_id=service.get_reference_by_id,
+    )
 
 
 @app.route("/new_reference")
@@ -55,36 +148,19 @@ def new(reftype):
 @app.route("/create_reference", methods=["POST"])
 def reference_creation():
     """Handles the creation of a new reference."""
-    citation_key = request.form.get(RefField.CITATION_KEY.value)
-    year = int(request.form.get(RefField.YEAR.value))
-    author = request.form.get(RefField.AUTHOR.value)
-    title = request.form.get(RefField.TITLE.value)
-    reftype = request.form.get(RefField.REFTYPE.value)
-
-    extra = {}
-    for key, value in request.form.to_dict().items():
-        if key in [
-            RefField.CITATION_KEY.value,
-            RefField.YEAR.value,
-            RefField.AUTHOR.value,
-            RefField.TITLE.value,
-            RefField.REFTYPE.value,
-        ]:
-            continue
-        extra[key] = value
+    input_ref = create_input_reference(request)
+    citation_key = input_ref.citation_key
+    authors = input_ref.authors
 
     reference_service = get_reference_service()
     existing_citation_keys = reference_service.get_citation_keys()
 
     try:
-        new_reference = Reference(
-            None, citation_key, year, author, title, reftype, extra
+        ValidationService.validate_input_reference(
+            input_ref, existing_citation_keys, authors=authors
         )
 
-        ValidationService.validate_reference(new_reference, existing_citation_keys)
-        reference_service.create_reference(
-            citation_key, year, author, title, reftype, extra
-        )
+        reference_service.create_reference(input_ref)
 
         flash(f"Reference {citation_key} created successfully!", "success")
         return redirect("/")
@@ -121,56 +197,23 @@ def update_reference(ref_id):
     if request.method == "GET":
         return render_template(f"add_{old_ref.reftype}.html", reference=old_ref)
     if request.method == "POST":
-        # get shared attributes from form
-        citation_key = request.form.get(RefField.CITATION_KEY.value)
-        year = request.form.get(RefField.YEAR.value)
-        author = request.form.get(RefField.AUTHOR.value)
-        title = request.form.get(RefField.TITLE.value)
-        reftype = request.form.get(RefField.REFTYPE.value)
+        input_ref = create_input_reference(request, ref_id)
+        citation_key = input_ref.citation_key
+        authors = input_ref.authors
 
-        # add extra attributes to dict extra
-        extra = {}
-        for key, value in request.form.to_dict().items():
-            if key in [
-                RefField.CITATION_KEY.value,
-                RefField.YEAR.value,
-                RefField.AUTHOR.value,
-                RefField.TITLE.value,
-                RefField.REFTYPE.value,
-            ]:
-                continue
-            extra[key] = value
-
-        # get existing citation keys from the repo
         reference_service = get_reference_service()
         existing_citation_keys = reference_service.get_citation_keys()
 
-        # create the updated entity and update by id
         try:
-            updated_reference = Reference(
-                ref_id,
-                citation_key,
-                int(year) if year else None,
-                author,
-                title,
-                reftype,
-                extra,
-            )
-
-            ValidationService.validate_reference(
-                updated_reference,
+            ValidationService.validate_input_reference(
+                input_ref,
                 existing_citation_keys,
                 same_citation_key=(old_ref.citation_key == citation_key),
+                authors=authors,
             )
+
             reference_service.update_reference_by_id(
-                ref_id,
-                citation_key,
-                int(year) if year else None,
-                author,
-                title,
-                reftype,
-                extra,
-                same_citation_key=(old_ref.citation_key == citation_key),
+                input_ref, same_citation_key=(old_ref.citation_key == citation_key)
             )
 
             flash(f"Reference {old_ref.citation_key} updated successfully!", "success")
@@ -186,7 +229,7 @@ def update_reference(ref_id):
 def download_bibtex():
     """generates and gives the BibTex file"""
     reference_service = get_reference_service()
-    refs = reference_service.get_all_references()
+    refs = reference_service.get_all_references(bibtex=True)
 
     if not refs:
         flash("No references available to download", "error")
@@ -206,42 +249,113 @@ def download_bibtex():
         return redirect("/")
 
 
+@app.route("/download_selected_bibtex")
+def download_selected_bibtex():
+    """Generates and gives the BibTex file for selected references."""
+    ref_ids = request.args.getlist("ref_id")
+
+    if not ref_ids:
+        flash("No references selected for download", "error")
+        return redirect("/")
+
+    reference_service = get_reference_service()
+    refs = []
+    for ref_id in ref_ids:
+        ref = reference_service.get_reference_by_id(int(ref_id))
+        if ref:
+            refs.append(ref)
+
+    if not refs:
+        flash("No valid references found for the selected IDs", "error")
+        return redirect("/")
+
+    try:
+        bibtex_content = BibtexService.generate_bibtex(refs)
+        return Response(
+            bibtex_content,
+            mimetype="text/plain",
+            headers={
+                "Content-Disposition": "attachment; filename=selected_references.bib",
+            },
+        )
+    except Exception as error:  # pylint: disable=broad-exception-caught
+        flash(str(error), "error")
+        return redirect("/")
+
+
 @app.route("/add_from_doi", methods=["POST"])
 def add_from_doi():
     doi = request.form.get("doi")
     citation_key = request.form.get("citation_key")
     if doi is None:
-        flash("error", "Input needs to have a DOI.")
+        flash("Input needs to have a DOI.", "error")
         return redirect("/new_reference/from_doi")
     if citation_key is None:
-        flash("error", "Input needs to have a citation key.")
+        flash("Input needs to have a citation key.", "error")
         return redirect("/new_reference/from_doi")
-    citation_key = request.form.get("citation_key")
+
     try:
         doi_service = get_doi_service()
-        ref = doi_service.get_doi(doi)
-        if ref is None:
+        input_ref = doi_service.get_doi(doi, citation_key)
+        if input_ref is None:
             # This only happens when we somehow fail to
             # contact api.crossref.org.
             flash("Failed to retrieve DOI. Try again later.", "error")
             return redirect("/")
-        print(ref)
-        ValidationService.validate_reference(ref)
-        reference_service = get_reference_service()
 
-        reference_service.create_reference(
-            citation_key,
-            ref.year,
-            ref.author,
-            ref.title,
-            ref.reftype,
-            ref.extra,
+        reference_service = get_reference_service()
+        existing_citation_keys = reference_service.get_citation_keys()
+
+        ValidationService.validate_input_reference(
+            input_ref, existing_citation_keys, authors=input_ref.authors
         )
-        flash(f"Reference {citation_key} created succesfully!", "success")
+
+        reference_service.create_reference(input_ref)
+        flash(f"Reference {citation_key} created successfully!", "success")
         return redirect("/")
+
     except UserInputError as err:
         flash(str(err), "error")
         return redirect("/new_reference/from_doi")
+
+    except UserInputError as err:
+        flash(str(err), "error")
+        return redirect("/new_reference/from_doi")
+
+
+@app.before_request
+def init_easter_egg():
+    """Initializes session["enable-easter-egg"] to False.
+    This is run before further handling of all requests."""
+    session.setdefault("enable-easter-egg", False)
+
+
+@app.route("/toggle_easter_egg")
+def toggle_easter_egg():
+    """Toggle session["enable-easter-egg"] between
+    True/False and redirect caller to args["origin"]."""
+    session["enable-easter-egg"] = not session.get("enable-easter-egg", False)
+    origin = request.args.get("origin", "/")
+    if session.get("enable-easter-egg"):
+        new_tab_url = "https://www.tiktok.com/@rickatleyofficial/video/7512867562258992406?lang=en"
+        redirect_url = origin
+
+        html = f"""
+        <html>
+        <head>
+            <script type="text/javascript">
+                window.onload = function() {{
+                    window.open("{new_tab_url}", "_blank");
+                    window.location.href = "{redirect_url}";
+                }};
+            </script>
+        </head>
+        <body></body>
+        </html>
+        """
+        return render_template_string(html)
+
+    return redirect(origin)
 
 
 # ---------------------------
@@ -259,13 +373,9 @@ if test_env:
     @app.route("/add_test_reference", methods=["POST"])
     def add_test_reference():
         """Adds a reference for testing purposes."""
-        citation_key = request.form.get(RefField.CITATION_KEY.value)
-        year = int(request.form.get(RefField.YEAR.value))
-        author = request.form.get(RefField.AUTHOR.value)
-        title = request.form.get(RefField.TITLE.value)
-        reftype = request.form.get(RefField.REFTYPE.value)
 
+        input_ref = create_input_reference(request)
         service = get_reference_service()
-        service.create_reference(citation_key, year, author, title, reftype)
+        service.create_reference(input_ref)
 
         return jsonify({"message": "reference registered"})

@@ -3,7 +3,7 @@
 from config import db
 from sqlalchemy import text
 
-from entities.reference import Reference
+from entities.reference import Reference, InputReference
 from util import RefField
 
 import json
@@ -17,14 +17,15 @@ class ReferenceRepository:
         """Fetches all references from the database."""
         sql = text(
             f"""
-                SELECT id, 
-                {RefField.CITATION_KEY.value},
-                {RefField.YEAR.value},
-                {RefField.AUTHOR.value},
-                {RefField.TITLE.value},
-                {RefField.REFTYPE.value},
-                {RefField.EXTRA.value}
-                FROM reference_values
+                SELECT 
+                    id, 
+                    {RefField.CITATION_KEY.value},
+                    {RefField.YEAR.value},
+                    {RefField.AUTHOR.value},
+                    {RefField.TITLE.value},
+                    {RefField.REFTYPE.value},
+                    {RefField.EXTRA.value}
+                FROM references_view
                 ORDER BY {order_by.value}
                 """
         )
@@ -32,8 +33,6 @@ class ReferenceRepository:
         result = db.session.execute(sql)
         rows = result.fetchall()
 
-        # jsonb is automagically converted to a python
-        # object so we don't have to call json.loads.
         return [
             Reference(row[0], row[1], row[2], row[3], row[4], row[5], row[6])
             for row in rows
@@ -43,14 +42,15 @@ class ReferenceRepository:
         """Fetches a single reference by its ID."""
         sql = text(
             f"""
-                SELECT id, 
-                {RefField.CITATION_KEY.value},
-                {RefField.YEAR.value},
-                {RefField.AUTHOR.value},
-                {RefField.TITLE.value},
-                {RefField.REFTYPE.value},
-                {RefField.EXTRA.value}
-                FROM reference_values
+                SELECT 
+                    id, 
+                    {RefField.CITATION_KEY.value},
+                    {RefField.YEAR.value},
+                    {RefField.AUTHOR.value},
+                    {RefField.TITLE.value},
+                    {RefField.REFTYPE.value},
+                    {RefField.EXTRA.value}
+                FROM references_view
                 WHERE id = :id
                 """
         )
@@ -67,14 +67,15 @@ class ReferenceRepository:
         """Fetches a single reference by its citation key."""
         sql = text(
             f"""
-                SELECT id, 
-                {RefField.CITATION_KEY.value},
-                {RefField.YEAR.value},
-                {RefField.AUTHOR.value},
-                {RefField.TITLE.value},
-                {RefField.REFTYPE.value},
-                {RefField.EXTRA.value}
-                FROM reference_values
+                SELECT 
+                    id, 
+                    {RefField.CITATION_KEY.value},
+                    {RefField.YEAR.value},
+                    {RefField.AUTHOR.value},
+                    {RefField.TITLE.value},
+                    {RefField.REFTYPE.value},
+                    {RefField.EXTRA.value}
+                FROM references_view
                 WHERE {RefField.CITATION_KEY.value} = :{RefField.CITATION_KEY.value}
                 """
         )
@@ -87,42 +88,59 @@ class ReferenceRepository:
 
         return Reference(row[0], row[1], row[2], row[3], row[4], row[5], row[6])
 
-    def create_reference(
-        self,
-        citation_key: str,
-        year: int,
-        author: str,
-        title: str,
-        reftype: str,
-        extra: dict[str, str] = {},
-    ):
+    def create_reference(self, input_ref: InputReference):
         """Creates a new reference in the database."""
+
+        author_ids = self.get_author_ids(input_ref)
+
         sql = text(
             f"""
             INSERT INTO reference_values ( 
             {RefField.CITATION_KEY.value},
             {RefField.YEAR.value},
-            {RefField.AUTHOR.value},
             {RefField.TITLE.value},
             {RefField.REFTYPE.value},
             {RefField.EXTRA.value})
-            VALUES (:{RefField.CITATION_KEY.value}, :{RefField.YEAR.value}, :{RefField.AUTHOR.value}, :{RefField.TITLE.value}, :{RefField.REFTYPE.value}, :{RefField.EXTRA.value})
+            VALUES (:{RefField.CITATION_KEY.value}, :{RefField.YEAR.value}, :{RefField.TITLE.value}, :{RefField.REFTYPE.value}, :{RefField.EXTRA.value})
+            RETURNING id
             """
         )
-        db.session.execute(
+        result = db.session.execute(
             sql,
             {
-                RefField.CITATION_KEY.value: citation_key,
-                RefField.YEAR.value: year,
-                RefField.AUTHOR.value: author,
-                RefField.TITLE.value: title,
-                RefField.REFTYPE.value: reftype,
-                RefField.EXTRA.value: json.dumps(extra),
+                RefField.CITATION_KEY.value: input_ref.citation_key,
+                RefField.YEAR.value: input_ref.year,
+                RefField.TITLE.value: input_ref.title,
+                RefField.REFTYPE.value: input_ref.reftype,
+                RefField.EXTRA.value: json.dumps(input_ref.extra),
             },
         )
-        db.session.commit()
+        reference_id = result.fetchone()[0]
 
-        return self.get_reference_by_citation_key(citation_key).id
+        self.insert_into_authors(author_ids, reference_id)
+
+        db.session.commit()
+        return reference_id
+
+    def insert_into_authors(self, author_ids: list[int], reference_id: int) -> int:
+        for order, author_id in enumerate(author_ids):
+            insert_mapping_sql = self.get_insert_mapping_sql()
+            db.session.execute(
+                insert_mapping_sql,
+                {
+                    "reference_id": reference_id,
+                    "author_id": author_id,
+                    "author_order": order,
+                },
+            )
+
+    def get_insert_mapping_sql(self):
+        return text(
+            """
+                INSERT INTO reference_authors (reference_id, author_id, author_order)
+                VALUES (:reference_id, :author_id, :author_order)
+                """
+        )
 
     def get_citation_keys(self) -> list[str]:
         """Fetches all citation keys from the database."""
@@ -159,39 +177,43 @@ class ReferenceRepository:
         db.session.execute(sql, {RefField.CITATION_KEY.value: citation_key})
         db.session.commit()
 
-    def update_reference(
-        self,
-        id: int,
-        citation_key: str,
-        year: int = None,
-        author: str = None,
-        title: str = None,
-        reftype: str = None,
-        extra: dict[str, str] = None,
-    ):
-        """Updates only fields that are not None."""
+    def delete_authors(self, id):
+        delete_mappings_sql = text(
+            """
+                DELETE FROM reference_authors
+                WHERE reference_id = :reference_id
+                """
+        )
+        db.session.execute(delete_mappings_sql, {"reference_id": id})
+
+    def update_reference(self, input_ref: InputReference):
+        """Updates a reference using InputReference entity."""
 
         updates = {}
-        if citation_key is not None:
-            updates["citation_key"] = citation_key
-        if year is not None:
-            updates["year"] = year
-        if author is not None:
-            updates["author"] = author
-        if title is not None:
-            updates["title"] = title
-        if reftype is not None:
-            updates["reftype"] = reftype
-        if extra is not None:
-            updates["extra"] = json.dumps(extra)
+        if input_ref.citation_key is not None:
+            updates["citation_key"] = input_ref.citation_key
+        if input_ref.year is not None:
+            updates["year"] = input_ref.year
+        if input_ref.title is not None:
+            updates["title"] = input_ref.title
+        if input_ref.reftype is not None:
+            updates["reftype"] = input_ref.reftype
+        if input_ref.extra is not None:
+            updates["extra"] = json.dumps(input_ref.extra)
 
-        if not updates:
-            return  # nothing to update
+        if updates:
 
+            self.update_reference_by_citation_key(input_ref, updates)
+            self.handle_authors_update(input_ref)
+
+        db.session.commit()
+
+    def update_reference_by_citation_key(
+        self, input_ref: InputReference, updates: dict[str, str]
+    ):
         field_mapping = {
             "citation_key": RefField.CITATION_KEY.value,
             "year": RefField.YEAR.value,
-            "author": RefField.AUTHOR.value,
             "title": RefField.TITLE.value,
             "reftype": RefField.REFTYPE.value,
             "extra": RefField.EXTRA.value,
@@ -212,6 +234,45 @@ class ReferenceRepository:
         """
         )
 
-        updates["id"] = id
+        updates["id"] = input_ref.id
         db.session.execute(sql, updates)
-        db.session.commit()
+
+    def handle_authors_update(self, input_ref: InputReference):
+        if input_ref.authors is not None:
+            self.delete_authors(input_ref.id)
+            author_ids = self.get_author_ids(input_ref)
+            # Step 3: Insert new mappings into reference_authors
+            self.insert_into_authors(author_ids, input_ref.id)
+
+    def get_author_ids(self, input_ref: InputReference) -> list[int]:
+        author_ids = []
+        for author in input_ref.authors:
+            author_name = author.strip()
+            if not author_name:
+                continue
+
+            # Try to insert author, or get existing ID
+            author_id = self.insert_into_author(author_name)
+            author_ids.append(author_id)
+
+        return author_ids
+
+    def insert_into_author(self, author_name: str) -> int:
+        insert_author_sql = text(
+            """
+            INSERT INTO authors (name)
+            VALUES (:name)
+            ON CONFLICT (name) DO NOTHING
+            """
+        )
+        db.session.execute(insert_author_sql, {"name": author_name})
+
+        # Get the author ID
+        get_author_id_sql = text(
+            """
+            SELECT id FROM authors WHERE name = :name
+            """
+        )
+        result = db.session.execute(get_author_id_sql, {"name": author_name})
+        author_id = result.fetchone()[0]
+        return author_id

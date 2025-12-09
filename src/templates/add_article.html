@@ -9,7 +9,7 @@ Add a new article
 {% block extra_fields %}
 
 <div class="row mb-3">
-  <label for="journal" class="col-sm-3 col-form-label">Journal</label>
+  <label for="journal" class="col-sm-3 col-form-label">Journal*</label>
   <div class="col-sm-9">
     <input 
       type="text" 
@@ -48,7 +48,6 @@ Add a new article
       class="form-control" 
       placeholder="Example: 3"
       value="{{ reference.extra.number if reference else '' }}"
-    >
   </div>
 </div>
 
