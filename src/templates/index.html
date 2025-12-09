@@ -18,9 +18,9 @@ Reference app
           <input 
             class="form-check-input" 
             type="checkbox" 
-            id="select-{{ reference.id }}"
+            id="select-{{ reference.citation_key }}"
             bibtex-data="{{ generate_bibtex([bibtex_refs_by_id[reference.id]]) }}"
-            aria-label="Select reference {{ reference.id }} for BibTex generation.">
+            aria-label="Select reference {{ reference.citation_key }} for BibTex generation.">
         </div>
         <div class="mt-3">
           <div class="d-flex align-items-center gap-2 mb-2">
@@ -82,18 +82,11 @@ Reference app
       onclick="copyToClipboard(`{{ generate_bibtex(bibtex_references) | safe }}`)">Copy BibTeX to Clipboard</button>
   </div>
   <div class="mt-3">
-    <button class="btn btn-tertiary" onclick="copy_selected(`{{references}}, {{get_reference_by_id}}`)">Copy selected BibTeX to Clipboard</button>
+    <button class="btn btn-tertiary" id="clipboardcopy-selected"
+     onclick="copy_selected(`{{references}}, {{get_reference_by_id}}`)">Copy selected BibTeX to Clipboard</button>
   </div>
 </div>
 
 <script src="{{ url_for('static', filename='copy_to_clipboard.js') }}"></script>
-<script>
-  const copy_selected = () => {
-    const checkedBoxes = document.querySelectorAll('input[type=checkbox]:checked')
-
-    const bibtexData = Array.from(checkedBoxes).map(checked => checked.getAttribute('bibtex-data'))
-
-    copyToClipboard(bibtexData.join('\n'))
-  }
-</script>
+<script src="{{ url_for('static', filename='copy_selected.js') }}"></script>
 {% endblock %}
