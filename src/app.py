@@ -286,10 +286,6 @@ def toggle_easter_egg():
     True/False and redirect caller to args["origin"]."""
     session["enable-easter-egg"] = not session.get("enable-easter-egg", False)
     origin = request.args.get("origin", "/")
-    if session.get("enable-easter-egg"):
-        return redirect(
-            "https://www.tiktok.com/@rickastleyofficial/video/7512867562258992406?lang=en"
-        )
     return redirect(origin)
 
 
