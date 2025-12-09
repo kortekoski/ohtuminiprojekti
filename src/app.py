@@ -278,7 +278,7 @@ def init_easter_egg():
 
 
 @app.route("/toggle_easter_egg")
-def togge_easter_egg():
+def toggle_easter_egg():
     """Toggle session["enable-easter-egg"] between
     True/False and redirect caller to args["origin"]."""
     session["enable-easter-egg"] = not session.get("enable-easter-egg", False)
