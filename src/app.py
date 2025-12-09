@@ -272,11 +272,15 @@ def add_from_doi():
 
 @app.before_request
 def init_easter_egg():
+    """Initializes session["enable-easter-egg"] to False.
+    This is run before further handling of all requests."""
     session.setdefault("enable-easter-egg", False)
 
 
 @app.route("/toggle_easter_egg")
 def togge_easter_egg():
+    """Toggle session["enable-easter-egg"] between
+    True/False and redirect caller to args["origin"]."""
     session["enable-easter-egg"] = not session.get("enable-easter-egg", False)
     origin = request.args.get("origin", "/")
     return redirect(origin)
