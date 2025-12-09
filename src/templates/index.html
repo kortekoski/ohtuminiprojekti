@@ -8,6 +8,22 @@ Reference app
 <div class="container mt-4">
   <h2 class="mb-4">Reference app</h2>
   <div class="container border border-secondary-subtle rounded-4 p-3 bg-white">
+    <form class="d-flex gap-2 mb-3" action="/" method="get">
+      <input type="text" name="author" class="form-control" placeholder="Filter by Author"
+        value="{{ request.args.get('author', '') }}">
+      <input type="number" name="year" class="form-control" placeholder="Filter by Year"
+        value="{{ request.args.get('year', '') }}">
+      <button type="submit" class="btn btn-primary">Filter</button>
+      <a href="/" class="btn btn-secondary">Clear</a>
+    </form>
+
+    <div class="mb-3">
+      <span>Sort by:</span>
+      <a href="{{ url_for('index', sort_by='author') }}" class="btn btn-sm btn-outline-secondary">Author</a>
+      <a href="{{ url_for('index', sort_by='year') }}" class="btn btn-sm btn-outline-secondary">Year</a>
+      <a href="{{ url_for('index', sort_by='title') }}" class="btn btn-sm btn-outline-secondary">Title</a>
+    </div>
+
     {% if references|length == 0 %}
     <p>No references found!</p>
     {% else %}
