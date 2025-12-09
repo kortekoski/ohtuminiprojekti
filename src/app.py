@@ -233,6 +233,40 @@ def download_bibtex():
         return redirect("/")
 
 
+@app.route("/download_selected_bibtex")
+def download_selected_bibtex():
+    """Generates and gives the BibTex file for selected references."""
+    ref_ids = request.args.getlist("ref_id")
+
+    if not ref_ids:
+        flash("No references selected for download", "error")
+        return redirect("/")
+
+    reference_service = get_reference_service()
+    refs = []
+    for ref_id in ref_ids:
+        ref = reference_service.get_reference_by_id(int(ref_id))
+        if ref:
+            refs.append(ref)
+
+    if not refs:
+        flash("No valid references found for the selected IDs", "error")
+        return redirect("/")
+
+    try:
+        bibtex_content = BibtexService.generate_bibtex(refs)
+        return Response(
+            bibtex_content,
+            mimetype="text/plain",
+            headers={
+                "Content-Disposition": "attachment; filename=selected_references.bib",
+            },
+        )
+    except Exception as error:  # pylint: disable=broad-exception-caught
+        flash(str(error), "error")
+        return redirect("/")
+
+
 @app.route("/add_from_doi", methods=["POST"])
 def add_from_doi():
     doi = request.form.get("doi")

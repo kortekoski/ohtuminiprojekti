@@ -87,6 +87,21 @@ BibTeX is downloadable for a reference
     Should Contain  ${bibtex_content}  title = {Different types of clover in Melee island},
     Should Contain  ${bibtex_content}  year = {2025}
 
+BibTeX is downloadable for a selected reference
+    Add Test Reference
+    Go To  ${HOME_URL}
+    Page Should Contain  Download selected BibTeX
+    Click Button  download-selected
+    Page Should Contain  No references selected for download
+    Select Checkbox  select-Test2025
+    ${response}=  GET On Session    app    url=/download_selected_bibtex?ids=Test2025
+    Should Be Equal As Integers  ${response.status_code}  200
+    ${bibtex_content}=  Set Variable  ${response.text}
+    Should Contain  ${bibtex_content}  @book{Test2025,
+    Should Contain  ${bibtex_content}  author = {Threeplog, Guybroom},
+    Should Contain  ${bibtex_content}  title = {Different types of clover in Melee island},
+    Should Contain  ${bibtex_content}  year = {2025}
+
 Copy BibTeX button copies all references to clipboard
     Add Test Reference
     Go To  ${HOME_URL}
