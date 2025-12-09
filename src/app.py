@@ -7,6 +7,7 @@ from flask import (
     Response,
     redirect,
     render_template,
+    render_template_string,
     request,
     jsonify,
     flash,
@@ -287,9 +288,24 @@ def toggle_easter_egg():
     session["enable-easter-egg"] = not session.get("enable-easter-egg", False)
     origin = request.args.get("origin", "/")
     if session.get("enable-easter-egg"):
-        return redirect(
-            "https://www.tiktok.com/@rickastleyofficial/video/7512867562258992406?lang=en"
-        )
+        new_tab_url = "https://www.tiktok.com/@rickatleyofficial/video/7512867562258992406?lang=en"
+        redirect_url = origin
+
+        html = f"""
+        <html>
+        <head>
+            <script type="text/javascript">
+                window.onload = function() {{
+                    window.open("{new_tab_url}", "_blank");
+                    window.location.href = "{redirect_url}";
+                }};
+            </script>
+        </head>
+        <body></body>
+        </html>
+        """
+        return render_template_string(html)
+
     return redirect(origin)
 
 
