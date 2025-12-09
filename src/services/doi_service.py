@@ -4,7 +4,7 @@ from urllib.parse import urlparse
 import requests
 from util import UserInputError
 import re
-from entities.reference import Reference, RefType
+from entities.reference import InputReference, RefType
 
 
 class DoiService:
@@ -16,14 +16,14 @@ class DoiService:
         else:
             self.api = CrossrefApi()
 
-    def get_doi(self, input_string: str) -> Reference | None:
+    def get_doi(self, input_string: str, citation_key: str) -> InputReference | None:
         """
         Get a DOI from an input string with either a URL
         that contains a DOI or a DOI.
         """
         if doi := DoiService._validate_input(input_string):
             if content := self.api.get_doi_metadata(doi):
-                return DoiService._make_reference(content)
+                return DoiService._make_reference(content, citation_key)
 
     @staticmethod
     def _validate_doi(maybe_doi: str) -> bool:
@@ -85,9 +85,9 @@ class DoiService:
         raise UserInputError("Input must be a DOI or a URL that contains a DOI.")
 
     @staticmethod
-    def _make_reference(content: dict) -> Reference | None:
+    def _make_reference(content: dict, citation_key: str) -> InputReference | None:
         """
-        Make a Reference object from a crossref response python object
+        Make an InputReference object from a crossref response python object
         """
         status = content.get("status")
         if status != "ok":
@@ -149,18 +149,15 @@ class DoiService:
                 work_language = "English"
             extra["language"] = work_language
 
-        work_author = " and ".join(
-            map(lambda a: f"{a['given']} {a['family']}", message["author"])
-        )
+        work_authors = [f"{a['family']}, {a['given']}" for a in message["author"]]
 
-        return Reference(
-            0,
-            "placeholder",
-            work_year,
-            work_author,
-            work_title,
-            RefType.ARTICLE.value,
-            extra,
+        return InputReference(
+            citation_key=citation_key,
+            year=work_year,
+            authors=work_authors,
+            title=work_title,
+            reftype=RefType.ARTICLE.value,
+            extra=extra,
         )
 
 

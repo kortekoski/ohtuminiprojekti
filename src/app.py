@@ -105,10 +105,14 @@ def index():
     """Renders the index page with all references."""
     service = get_reference_service()
     references: list[Reference] = service.get_all_references()
+    bibtex_references: list[Reference] = service.get_all_references(bibtex=True)
+    bibtex_refs_by_id = {ref.id: ref for ref in bibtex_references}
     return render_template(
         "index.html",
         references=references,
         generate_bibtex=BibtexService.generate_bibtex,
+        bibtex_references=bibtex_references,
+        bibtex_refs_by_id=bibtex_refs_by_id,
         get_reference_by_id=service.get_reference_by_id,
     )
 
@@ -234,37 +238,36 @@ def add_from_doi():
     doi = request.form.get("doi")
     citation_key = request.form.get("citation_key")
     if doi is None:
-        flash("error", "Input needs to have a DOI.")
+        flash("Input needs to have a DOI.", "error")
         return redirect("/new_reference/from_doi")
     if citation_key is None:
-        flash("error", "Input needs to have a citation key.")
+        flash("Input needs to have a citation key.", "error")
         return redirect("/new_reference/from_doi")
-    citation_key = request.form.get("citation_key")
+
     try:
         doi_service = get_doi_service()
-        ref = doi_service.get_doi(doi)
-        if ref is None:
+        input_ref = doi_service.get_doi(doi, citation_key)
+        if input_ref is None:
             # This only happens when we somehow fail to
             # contact api.crossref.org.
             flash("Failed to retrieve DOI. Try again later.", "error")
             return redirect("/")
 
-        # DOI service returns author as a string, split it into a list for validation
-        authors = [a.strip() for a in ref.author.split(" and ")]
-        ValidationService.validate_input_reference(ref, authors=authors)
         reference_service = get_reference_service()
+        existing_citation_keys = reference_service.get_citation_keys()
 
-        input_ref = InputReference(
-            citation_key=citation_key,
-            year=ref.year,
-            authors=authors,
-            title=ref.title,
-            reftype=ref.reftype,
-            extra=ref.extra,
+        ValidationService.validate_input_reference(
+            input_ref, existing_citation_keys, authors=input_ref.authors
         )
+
         reference_service.create_reference(input_ref)
-        flash(f"Reference {citation_key} created succesfully!", "success")
+        flash(f"Reference {citation_key} created successfully!", "success")
         return redirect("/")
+
+    except UserInputError as err:
+        flash(str(err), "error")
+        return redirect("/new_reference/from_doi")
+
     except UserInputError as err:
         flash(str(err), "error")
         return redirect("/new_reference/from_doi")
