@@ -3,20 +3,20 @@
 }
 
 .btn-primary {
-  background-color: #244737;
-  border-color: #244737;
+  background-color: #a28c2a;
+  border-color: #a28c2a;
 }
 
 .btn-primary:hover {
-  background-color: #1a3428;
-  border-color: #1a3428;
+  background-color: #8b7218;
+  border-color: #8b7218;
 }
 
 .btn-primary:focus,
 .btn-primary.focus {
-  background-color: #122519;
-  border-color: #122519;
-  box-shadow: 0 0 0 0.25rem rgba(36, 71, 55, 0.5);
+  background-color: #6f5c0f;
+  border-color: #6f5c0f;
+  box-shadow: 0 0 0 0.25rem rgba(162, 140, 42, 0.5);
 }
 
 .btn-tertiary {
@@ -95,29 +95,28 @@ a:hover {
 }
 
 /* --- Idea for animated background --- */
-/* .create-bg {
+.create-alt-bg { */
   margin: 0;
   height: 100vh;
   overflow: hidden;
 
   /* Tile the GIF instead of stretching */
-  /* background-image: url("bg_stars.png");
+  background-image: url("bg_stars.png");
   background-repeat: repeat;
   background-size: 400px 400px; /* Size of each tile */
   
   /* Start position */
-  /* background-position: 0 0;
+  background-position: 0 0;
 
   /* Animate the background */
-  /* animation: moveBackground 30s linear infinite;
-}  */
+  animation: moveBackground 30s linear infinite;
+}
 
-
-/* @keyframes moveBackground {
+@keyframes moveBackground {
   from {
       background-position: 0 0;
   }
   to {
       background-position: 400px 400px; /* matches background-size for smooth loop */
-  /* }
-} */
+  }
+}
