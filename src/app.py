@@ -11,6 +11,7 @@ from flask import (
     jsonify,
     flash,
     g,
+    session,
 )
 from db_helper import reset_db
 from entities.reference import Reference, InputReference
@@ -267,6 +268,17 @@ def add_from_doi():
     except UserInputError as err:
         flash(str(err), "error")
         return redirect("/new_reference/from_doi")
+
+
+@app.before_request
+def init_easter_egg():
+    session.setdefault("enable-easter-egg", False)
+
+
+def togge_easter_egg():
+    session["enable-easter-egg"] = not session.get("enable-easter-egg", False)
+    origin = request.args.get("origin", "/")
+    return redirect(origin)
 
 
 # ---------------------------
