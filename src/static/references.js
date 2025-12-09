@@ -25,8 +25,6 @@ const download_selected = () => {
   const checkedBoxes = document.querySelectorAll('input[type=checkbox]:checked');
   const checkedRefIds = Array.from(checkedBoxes).map(checked => checked.getAttribute('ref-id'));
 
-  console.log(checkedRefIds.join('\n'));
-
   const url = new URL("/download_selected_bibtex", window.location.origin);
   
   for (const refId of checkedRefIds) {
