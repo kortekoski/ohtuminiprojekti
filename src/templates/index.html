@@ -20,6 +20,7 @@ Reference app
             type="checkbox" 
             id="select-{{ reference.citation_key }}"
             ref-id="{{ reference.id }}"
+            ref-citation-key="{{ reference.citation_key }}"
             bibtex-data="{{ generate_bibtex([bibtex_refs_by_id[reference.id]]) }}"
             aria-label="Select reference {{ reference.citation_key }} for BibTex generation.">
         </div>
@@ -89,6 +90,10 @@ Reference app
   <div class="mt-3">
     <button class="btn btn-tertiary" id="clipboardcopy-selected"
      onclick="copy_selected(`{{references}}`)">Copy selected BibTeX to Clipboard</button>
+  </div>
+  <div class="mt-3">
+    <button class="btn btn-danger" id="delete-selected"
+     onclick="delete_selected(`{{references}}`)">Delete selected references</button>
   </div>
 </div>
 
