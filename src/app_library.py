@@ -49,3 +49,74 @@ class app_library:
                 data_with_authors.append((key, value))
 
         requests.post(f"{self._base_url}/add_test_reference", data=data_with_authors)
+
+    def add_multiple_test_references(self, count=3):
+        """Add multiple test references with different citation keys."""
+        references = [
+            {
+                "citation_key": "Smith2020",
+                "year": 2020,
+                "authors": ["Smith, John", "Doe, Jane"],
+                "title": "Introduction to Software Testing",
+                "reftype": "book",
+                "extra": {
+                    "publisher": "Tech Press",
+                    "address": "New York, NY",
+                    "edition": "2",
+                    "isbn": "978-0123456789",
+                },
+            },
+            {
+                "citation_key": "Johnson2021",
+                "year": 2021,
+                "authors": ["Johnson, Alice"],
+                "title": "Advanced Database Systems",
+                "reftype": "article",
+                "extra": {
+                    "journal": "Journal of Database Research",
+                    "volume": "15",
+                    "number": "3",
+                    "pages": "123-145",
+                },
+            },
+            {
+                "citation_key": "Brown2022",
+                "year": 2022,
+                "authors": ["Brown, Robert", "Wilson, Emily"],
+                "title": "Machine Learning in Practice",
+                "reftype": "article",
+                "extra": {
+                    "booktitle": "Proceedings of ML Conference 2022",
+                    "pages": "45-52",
+                    "address": "San Francisco, CA",
+                },
+            },
+            {
+                "citation_key": "Davis2023",
+                "year": 2023,
+                "authors": ["Davis, Michael"],
+                "title": "Cloud Computing Architecture",
+                "reftype": "book",
+                "extra": {
+                    "publisher": "Cloud Press",
+                    "edition": "1",
+                    "isbn": "978-9876543210",
+                },
+            },
+            {
+                "citation_key": "Taylor2024",
+                "year": 2024,
+                "authors": ["Taylor, Sarah", "Anderson, Chris"],
+                "title": "Web Development Best Practices",
+                "reftype": "article",
+                "extra": {
+                    "journal": "Web Engineering Journal",
+                    "volume": "8",
+                    "number": "2",
+                },
+            },
+        ]
+
+        for i in range(min(count, len(references))):
+            ref = references[i]
+            self.add_test_reference(**ref)
