@@ -12,9 +12,10 @@ setup_db () {
     echo "starting testing db..."
     docker compose up -d db
     echo "waiting for testing db to become available..."
-    while [ "$(docker inspect -f '{{.State.Health.Status}}' $(docker compose ps -q db))" != "healthy" ]; do
+    until docker compose exec -T db pg_isready -U postgres > /dev/null 2>&1; do
           sleep 1
     done
+    echo "database is ready!"
 }
 
 start_app() {

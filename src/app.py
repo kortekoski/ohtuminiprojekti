@@ -247,30 +247,6 @@ def update_reference(ref_id):
     return None
 
 
-@app.route("/download_bibtex")
-def download_bibtex():
-    """generates and gives the BibTex file"""
-    reference_service = get_reference_service()
-    refs = reference_service.get_all_references(bibtex=True)
-
-    if not refs:
-        flash("No references available to download", "error")
-        return redirect("/")
-
-    try:
-        bibtex_content = BibtexService.generate_bibtex(refs)
-        return Response(
-            bibtex_content,
-            mimetype="text/plain",
-            headers={
-                "Content-Disposition": "attachment; filename=references.bib",
-            },
-        )
-    except Exception as error:  # pylint: disable=broad-exception-caught
-        flash(str(error), "error")
-        return redirect("/")
-
-
 @app.route("/download_selected_bibtex")
 def download_selected_bibtex():
     """Generates and gives the BibTex file for selected references."""
