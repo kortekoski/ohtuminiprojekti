@@ -49,6 +49,27 @@ Reference is not visible after deletion
     Page Should Not Contain  Threeplog
     Page Should Not Contain  clover
 
+Multiple references can be deleted if they are selected via checkbox
+    Add Multiple Test References
+    Go To  ${HOME_URL}
+    Select Checkbox  select-Smith2020
+    Select Checkbox  select-Johnson2021
+    Click Button  delete-selected
+    Handle Alert  accept
+    Page Should Contain  deleted successfully
+    Page Should Not Contain  Introduction to Software Testing
+    Page Should Not Contain  Advanced Database Systems
+    Page Should Contain  Machine Learning in Practice
+
+If no references are selected, none will be deleted by selection delete
+    Add Multiple Test References
+    Go To  ${HOME_URL}
+    Click Button  delete-selected
+    Alert Should Be Present
+    Page Should Contain  Introduction to Software Testing
+    Page Should Contain  Advanced Database Systems
+    Page Should Contain  Machine Learning in Practice
+
 Reference information is changed after update
     Add Test Reference
     Go To  ${HOME_URL}

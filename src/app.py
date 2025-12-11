@@ -187,6 +187,28 @@ def delete_reference(citation_key):
     return redirect("/")
 
 
+@app.route("/delete_selected_references", methods=["POST"])
+def delete_selected_references():
+    """
+    Handles the deletion of multiple references by citation key.
+    """
+    selected_citation_keys = request.form.getlist("citation_key")
+    service = get_reference_service()
+    try:
+        not_found_keys = []
+        for citation_key in selected_citation_keys:
+            if not service.citation_key_exists(citation_key):
+                not_found_keys.append(citation_key)
+                continue
+            service.delete_reference(citation_key)
+        if not_found_keys:
+            flash(f"References not found: {', '.join(not_found_keys)}", "error")
+        flash(f"Selected references deleted successfully!", "success")
+    except Exception as error:  # pylint: disable=broad-exception-caught
+        flash(str(error), "error")
+    return redirect("/")
+
+
 @app.route("/update_reference/<int:ref_id>", methods=["GET", "POST"])
 def update_reference(ref_id):
     """Handles the updating of an existing reference."""
