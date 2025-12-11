@@ -13,22 +13,32 @@ const copyToClipboard = (bibtexContent) => {
   }
 };
 
+// Toggle all checkboxes
+const toggleSelectAll = () => {
+  const selectAllCheckbox = document.getElementById('select-all');
+  const referenceCheckboxes = document.querySelectorAll('.reference-checkbox');
+  
+  referenceCheckboxes.forEach(checkbox => {
+    checkbox.checked = selectAllCheckbox.checked;
+  });
+};
+
 // Copy selected references to clipboard
 const copy_selected = () => {
-  const checkedBoxes = document.querySelectorAll('input[type=checkbox]:checked');
+  const checkedBoxes = document.querySelectorAll('.reference-checkbox:checked');
   const bibtexData = Array.from(checkedBoxes).map(checked => checked.getAttribute('bibtex-data'));
   copyToClipboard(bibtexData.join('\n'));
 };
 
 const getCheckedRefIds = () => {
-  const checkedBoxes = document.querySelectorAll('input[type=checkbox]:checked');
+  const checkedBoxes = document.querySelectorAll('.reference-checkbox:checked');
   const checkedRefIds = Array.from(checkedBoxes).map(checked => checked.getAttribute('ref-id'));
 
   return checkedRefIds;
 }
 
 const getCheckedCitationKeys = () => {
-  const checkedBoxes = document.querySelectorAll('input[type=checkbox]:checked');
+  const checkedBoxes = document.querySelectorAll('.reference-checkbox:checked');
   const checkedCitationKeys = Array.from(checkedBoxes).map(checked => checked.getAttribute('ref-citation-key'));
 
   return checkedCitationKeys;

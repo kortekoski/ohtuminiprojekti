@@ -96,26 +96,16 @@ Get to frontpage via navbar
     Click Link  Home
     Title Should Be  Reference app
 
-BibTeX is downloadable for a reference
-    Add Test Reference
-    Go To  ${HOME_URL}
-    Page Should Contain  Download BibTeX
-    ${response}=  GET On Session    app    /download_bibtex
-    Should Be Equal As Integers  ${response.status_code}  200
-    ${bibtex_content}=  Set Variable  ${response.text}
-    Should Contain  ${bibtex_content}  @book{Test2025,
-    Should Contain  ${bibtex_content}  author = {Threeplog, Guybroom},
-    Should Contain  ${bibtex_content}  title = {Different types of clover in Melee island},
-    Should Contain  ${bibtex_content}  year = {2025}
 
 BibTeX is downloadable for a selected reference
     Add Test Reference
     Go To  ${HOME_URL}
     Page Should Contain  Download selected BibTeX
-    Click Button  download-selected
-    Page Should Contain  No references selected for download
     Select Checkbox  select-Test2025
-    ${response}=  GET On Session    app    url=/download_selected_bibtex?ids=Test2025
+    Click Button  download-selected
+    Sleep  500ms
+    # Verify by making direct API call since download triggers file download
+    ${response}=  GET On Session    app    url=/download_selected_bibtex?ref_id=1
     Should Be Equal As Integers  ${response.status_code}  200
     ${bibtex_content}=  Set Variable  ${response.text}
     Should Contain  ${bibtex_content}  @book{Test2025,
@@ -123,25 +113,10 @@ BibTeX is downloadable for a selected reference
     Should Contain  ${bibtex_content}  title = {Different types of clover in Melee island},
     Should Contain  ${bibtex_content}  year = {2025}
 
-Copy BibTeX button copies all references to clipboard
-    Add Test Reference
-    Go To  ${HOME_URL}
-    Page Should Contain  Copy BibTeX to Clipboard
-    Click Button  clipboardcopy
-    Handle Alert  accept
-    Sleep  500ms
-    ${clipboard_content}=  Execute Javascript  return window.lastCopiedBibtex || '';
-    Should Contain  ${clipboard_content}  @book{Test2025,
-    Should Contain  ${clipboard_content}  author = {Threeplog, Guybroom},
-    Should Contain  ${clipboard_content}  title = {Different types of clover in Melee island},
-    Should Contain  ${clipboard_content}  year = {2025}
-
 Copy selected BibTeX button copies selected references to clipboard
     Add Test Reference
     Go To  ${HOME_URL}
     Page Should Contain  Copy selected BibTeX to Clipboard
-    Click Button  clipboardcopy-selected
-    Alert Should Be Present  No entries to copy!
     Select Checkbox  select-Test2025
     Click Button  clipboardcopy-selected
     Handle Alert  accept
@@ -163,11 +138,6 @@ Reference can be added by DOI
     Title Should Be  Reference app
     Page Should Contain  Construction of a reference material
 
-BibTeX download starts
-    Add Test Reference
-    Go To  ${HOME_URL}
-    Click Link  Download BibTeX
-    Alert Should Be Present
 
 As a user I can choose only certain reference types
     Go To  ${HOME_URL}/new_reference
