@@ -11,6 +11,17 @@ Setup Suite
     Open And Configure Browser
     Create Session    app    ${HOME_URL}
 
+Add Reference
+    [Arguments]  ${type}  ${last_name}  ${first_name}  ${title}  ${year}  ${citation_key}
+    Go To  ${HOME_URL}/new_reference
+    Click Link  ${type}
+    Input Text  last_name  ${last_name}
+    Input Text  first_name  ${first_name}
+    Input Text  title  ${title}
+    Input Text  year  ${year}
+    Input Text  citation_key  ${citation_key}
+    Click Button  Create Reference
+
 *** Test Cases ***
 At start there are no references
     Go To  ${HOME_URL}
@@ -328,3 +339,52 @@ As a user I can see all fields of a reference in the main view
     Page Should Contain  LocusArts
     Page Should Contain  A classic adventure game reference
 
+References get filtered by author
+    Add Reference  Book  McClane  John  Die Hard 2: Die Harder  1990  christmas_movie_1990
+    Add Reference  Book  McCallister  Kevin  Home Alone 2: Lost in New York  1992  christmas_movie_1992
+    Go To  ${HOME_URL}
+    Input Text  name:author  McClane
+    Click Button  Filter
+    Page Should Contain  Die Hard 2: Die Harder
+    Page Should Not Contain  Home Alone 2: Lost in New York
+    Click Link  Clear
+    Page Should Contain  Die Hard 2: Die Harder
+    Page Should Contain  Home Alone 2: Lost in New York
+
+References get filtered by year
+    Add Reference  Book  McClane  John  Die Hard 3: with a Vengeance  1995  christmas_movie_1995
+    Add Reference  Book  McCallister  Kevin  Home Alone 3: There's a new kid on the block  1992  christmas_movie_1997
+    Go To  ${HOME_URL}
+    Input Text  name:year  1995
+    Click Button  Filter
+    Page Should Contain  Die Hard 3: with a Vengeance
+    Page Should Not Contain  Home Alone 3: There's a new kid on the block
+    Click Link  Clear
+    Page Should Contain  Die Hard 3: with a Vengeance
+    Page Should Contain  Home Alone 3: There's a new kid on the block
+
+Sorting button updates URL
+    Add Test Reference
+    Go To  ${HOME_URL}
+    Click Link  Author
+    Location Should Contain  sort_by=author
+    Click Link  Year
+    Location Should Contain  sort_by=year
+    Click Link  Title
+    Location Should Contain  sort_by=title
+
+References get sorted by author, year and title
+    Add Reference  Book  Banderas  Antonio  The Legend of Zorro  2005  zorro
+    Add Reference  Book  Affleck  Ben  Armageddon  1998  plummer_astronauts
+    Go To  ${HOME_URL}
+    Click Link  Author
+    ${author_1}=  Get Text  xpath=(//small[contains(., 'Last Name:')])[1]
+    ${author_2}=  Get Text  xpath=(//small[contains(., 'Last Name:')])[2]
+    Should Be True  '${author_1}' < '${author_2}'
+    Click Link  Year
+    ${title_earlier}=  Get Text  xpath=(//h5)[1]
+    Should Be Equal  ${title_earlier}  Armageddon.
+    Click Link  Title
+    ${title_1}=  Get Text  xpath=(//h5)[1]
+    ${title_2}=  Get Text  xpath=(//h5)[2]
+    Should Be True  '${title_1}' < '${title_2}'
