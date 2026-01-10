@@ -20,7 +20,7 @@ from config import app, test_env
 from services.bibtex_service import BibtexService
 from services.reference_service import ReferenceService
 from services.validation_service import ValidationService
-from services.doi_service import DoiService
+from services.doi_service import DoiService, TestApi
 from util import RefField, UserInputError
 
 
@@ -35,9 +35,10 @@ def get_reference_service() -> ReferenceService:
 
 
 def get_doi_service() -> DoiService:
-    if "doi_service" not in g:
-        g.doi_service = DoiService()
-    return g.doi_service
+    if not test_env:
+        return DoiService()
+    mock_api = TestApi()
+    return DoiService(mock_api)
 
 
 def create_extra_dict(request: Request) -> dict[str, str]:

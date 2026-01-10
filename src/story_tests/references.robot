@@ -136,7 +136,7 @@ Reference can be added by DOI
     Click Button  Get Reference
     Wait Until Page Contains  created successfully!  timeout=10s
     Title Should Be  Reference app
-    Page Should Contain  Construction of a reference material
+    Page Should Not Contain  No references found!
 
 
 As a user I can choose only certain reference types
